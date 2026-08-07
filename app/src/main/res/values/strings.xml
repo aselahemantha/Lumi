@@ -13,4 +13,27 @@
     <string name="back_button">Back</string>
     <string name="continue_button">Continue</string>
     <string name="welcome_description">Your personal cycle intelligence journey starts here.</string>
+    <string name="core_data_title">The Core Data</string>
+    <string name="core_data_subtitle">Our AI needs a baseline to start predicting your unique patterns.</string>
+    <string name="last_period_title">First day of last period</string>
+    <string name="last_period_subtitle">Select the start date to calibrate the engine.</string>
+    <string name="period_duration_title">Period Duration</string>
+    <string name="period_duration_subtitle">Average bleeding phase</string>
+    <string name="cycle_length_title">Cycle Length</string>
+    <string name="cycle_length_subtitle">Typical days between periods</string>
+    <string name="ai_calibration_title">AI Calibration</string>
+    <string name="ai_calibration_desc">Logging 3+ consecutive cycles improves prediction accuracy significantly. We\'ll refine your insights as you go.</string>
+    <string name="health_profile_title">Health Profile</string>
+    <string name="health_profile_subtitle">AI uses your health context to adjust prediction boundaries and personalize your insights.</string>
+    <string name="age_label">Age</string>
+    <string name="age_placeholder">e.g., 28</string>
+    <string name="weight_label">Weight (Optional)</string>
+    <string name="weight_placeholder">e.g., 65</string>
+    <string name="underlying_conditions_title">Underlying Conditions</string>
+    <string name="underlying_conditions_subtitle">Select any that apply to help calibrate your cycle models.</string>
+    <string name="condition_pcos">PCOS</string>
+    <string name="condition_endometriosis">Endometriosis</string>
+    <string name="condition_thyroid">Thyroid Issues</string>
+    <string name="condition_none">None of the above</string>
+    <string name="security_info_text">Your health data is stored locally and securely. It is never shared with third parties without explicit consent.</string>
 </resources>
