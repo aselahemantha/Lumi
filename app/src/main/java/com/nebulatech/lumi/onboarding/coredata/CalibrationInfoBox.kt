@@ -1,4 +1,4 @@
-package com.nebulatech.lumi.onboarding.components
+package com.nebulatech.lumi.onboarding.coredata
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

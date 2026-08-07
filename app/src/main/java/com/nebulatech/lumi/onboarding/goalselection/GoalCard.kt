@@ -1,4 +1,4 @@
-package com.nebulatech.lumi.onboarding.components
+package com.nebulatech.lumi.onboarding.goalselection
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
