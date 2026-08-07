@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Lumi</string>
+    <string name="cycle_intelligence">Cycle Intelligence</string>
+    <string name="lumi_title">Lumi</string>
+    <string name="lumi_subtitle">Making sense of your body’s rhythm.</string>
+    <string name="primary_goal_question">What is your primary goal?</string>
+    <string name="goal_track_cycle_title">Track my cycle</string>
+    <string name="goal_track_cycle_desc">Monitor dates, flow, and phases.</string>
+    <string name="goal_understand_symptoms_title">Understand my symptoms</string>
+    <string name="goal_understand_symptoms_desc">Log moods, pain, and physical changes.</string>
+    <string name="goal_optimize_fertility_title">Optimize fertility</string>
+    <string name="goal_optimize_fertility_desc">Target fertile windows and ovulation.</string>
+    <string name="back_button">Back</string>
+    <string name="continue_button">Continue</string>
+    <string name="welcome_description">Your personal cycle intelligence journey starts here.</string>
+</resources>
