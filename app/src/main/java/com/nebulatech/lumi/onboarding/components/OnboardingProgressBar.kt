@@ -20,7 +20,7 @@ import com.nebulatech.lumi.onboarding.OnboardingStep
 fun OnboardingProgressBar(
     currentStep: OnboardingStep,
     modifier: Modifier = Modifier,
-    totalSteps: Int = 4
+    totalSteps: Int = 3
 ) {
     val step = when (currentStep) {
         OnboardingStep.WELCOME -> 0

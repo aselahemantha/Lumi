@@ -36,4 +36,6 @@
     <string name="condition_thyroid">Thyroid Issues</string>
     <string name="condition_none">None of the above</string>
     <string name="security_info_text">Your health data is stored locally and securely. It is never shared with third parties without explicit consent.</string>
+    <string name="name_label">What should we call you?</string>
+    <string name="name_placeholder">e.g., Sarah</string>
 </resources>

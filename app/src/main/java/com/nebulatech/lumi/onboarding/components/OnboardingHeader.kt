@@ -17,6 +17,7 @@ import com.nebulatech.lumi.R
 
 @Composable
 fun OnboardingHeader(
+    modifier: Modifier = Modifier,
     title: String = stringResource(R.string.lumi_title),
     subtitle: String = stringResource(R.string.lumi_subtitle),
     titleStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.displayLarge,
@@ -27,7 +28,6 @@ fun OnboardingHeader(
     ),
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     textAlign: TextAlign = TextAlign.Center,
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,

@@ -187,17 +187,34 @@ fun HealthProfileCard(
                         }
                         DropdownMenu(
                             expanded = dropdownExpanded,
-                            onDismissRequest = { dropdownExpanded = false }
+                            onDismissRequest = { dropdownExpanded = false },
+                            shape = RoundedCornerShape(16.dp),
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            tonalElevation = 0.dp,
+                            shadowElevation = 6.dp,
+                            modifier = Modifier.border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), RoundedCornerShape(16.dp))
                         ) {
                             DropdownMenuItem(
-                                text = { Text("kg") },
+                                text = {
+                                    Text(
+                                        text = "kg",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                },
                                 onClick = {
                                     onWeightUnitChange("kg")
                                     dropdownExpanded = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("lbs") },
+                                text = {
+                                    Text(
+                                        text = "lbs",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                },
                                 onClick = {
                                     onWeightUnitChange("lbs")
                                     dropdownExpanded = false

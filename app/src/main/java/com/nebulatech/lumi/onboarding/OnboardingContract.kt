@@ -28,7 +28,8 @@ data class OnboardingState(
     val age: String = "",
     val weight: String = "",
     val weightUnit: String = "kg",
-    val selectedConditions: Set<String> = emptySet()
+    val selectedConditions: Set<String> = emptySet(),
+    val name: String = ""
 )
 
 sealed interface OnboardingAction {
@@ -42,6 +43,7 @@ sealed interface OnboardingAction {
     data class UpdateWeight(val weight: String) : OnboardingAction
     data class UpdateWeightUnit(val unit: String) : OnboardingAction
     data class ToggleCondition(val condition: String) : OnboardingAction
+    data class UpdateName(val name: String) : OnboardingAction
 }
 
 sealed interface OnboardingEvent {

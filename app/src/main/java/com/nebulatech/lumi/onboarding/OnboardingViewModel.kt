@@ -60,6 +60,9 @@ class OnboardingViewModel : ViewModel() {
                     currentState.copy(selectedConditions = updatedConditions)
                 }
             }
+            is OnboardingAction.UpdateName -> {
+                _state.update { it.copy(name = action.name) }
+            }
             OnboardingAction.ClickBack -> {
                 when (state.value.currentStep) {
                     OnboardingStep.WELCOME -> {

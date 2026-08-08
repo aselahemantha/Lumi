@@ -64,7 +64,7 @@ fun OnboardingScreen(
                 onBackClick = { onAction(OnboardingAction.ClickBack) },
                 onContinueClick = { onAction(OnboardingAction.ClickContinue) },
                 isContinueEnabled = when (state.currentStep) {
-                    OnboardingStep.WELCOME -> true
+                    OnboardingStep.WELCOME -> state.name.isNotBlank()
                     OnboardingStep.SELECT_GOAL -> state.selectedGoal != null
                     OnboardingStep.CORE_DATA -> true
                     OnboardingStep.HEALTH_PROFILE -> state.age.isNotEmpty()
@@ -89,7 +89,10 @@ fun OnboardingScreen(
 
             when (state.currentStep) {
                 OnboardingStep.WELCOME -> {
-                    WelcomeScreen()
+                    WelcomeScreen(
+                        name = state.name,
+                        onNameChange = { onAction(OnboardingAction.UpdateName(it)) }
+                    )
                 }
                 OnboardingStep.SELECT_GOAL -> {
                     GoalSelectionScreen(

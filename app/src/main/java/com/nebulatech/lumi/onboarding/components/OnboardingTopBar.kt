@@ -23,11 +23,7 @@ fun OnboardingTopBar(
 ) {
     CenterAlignedTopAppBar(
         title = {
-            Text(
-                text = stringResource(R.string.cycle_intelligence),
-                style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp),
-                color = MaterialTheme.colorScheme.primary
-            )
+
         },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
