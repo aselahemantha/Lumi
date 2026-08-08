@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = OnboardingRoute
+                        startDestination = com.nebulatech.lumi.home.HomeRoute
                     ) {
                         composable<OnboardingRoute> {
                             OnboardingRoot(
@@ -33,13 +33,12 @@ class MainActivity : ComponentActivity() {
                                     finish()
                                 },
                                 onNavigateNext = { goal ->
-                                    Toast.makeText(
-                                        this@MainActivity,
-                                        "Selected goal: ${goal.name}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    navController.navigate(com.nebulatech.lumi.home.HomeRoute)
                                 }
                             )
+                        }
+                        composable<com.nebulatech.lumi.home.HomeRoute> {
+                            com.nebulatech.lumi.home.HomeScreenContainer()
                         }
                     }
                 }
