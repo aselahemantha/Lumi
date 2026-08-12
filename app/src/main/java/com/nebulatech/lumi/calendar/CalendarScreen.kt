@@ -49,6 +49,9 @@ import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.Primary
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun CalendarTopBar(
@@ -101,12 +104,16 @@ fun CalendarTopBar(
 
 @Composable
 fun CalendarScreen(
-    currentMonthYear: String = "October 2023",
-    onPreviousMonthClick: () -> Unit = {},
-    onNextMonthClick: () -> Unit = {},
+    initialYearMonth: YearMonth = YearMonth.of(2023, 10),
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var currentYearMonth by remember { mutableStateOf(initialYearMonth) }
+
+    val formattedMonthYear = remember(currentYearMonth) {
+        currentYearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH))
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -128,7 +135,7 @@ fun CalendarScreen(
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Month Header Row with Navigation Arrows
+            // Month Header Row with Interactive Navigation Arrows (< and >)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -137,7 +144,7 @@ fun CalendarScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = currentMonthYear,
+                    text = formattedMonthYear,
                     fontFamily = LiterataFontFamily,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
@@ -145,7 +152,9 @@ fun CalendarScreen(
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onPreviousMonthClick) {
+                    IconButton(
+                        onClick = { currentYearMonth = currentYearMonth.minusMonths(1) }
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
                             contentDescription = "Previous Month",
@@ -154,7 +163,9 @@ fun CalendarScreen(
                         )
                     }
                     Spacer(modifier = Modifier.width(4.dp))
-                    IconButton(onClick = onNextMonthClick) {
+                    IconButton(
+                        onClick = { currentYearMonth = currentYearMonth.plusMonths(1) }
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                             contentDescription = "Next Month",
@@ -165,8 +176,10 @@ fun CalendarScreen(
                 }
             }
 
-            // 1. Monthly Calendar Grid Card
-            MonthlyCalendarCard()
+            // 1. Monthly Calendar Grid Card (Dynamically re-renders on month change)
+            MonthlyCalendarCard(
+                yearMonth = currentYearMonth
+            )
 
             // 2. Calendar Legend
             CalendarLegend()

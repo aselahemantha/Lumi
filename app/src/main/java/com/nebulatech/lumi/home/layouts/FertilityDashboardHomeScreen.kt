@@ -8,8 +8,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,6 +27,9 @@ import com.nebulatech.lumi.home.components.LibraryFeaturedCard
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.home.components.LumiInsightCard
 import com.nebulatech.lumi.home.components.TodaysLogsCard
+import com.nebulatech.lumi.logging.LogBBTBottomSheet
+import com.nebulatech.lumi.logging.LogFlowBottomSheet
+import com.nebulatech.lumi.logging.LogLHTestBottomSheet
 import com.nebulatech.lumi.ui.theme.LumiTheme
 
 /**
@@ -29,6 +37,7 @@ import com.nebulatech.lumi.ui.theme.LumiTheme
  * Triggered during FERTILE_WINDOW phase (Days 11–15 of a 28-day cycle).
  * Focuses on peak ovulation status, BBT/LH logging, temperature trends, and ovulation insights.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FertilityDashboardHomeScreen(
     onLogBBTClick: () -> Unit = {},
@@ -38,6 +47,10 @@ fun FertilityDashboardHomeScreen(
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var showBBTSheet by remember { mutableStateOf(false) }
+    var showLHSheet by remember { mutableStateOf(false) }
+    var showFlowSheet by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -64,8 +77,14 @@ fun FertilityDashboardHomeScreen(
                 statusTag = "CURRENT STATUS",
                 title = "High Fertility Today",
                 description = "Ovulation expected tomorrow. This is your peak window.",
-                onLogBBTClick = onLogBBTClick,
-                onLogLHClick = onLogLHClick
+                onLogBBTClick = {
+                    showBBTSheet = true
+                    onLogBBTClick()
+                },
+                onLogLHClick = {
+                    showLHSheet = true
+                    onLogLHClick()
+                }
             )
 
             // 2. Daily Insight Card
@@ -79,7 +98,10 @@ fun FertilityDashboardHomeScreen(
 
             // 4. Today's Logs Card
             TodaysLogsCard(
-                onAddMoreLogsClick = onAddMoreLogsClick
+                onAddMoreLogsClick = {
+                    showFlowSheet = true
+                    onAddMoreLogsClick()
+                }
             )
 
             // 5. Contextual Library Card
@@ -89,6 +111,30 @@ fun FertilityDashboardHomeScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // Log BBT Bottom Sheet
+        if (showBBTSheet) {
+            LogBBTBottomSheet(
+                onDismissRequest = { showBBTSheet = false },
+                onSaveReading = { _, _, _ -> showBBTSheet = false }
+            )
+        }
+
+        // Log LH Test Bottom Sheet
+        if (showLHSheet) {
+            LogLHTestBottomSheet(
+                onDismissRequest = { showLHSheet = false },
+                onSaveResult = { _, _, _ -> showLHSheet = false }
+            )
+        }
+
+        // Log Flow / General Log Bottom Sheet
+        if (showFlowSheet) {
+            LogFlowBottomSheet(
+                onDismissRequest = { showFlowSheet = false },
+                onSaveLog = { _, _, _ -> showFlowSheet = false }
+            )
         }
     }
 }

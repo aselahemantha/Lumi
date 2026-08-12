@@ -1,7 +1,13 @@
 package com.nebulatech.lumi.insights.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +25,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +39,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,12 +47,39 @@ import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
 
+enum class HormoneFilter {
+    ALL,
+    ESTROGEN,
+    PROGESTERONE,
+    HEADACHES
+}
+
 @Composable
 fun HormoneSymptomTrendsCard(
-    currentPhase: String = "Luteal",
-    loggedSymptom: String = "Headaches logged",
     modifier: Modifier = Modifier
 ) {
+    var cursorRatio by remember { mutableFloatStateOf(0.76f) } // Default ~Day 21 (Luteal)
+    var selectedFilter by remember { mutableStateOf(HormoneFilter.ALL) }
+    var activeTooltip by remember { mutableStateOf<String?>(null) }
+
+    // Resolve current phase & logged symptom dynamically from cursor position
+    val currentPhase = when {
+        cursorRatio <= 0.33f -> "Menstrual"
+        cursorRatio <= 0.68f -> "Follicular"
+        else -> "Luteal"
+    }
+
+    val loggedSymptom = when {
+        cursorRatio <= 0.33f -> "Cramps logged"
+        cursorRatio <= 0.68f -> "High Energy logged"
+        else -> "Headaches logged"
+    }
+
+    val estrogenColor = Color(0xFF704257)
+    val progesteroneColor = Color(0xFF5B3950)
+    val headachesColor = Color(0xFFD32F2F)
+    val tealNodeColor = Color(0xFF88D8C0)
+
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = "HORMONE & SYMPTOM TRENDS",
@@ -102,59 +141,81 @@ fun HormoneSymptomTrendsCard(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
-                // Chart Container with Canvas
+                // Interactive Chart Container with Canvas
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(180.dp)
+                        .height(190.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFFF7F5F3))
+                        .background(Color(0xFFFBF7F5))
                 ) {
-                    Canvas(modifier = Modifier.fillMaxSize()) {
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .pointerInput(Unit) {
+                                detectTapGestures { offset ->
+                                    val r = (offset.x / size.width).coerceIn(0.05f, 0.95f)
+                                    cursorRatio = r
+
+                                    // Check node clicks
+                                    val n1X = size.width * 0.42f
+                                    val n2X = size.width * 0.58f
+                                    if (Math.abs(offset.x - n1X) < 40f) {
+                                        activeTooltip = "High Energy Logged (Day 11)"
+                                    } else if (Math.abs(offset.x - n2X) < 40f) {
+                                        activeTooltip = "Ovulation Window (Day 16)"
+                                    } else {
+                                        activeTooltip = null
+                                    }
+                                }
+                            }
+                            .pointerInput(Unit) {
+                                detectDragGestures { change, _ ->
+                                    cursorRatio = (change.position.x / size.width).coerceIn(0.05f, 0.95f)
+                                }
+                            }
+                    ) {
                         val w = size.width
                         val h = size.height
 
-                        // Phase vertical shading & dashed dividers
                         val mWidth = w * 0.33f
                         val fWidth = w * 0.35f
 
                         val dashEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 8f), 0f)
 
-                        // Vertical dashed divider 1 (between Menstrual & Follicular)
+                        // 1. Phase vertical dividers
                         drawLine(
-                            color = Color(0xFFE4DCDD),
+                            color = Color(0xFFEADBDF),
                             start = Offset(mWidth, 0f),
-                            end = Offset(mWidth, h * 0.85f),
+                            end = Offset(mWidth, h * 0.82f),
                             strokeWidth = 1.dp.toPx()
                         )
-
-                        // Vertical dashed divider 2 (between Follicular & Luteal)
                         drawLine(
-                            color = Color(0xFFE4DCDD),
+                            color = Color(0xFFEADBDF),
                             start = Offset(mWidth + fWidth, 0f),
-                            end = Offset(mWidth + fWidth, h * 0.85f),
+                            end = Offset(mWidth + fWidth, h * 0.82f),
                             strokeWidth = 1.dp.toPx()
                         )
 
-                        // Current day vertical line (dashed)
-                        val currentDayX = w * 0.76f
+                        // 2. Interactive Cursor Line
+                        val currentDayX = w * cursorRatio
                         drawLine(
                             color = Color(0xFFB0A0A8),
                             start = Offset(currentDayX, 0f),
-                            end = Offset(currentDayX, h * 0.85f),
+                            end = Offset(currentDayX, h * 0.82f),
                             strokeWidth = 1.5.dp.toPx(),
                             pathEffect = dashEffect
                         )
 
-                        // Estrogen Wave (Mauve curve - surges in Follicular, small secondary bump in Luteal)
-                        val estrogenColor = Color(0xFF704257)
+                        // Estrogen Wave (Mauve)
+                        val estAlpha = if (selectedFilter == HormoneFilter.ALL || selectedFilter == HormoneFilter.ESTROGEN) 1.0f else 0.25f
                         val estrogenPath = Path().apply {
                             moveTo(0f, h * 0.72f)
                             cubicTo(
                                 w * 0.20f, h * 0.60f,
-                                w * 0.35f, h * 0.10f,
+                                w * 0.38f, h * 0.12f,
                                 w * 0.50f, h * 0.40f
                             )
                             cubicTo(
@@ -165,46 +226,95 @@ fun HormoneSymptomTrendsCard(
                         }
                         drawPath(
                             path = estrogenPath,
-                            color = estrogenColor,
+                            color = estrogenColor.copy(alpha = estAlpha),
                             style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
                         )
 
-                        // Progesterone Wave (Purple curve - surges high in Luteal)
-                        val progesteroneColor = Color(0xFF5B3950)
+                        // Progesterone Wave (Dark Plum)
+                        val progAlpha = if (selectedFilter == HormoneFilter.ALL || selectedFilter == HormoneFilter.PROGESTERONE) 1.0f else 0.25f
                         val progesteronePath = Path().apply {
-                            moveTo(0f, h * 0.75f)
+                            moveTo(0f, h * 0.76f)
                             quadraticTo(
                                 w * 0.45f, h * 0.73f,
                                 w * 0.60f, h * 0.50f
                             )
                             cubicTo(
-                                w * 0.70f, h * 0.25f,
+                                w * 0.72f, h * 0.30f,
                                 w * 0.85f, h * 0.35f,
                                 w, h * 0.70f
                             )
                         }
                         drawPath(
                             path = progesteronePath,
-                            color = progesteroneColor,
+                            color = progesteroneColor.copy(alpha = progAlpha),
                             style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
                         )
 
-                        // Symptom Highlight Dot (Red) on Progesterone line at current day X
-                        val redSymptomColor = Color(0xFFD32F2F)
-                        val symptomPoint = Offset(currentDayX, h * 0.33f)
+                        // 3. Teal Glowing Symptom Nodes & Connector Line (from image!)
+                        val node1 = Offset(w * 0.42f, h * 0.68f)
+                        val node2 = Offset(w * 0.58f, h * 0.52f)
+                        val midPoint = Offset(w * 0.50f, h * 0.60f)
+
+                        // Connecting line between nodes
+                        drawLine(
+                            color = tealNodeColor.copy(alpha = 0.8f),
+                            start = node1,
+                            end = node2,
+                            strokeWidth = 1.5.dp.toPx()
+                        )
+                        drawCircle(color = tealNodeColor, radius = 3.dp.toPx(), center = midPoint)
+
+                        // Glowing Node 1 (Follicular)
+                        drawCircle(color = tealNodeColor.copy(alpha = 0.20f), radius = 18.dp.toPx(), center = node1)
+                        drawCircle(color = tealNodeColor.copy(alpha = 0.40f), radius = 12.dp.toPx(), center = node1)
+                        drawCircle(color = Color.White, radius = 4.dp.toPx(), center = node1)
+
+                        // Glowing Node 2 (Luteal transition)
+                        drawCircle(color = tealNodeColor.copy(alpha = 0.20f), radius = 18.dp.toPx(), center = node2)
+                        drawCircle(color = tealNodeColor.copy(alpha = 0.40f), radius = 12.dp.toPx(), center = node2)
+                        drawCircle(color = Color.White, radius = 4.dp.toPx(), center = node2)
+
+                        // 4. Red Highlight Dot at Cursor position
+                        val headAlpha = if (selectedFilter == HormoneFilter.ALL || selectedFilter == HormoneFilter.HEADACHES) 1.0f else 0.25f
+                        val progY = when {
+                            cursorRatio < 0.45f -> h * 0.75f
+                            cursorRatio < 0.60f -> h * 0.60f
+                            cursorRatio < 0.76f -> h * 0.35f
+                            else -> h * 0.45f
+                        }
+                        val symptomPoint = Offset(currentDayX, progY)
 
                         // Red outer aura
                         drawCircle(
-                            color = redSymptomColor.copy(alpha = 0.2f),
-                            radius = 12.dp.toPx(),
+                            color = headachesColor.copy(alpha = 0.20f * headAlpha),
+                            radius = 14.dp.toPx(),
                             center = symptomPoint
                         )
                         // Red inner dot
                         drawCircle(
-                            color = redSymptomColor,
+                            color = headachesColor.copy(alpha = headAlpha),
                             radius = 5.dp.toPx(),
                             center = symptomPoint
                         )
+                    }
+
+                    // Active Tooltip Overlay
+                    if (activeTooltip != null) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(top = 8.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color(0xFF3B2633))
+                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = activeTooltip ?: "",
+                                fontFamily = ManropeFontFamily,
+                                fontSize = 11.sp,
+                                color = Color.White
+                            )
+                        }
                     }
 
                     // Phase X-axis Labels at bottom of chart
@@ -215,23 +325,62 @@ fun HormoneSymptomTrendsCard(
                             .padding(bottom = 8.dp, start = 16.dp, end = 16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Menstrual", fontFamily = ManropeFontFamily, fontSize = 11.sp, color = Color(0xFF7A6A73))
-                        Text("Follicular", fontFamily = ManropeFontFamily, fontSize = 11.sp, color = Color(0xFF7A6A73))
-                        Text("Luteal", fontFamily = ManropeFontFamily, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Primary)
+                        Text(
+                            text = "Menstrual",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 12.sp,
+                            fontWeight = if (currentPhase == "Menstrual") FontWeight.Bold else FontWeight.Normal,
+                            color = if (currentPhase == "Menstrual") Primary else Color(0xFF7A6A73)
+                        )
+                        Text(
+                            text = "Follicular",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 12.sp,
+                            fontWeight = if (currentPhase == "Follicular") FontWeight.Bold else FontWeight.Normal,
+                            color = if (currentPhase == "Follicular") Primary else Color(0xFF7A6A73)
+                        )
+                        Text(
+                            text = "Luteal",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 12.sp,
+                            fontWeight = if (currentPhase == "Luteal") FontWeight.Bold else FontWeight.Normal,
+                            color = if (currentPhase == "Luteal") Primary else Color(0xFF7A6A73)
+                        )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                // Legend Row
+                // Interactive Legend Filter Row (Tap to filter curves!)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LegendDot(color = Color(0xFF704257), label = "Estrogen")
-                    LegendDot(color = Color(0xFF5B3950), label = "Progesterone")
-                    LegendDot(color = Color(0xFFD32F2F), label = "Headaches")
+                    LegendItem(
+                        color = estrogenColor,
+                        label = "Estrogen",
+                        isSelected = selectedFilter == HormoneFilter.ALL || selectedFilter == HormoneFilter.ESTROGEN,
+                        onClick = {
+                            selectedFilter = if (selectedFilter == HormoneFilter.ESTROGEN) HormoneFilter.ALL else HormoneFilter.ESTROGEN
+                        }
+                    )
+                    LegendItem(
+                        color = progesteroneColor,
+                        label = "Progesterone",
+                        isSelected = selectedFilter == HormoneFilter.ALL || selectedFilter == HormoneFilter.PROGESTERONE,
+                        onClick = {
+                            selectedFilter = if (selectedFilter == HormoneFilter.PROGESTERONE) HormoneFilter.ALL else HormoneFilter.PROGESTERONE
+                        }
+                    )
+                    LegendItem(
+                        color = headachesColor,
+                        label = "Headaches",
+                        isSelected = selectedFilter == HormoneFilter.ALL || selectedFilter == HormoneFilter.HEADACHES,
+                        onClick = {
+                            selectedFilter = if (selectedFilter == HormoneFilter.HEADACHES) HormoneFilter.ALL else HormoneFilter.HEADACHES
+                        }
+                    )
                 }
             }
         }
@@ -239,20 +388,32 @@ fun HormoneSymptomTrendsCard(
 }
 
 @Composable
-private fun LegendDot(color: Color, label: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+private fun LegendItem(
+    color: Color,
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick() }
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
         Box(
             modifier = Modifier
-                .size(8.dp)
+                .size(10.dp)
                 .clip(CircleShape)
-                .background(color)
+                .background(if (isSelected) color else color.copy(alpha = 0.3f))
         )
         Spacer(modifier = Modifier.width(6.dp))
         Text(
             text = label,
             fontFamily = ManropeFontFamily,
-            fontSize = 12.sp,
-            color = Color(0xFF5E4E57)
+            fontSize = 13.sp,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+            color = if (isSelected) Color(0xFF3B2633) else Color(0xFF9E8E96)
         )
     }
 }

@@ -37,6 +37,7 @@ import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.insights.components.CycleAtAGlanceSection
 import com.nebulatech.lumi.insights.components.HormoneSymptomTrendsCard
 import com.nebulatech.lumi.insights.components.InsightsLumiBannerCard
+import com.nebulatech.lumi.insights.components.InteractiveHormoneChartCard
 import com.nebulatech.lumi.insights.components.LearnArticlesSection
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
@@ -139,13 +140,16 @@ fun InsightsScreen(
             // 1. Cycle At A Glance
             CycleAtAGlanceSection()
 
-            // 2. Hormone & Symptom Trends
+            // 2. Interactive Hormone Cycle Tracker Chart
+            InteractiveHormoneChartCard()
+
+            // 3. Hormone & Symptom Trends Summary
             HormoneSymptomTrendsCard()
 
-            // 3. Lumi Insight Dark Banner
+            // 4. Lumi Insight Dark Banner
             InsightsLumiBannerCard()
 
-            // 4. Learn Section
+            // 5. Learn Section
             LearnArticlesSection()
 
             Spacer(modifier = Modifier.height(16.dp))

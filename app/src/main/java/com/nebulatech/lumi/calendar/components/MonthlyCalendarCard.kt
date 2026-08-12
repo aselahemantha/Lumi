@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import java.time.YearMonth
 
 enum class CalendarDayType {
     NORMAL,
@@ -48,7 +49,8 @@ data class CalendarGridCell(
 
 @Composable
 fun MonthlyCalendarCard(
-    cells: List<CalendarGridCell> = generateSampleOctoberCells(),
+    yearMonth: YearMonth = YearMonth.of(2023, 10),
+    cells: List<CalendarGridCell> = generateCalendarCells(yearMonth),
     onDayClick: (CalendarGridCell) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -83,9 +85,9 @@ fun MonthlyCalendarCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 7 Columns Grid (5 rows of 7 days)
+            // 7 Columns Grid
             val rows = cells.chunked(7)
-            rows.forEachIndexed { rowIndex, rowCells ->
+            rows.forEachIndexed { _, rowCells ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -195,7 +197,6 @@ private fun CalendarCellItem(
                     modifier = Modifier.size(38.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Filled background
                     Box(
                         modifier = Modifier
                             .size(36.dp)
@@ -213,7 +214,6 @@ private fun CalendarCellItem(
                         )
                     }
 
-                    // Top-right ovulation dot indicator
                     Box(
                         modifier = Modifier
                             .size(6.dp)
@@ -250,43 +250,58 @@ private fun CalendarCellItem(
     }
 }
 
-private fun generateSampleOctoberCells(): List<CalendarGridCell> {
+fun generateCalendarCells(yearMonth: YearMonth): List<CalendarGridCell> {
     val list = mutableListOf<CalendarGridCell>()
 
-    // Row 1: Prev month 25..30, Oct 1
-    listOf(25, 26, 27, 28, 29, 30).forEach { list.add(CalendarGridCell(it, isCurrentMonth = false)) }
-    list.add(CalendarGridCell(1))
+    val firstDay = yearMonth.atDay(1)
+    val startDayOfWeek = firstDay.dayOfWeek.value // 1 = Monday, 7 = Sunday
+    val leadingCount = startDayOfWeek - 1
 
-    // Row 2: Oct 2..8 (Period on 3,4,5,6,7)
-    list.add(CalendarGridCell(2))
-    list.add(CalendarGridCell(3, type = CalendarDayType.PERIOD_LIGHT))
-    list.add(CalendarGridCell(4, type = CalendarDayType.PERIOD_HEAVY))
-    list.add(CalendarGridCell(5, type = CalendarDayType.PERIOD_HEAVY))
-    list.add(CalendarGridCell(6, type = CalendarDayType.PERIOD_HEAVY))
-    list.add(CalendarGridCell(7, type = CalendarDayType.PERIOD_LIGHT))
-    list.add(CalendarGridCell(8))
+    val prevMonth = yearMonth.minusMonths(1)
+    val prevMonthLength = prevMonth.lengthOfMonth()
 
-    // Row 3: Oct 9..15 (Fertile 13, 14, 15)
-    list.add(CalendarGridCell(9))
-    list.add(CalendarGridCell(10))
-    list.add(CalendarGridCell(11))
-    list.add(CalendarGridCell(12, hasDotBelow = true))
-    list.add(CalendarGridCell(13, type = CalendarDayType.FERTILE_OUTLINE))
-    list.add(CalendarGridCell(14, type = CalendarDayType.FERTILE_OUTLINE))
-    list.add(CalendarGridCell(15, type = CalendarDayType.FERTILE_FILLED))
+    // Leading days from previous month
+    for (i in (prevMonthLength - leadingCount + 1)..prevMonthLength) {
+        list.add(CalendarGridCell(dayNumber = i, isCurrentMonth = false))
+    }
 
-    // Row 4: Oct 16..22 (Fertile 16, Ovulation 17)
-    list.add(CalendarGridCell(16, type = CalendarDayType.FERTILE_FILLED))
-    list.add(CalendarGridCell(17, type = CalendarDayType.OVULATION))
-    (18..22).forEach { list.add(CalendarGridCell(it)) }
+    // Current month days
+    val currentMonthLength = yearMonth.lengthOfMonth()
 
-    // Row 5: Oct 23..29
-    (23..29).forEach { list.add(CalendarGridCell(it)) }
+    for (d in 1..currentMonthLength) {
+        val type = when {
+            // Odd month sample cycle mapping (e.g. October 2023)
+            yearMonth.monthValue % 2 == 1 && d in 3..7 -> if (d == 3 || d == 7) CalendarDayType.PERIOD_LIGHT else CalendarDayType.PERIOD_HEAVY
+            yearMonth.monthValue % 2 == 1 && d in 13..14 -> CalendarDayType.FERTILE_OUTLINE
+            yearMonth.monthValue % 2 == 1 && d in 15..16 -> CalendarDayType.FERTILE_FILLED
+            yearMonth.monthValue % 2 == 1 && d == 17 -> CalendarDayType.OVULATION
 
-    // Row 6: Oct 30..31, Nov 1..5
-    list.add(CalendarGridCell(30))
-    list.add(CalendarGridCell(31))
-    (1..5).forEach { list.add(CalendarGridCell(it, isCurrentMonth = false)) }
+            // Even month sample cycle mapping
+            yearMonth.monthValue % 2 == 0 && d in 1..5 -> if (d == 1 || d == 5) CalendarDayType.PERIOD_LIGHT else CalendarDayType.PERIOD_HEAVY
+            yearMonth.monthValue % 2 == 0 && d in 11..12 -> CalendarDayType.FERTILE_OUTLINE
+            yearMonth.monthValue % 2 == 0 && d in 13..14 -> CalendarDayType.FERTILE_FILLED
+            yearMonth.monthValue % 2 == 0 && d == 15 -> CalendarDayType.OVULATION
+
+            else -> CalendarDayType.NORMAL
+        }
+        val hasDotBelow = (yearMonth.monthValue % 2 == 1 && d == 12) || (yearMonth.monthValue % 2 == 0 && d == 10)
+
+        list.add(
+            CalendarGridCell(
+                dayNumber = d,
+                isCurrentMonth = true,
+                type = type,
+                hasDotBelow = hasDotBelow
+            )
+        )
+    }
+
+    // Trailing days from next month to complete grid
+    val totalCells = if (list.size > 35) 42 else 35
+    val trailingCount = totalCells - list.size
+    for (i in 1..trailingCount) {
+        list.add(CalendarGridCell(dayNumber = i, isCurrentMonth = false))
+    }
 
     return list
 }
