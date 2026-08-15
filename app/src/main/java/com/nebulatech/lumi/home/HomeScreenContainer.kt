@@ -58,35 +58,42 @@ fun HomeScreenContainer(
         Box(modifier = Modifier.weight(1f)) {
             when (selectedBottomTab) {
                 HomeTab.TODAY -> {
-                    when (state.layoutType) {
-                        HomeLayoutType.CYCLE_RING -> {
-                            CycleRingHomeScreen(
-                                cycleDay = state.cycleDay,
-                                cycleDayTotal = state.cycleLength,
-                                progressRatio = state.progressRatio,
-                                subLabelText = state.subLabelText,
-                                userName = state.userName,
-                                insightTitle = state.insightTitle,
-                                insightText = state.insightText,
-                                loggingViewModel = loggingVm,
-                                onTabSelected = { selectedBottomTab = it }
-                            )
-                        }
-                        HomeLayoutType.FERTILITY_DASHBOARD -> {
-                            FertilityDashboardHomeScreen(
-                                userName = state.userName,
-                                loggingViewModel = loggingVm,
-                                onTabSelected = { selectedBottomTab = it }
-                            )
-                        }
-                        HomeLayoutType.SYMPTOM_GRID -> {
-                            LateLutealHomeScreen(
-                                cycleDay = state.cycleDay,
-                                progressRatio = state.progressRatio,
-                                userName = state.userName,
-                                loggingViewModel = loggingVm,
-                                onTabSelected = { selectedBottomTab = it }
-                            )
+                    if (state.isLoading) {
+                        com.nebulatech.lumi.home.components.HomeScreenSkeleton(
+                            selectedTab = selectedBottomTab,
+                            onTabSelected = { selectedBottomTab = it }
+                        )
+                    } else {
+                        when (state.layoutType) {
+                            HomeLayoutType.CYCLE_RING -> {
+                                CycleRingHomeScreen(
+                                    cycleDay = state.cycleDay,
+                                    cycleDayTotal = state.cycleLength,
+                                    progressRatio = state.progressRatio,
+                                    subLabelText = state.subLabelText,
+                                    userName = state.userName,
+                                    insightTitle = state.insightTitle,
+                                    insightText = state.insightText,
+                                    loggingViewModel = loggingVm,
+                                    onTabSelected = { selectedBottomTab = it }
+                                )
+                            }
+                            HomeLayoutType.FERTILITY_DASHBOARD -> {
+                                FertilityDashboardHomeScreen(
+                                    userName = state.userName,
+                                    loggingViewModel = loggingVm,
+                                    onTabSelected = { selectedBottomTab = it }
+                                )
+                            }
+                            HomeLayoutType.SYMPTOM_GRID -> {
+                                LateLutealHomeScreen(
+                                    cycleDay = state.cycleDay,
+                                    progressRatio = state.progressRatio,
+                                    userName = state.userName,
+                                    loggingViewModel = loggingVm,
+                                    onTabSelected = { selectedBottomTab = it }
+                                )
+                            }
                         }
                     }
                 }

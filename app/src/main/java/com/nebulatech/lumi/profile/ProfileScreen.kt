@@ -134,54 +134,63 @@ fun ProfileScreen(
         },
         containerColor = Color(0xFFFBF9F7)
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // 1. Hero User Banner Card
-            HeroUserCard(
-                userName = state.userName.ifBlank { "Lumi User" },
-                trackingDuration = state.trackingDuration.ifBlank { "Tracking with Lumi" },
-                memberStatus = if (state.isPremium) "Premium Member" else "Free Member"
+        if (state.isLoading) {
+            com.nebulatech.lumi.profile.components.ProfileScreenSkeleton(
+                modifier = Modifier.padding(innerPadding)
             )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // 1. Hero User Banner Card
+                HeroUserCard(
+                    userName = state.userName.ifBlank { "Lumi User" },
+                    trackingDuration = state.trackingDuration.ifBlank { "Tracking with Lumi" },
+                    memberStatus = if (state.isPremium) "Premium Member" else "Free Member"
+                )
 
-            // 2. Health Profile Card (Editable)
-            HealthProfileCard(
-                cycleLengthDays = state.cycleLength,
-                periodDurationDays = state.periodDuration,
-                primaryGoal = state.primaryGoal.toDisplayName(),
-                onEditClick = { showEditSheet = true }
-            )
+                // 2. Health Profile Card (Editable)
+                HealthProfileCard(
+                    cycleLengthDays = state.cycleLength,
+                    periodDurationDays = state.periodDuration,
+                    primaryGoal = state.primaryGoal.toDisplayName(),
+                    onEditClick = { showEditSheet = true }
+                )
 
-            // 3. App Settings Card (with expanding reminder manager & privacy sheet)
-            AppSettingsCard(
-                notificationsEnabled = state.notificationsEnabled,
-                notifDailyLog = state.notifDailyLog,
-                notifMorningBbt = state.notifMorningBbt,
-                notifPeriodAlerts = state.notifPeriodAlerts,
-                notifFertilityAlerts = state.notifFertilityAlerts,
-                notifPhaseInsights = state.notifPhaseInsights,
-                onNotificationsToggle = { enabled ->
-                    profileVm.onAction(ProfileAction.UpdateNotifications(enabled))
-                },
-                onGranularToggle = { type, enabled ->
-                    profileVm.onAction(ProfileAction.ToggleNotificationSetting(type, enabled))
-                },
-                onPrivacyClick = { showPrivacySheet = true }
-            )
+                // 3. App Settings Card (with expanding reminder manager & privacy sheet)
+                AppSettingsCard(
+                    notificationsEnabled = state.notificationsEnabled,
+                    notifDailyLog = state.notifDailyLog,
+                    notifMorningBbt = state.notifMorningBbt,
+                    notifPeriodAlerts = state.notifPeriodAlerts,
+                    notifFertilityAlerts = state.notifFertilityAlerts,
+                    notifPhaseInsights = state.notifPhaseInsights,
+                    onNotificationsToggle = { enabled ->
+                        profileVm.onAction(ProfileAction.UpdateNotifications(enabled))
+                    },
+                    onGranularToggle = { type, enabled ->
+                        profileVm.onAction(ProfileAction.ToggleNotificationSetting(type, enabled))
+                    },
+                    onPrivacyClick = { showPrivacySheet = true }
+                )
 
-            // 4. Support & Log Out Card
-            SupportAndLogoutCard(
-                onHelpClick = { showHelpSheet = true },
-                onTermsClick = { showTermsSheet = true },
-                onLogoutClick = { showLogoutDialog = true }
-            )
+                // 4. Support & Log Out Card
+                SupportAndLogoutCard(
+                    onHelpClick = { showHelpSheet = true },
+                    onTermsClick = { showTermsSheet = true },
+                    onLogoutClick = { showLogoutDialog = true }
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                // 5. Developer Support Lottie & Precision Tag Footer
+                com.nebulatech.lumi.profile.components.DeveloperSupportFooter()
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
 
         // Edit Health Profile Bottom Sheet Modal

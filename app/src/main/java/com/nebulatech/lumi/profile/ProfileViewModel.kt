@@ -123,7 +123,7 @@ class ProfileViewModel(
                 }
             }
             ProfileAction.LogoutAndClearData -> {
-                viewModelScope.launch {
+                viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
                     userRepository.clearAllData()
                     _events.send(ProfileEvent.LoggedOutAndAppClosed)
                 }

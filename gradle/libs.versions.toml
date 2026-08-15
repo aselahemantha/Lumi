@@ -15,8 +15,10 @@ room = "2.7.0-alpha13"
 supabase = "3.6.0"
 workManager = "2.10.0"
 ksp = "2.2.10-2.0.2"
+lottie = "6.6.2"
 
 [libraries]
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

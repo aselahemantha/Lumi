@@ -66,15 +66,20 @@ fun CalendarScreen(
         },
         containerColor = Color(0xFFFBF9F7)
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .statusBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        if (state.isLoading) {
+            com.nebulatech.lumi.calendar.components.CalendarScreenSkeleton(
+                modifier = Modifier.padding(innerPadding)
+            )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .statusBarsPadding()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
             // Month Header Row with Interactive Navigation Arrows (< and >)
             Row(
                 modifier = Modifier
@@ -146,6 +151,7 @@ fun CalendarScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+        }
         }
     }
 }

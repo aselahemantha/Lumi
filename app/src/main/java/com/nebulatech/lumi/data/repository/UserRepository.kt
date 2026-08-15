@@ -14,9 +14,11 @@ import com.nebulatech.lumi.data.mapper.toUserProfile
 import com.nebulatech.lumi.data.mapper.toUserProfileEntity
 import com.nebulatech.lumi.data.model.User
 import com.nebulatech.lumi.data.model.UserProfile
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.util.UUID
 
@@ -45,8 +47,8 @@ class RoomUserRepository(
         return userDao.getFirstUserFlow().map { it?.toUser() }
     }
 
-    override suspend fun getOrCreateUser(name: String): Result<User, DataError.Local> {
-        return try {
+    override suspend fun getOrCreateUser(name: String): Result<User, DataError.Local> = withContext(Dispatchers.IO) {
+        try {
             val existing = userDao.getFirstUser()
             if (existing != null) {
                 Result.Success(existing.toUser())
@@ -68,8 +70,8 @@ class RoomUserRepository(
         }
     }
 
-    override suspend fun getUserProfile(userId: String): Result<UserProfile?, DataError.Local> {
-        return try {
+    override suspend fun getUserProfile(userId: String): Result<UserProfile?, DataError.Local> = withContext(Dispatchers.IO) {
+        try {
             val profileEntity = userProfileDao.getProfile(userId)
             val conditions = healthConditionDao.getConditions(userId)
             Result.Success(profileEntity?.toUserProfile(conditions))
@@ -88,8 +90,8 @@ class RoomUserRepository(
         }
     }
 
-    override suspend fun saveUserProfile(profile: UserProfile): EmptyResult<DataError.Local> {
-        return try {
+    override suspend fun saveUserProfile(profile: UserProfile): EmptyResult<DataError.Local> = withContext(Dispatchers.IO) {
+        try {
             userProfileDao.insertOrUpdate(profile.toUserProfileEntity())
             val now = Instant.now().toString()
             val conditionEntities = profile.healthConditions.map { condition ->
@@ -114,8 +116,8 @@ class RoomUserRepository(
         userId: String,
         email: String,
         supabaseUid: String
-    ): EmptyResult<DataError.Local> {
-        return try {
+    ): EmptyResult<DataError.Local> = withContext(Dispatchers.IO) {
+        try {
             val user = userDao.getUserById(userId)
             if (user != null) {
                 val updated = user.copy(
@@ -134,8 +136,8 @@ class RoomUserRepository(
         }
     }
 
-    override suspend fun clearAllData(): EmptyResult<DataError.Local> {
-        return try {
+    override suspend fun clearAllData(): EmptyResult<DataError.Local> = withContext(Dispatchers.IO) {
+        try {
             database.clearAllTables()
             Result.Success(Unit)
         } catch (e: Exception) {

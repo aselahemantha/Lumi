@@ -50,15 +50,20 @@ fun InsightsScreen(
         },
         containerColor = Color(0xFFFBF9F7)
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .statusBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
+        if (state.isLoading) {
+            com.nebulatech.lumi.insights.components.InsightsScreenSkeleton(
+                modifier = Modifier.padding(innerPadding)
+            )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .statusBarsPadding()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
             // Header Title & Subtitle
             Column(modifier = Modifier.padding(top = 4.dp)) {
                 Text(
@@ -101,6 +106,7 @@ fun InsightsScreen(
             LearnArticlesSection()
 
             Spacer(modifier = Modifier.height(16.dp))
+        }
         }
     }
 }
