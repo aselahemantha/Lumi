@@ -18,7 +18,9 @@ data class HomeState(
     val subLabelText: String = "",
     val userName: String = "",
     val hasCycle: Boolean = false,
-    val currentPhase: CyclePhase = CyclePhase.FOLLICULAR
+    val currentPhase: CyclePhase = CyclePhase.FOLLICULAR,
+    val insightTitle: String = "Lumi Insight",
+    val insightText: String = ""
 )
 
 sealed interface HomeAction {

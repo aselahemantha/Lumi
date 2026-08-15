@@ -21,9 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,25 +29,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nebulatech.lumi.calendar.components.CalendarLegend
 import com.nebulatech.lumi.calendar.components.CycleStatusBannerCard
 import com.nebulatech.lumi.calendar.components.MonthlyCalendarCard
 import com.nebulatech.lumi.calendar.components.PhaseDetailCard
+import com.nebulatech.lumi.data.model.CyclePhase
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.home.components.StandardLumiTopBar
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
-import java.time.YearMonth
+import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
 fun CalendarTopBar(
+    userName: String? = null,
     onProfileClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     StandardLumiTopBar(
+        userName = userName,
         onProfileClick = onProfileClick,
         modifier = modifier
     )
@@ -57,20 +59,21 @@ fun CalendarTopBar(
 
 @Composable
 fun CalendarScreen(
-    initialYearMonth: YearMonth = YearMonth.of(2023, 10),
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var currentYearMonth by remember { mutableStateOf(initialYearMonth) }
+    val calendarVm: CalendarViewModel = koinViewModel()
+    val state by calendarVm.state.collectAsStateWithLifecycle()
 
-    val formattedMonthYear = remember(currentYearMonth) {
-        currentYearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH))
+    val formattedMonthYear = remember(state.selectedYearMonth) {
+        state.selectedYearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH))
     }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             CalendarTopBar(
+                userName = state.userName,
                 onProfileClick = { onTabSelected(HomeTab.PROFILE) }
             )
         },
@@ -108,7 +111,9 @@ fun CalendarScreen(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
-                        onClick = { currentYearMonth = currentYearMonth.minusMonths(1) }
+                        onClick = {
+                            calendarVm.onAction(CalendarAction.ChangeMonth(state.selectedYearMonth.minusMonths(1)))
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
@@ -119,7 +124,9 @@ fun CalendarScreen(
                     }
                     Spacer(modifier = Modifier.width(4.dp))
                     IconButton(
-                        onClick = { currentYearMonth = currentYearMonth.plusMonths(1) }
+                        onClick = {
+                            calendarVm.onAction(CalendarAction.ChangeMonth(state.selectedYearMonth.plusMonths(1)))
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
@@ -131,9 +138,10 @@ fun CalendarScreen(
                 }
             }
 
-            // 1. Monthly Calendar Grid Card (Dynamically re-renders on month change)
+            // 1. Monthly Calendar Grid Card (Dynamically populated from Room)
             MonthlyCalendarCard(
-                yearMonth = currentYearMonth
+                yearMonth = state.selectedYearMonth,
+                cells = state.gridCells
             )
 
             // 2. Calendar Legend
@@ -143,20 +151,28 @@ fun CalendarScreen(
 
             // 3. Phase Detail Info Card
             PhaseDetailCard(
-                phaseName = "Follicular Phase",
-                dayNumber = 8,
-                description = "Estrogen levels are rising. You might feel an increase in energy and focus today.",
-                daysUntilNextPeriod = 21
+                phaseName = state.currentPhase.toDisplayName(),
+                dayNumber = state.cycleDay,
+                description = state.phaseDescription,
+                daysUntilNextPeriod = state.daysUntilNextPeriod
             )
 
             // 4. Cycle Status Banner Card
             CycleStatusBannerCard(
-                text = "Your cycle length is steady at 28 days."
+                text = "Your average cycle length is steady at ${state.cycleLength} days."
             )
 
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+}
+
+private fun CyclePhase.toDisplayName(): String = when (this) {
+    CyclePhase.MENSTRUATION -> "Menstrual Phase"
+    CyclePhase.FOLLICULAR -> "Follicular Phase"
+    CyclePhase.FERTILE_WINDOW -> "Fertile Window"
+    CyclePhase.LUTEAL -> "Luteal Phase"
+    CyclePhase.LATE_LUTEAL -> "Late Luteal Phase"
 }
 
 @Preview(showBackground = true)

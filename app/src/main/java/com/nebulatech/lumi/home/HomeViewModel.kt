@@ -38,9 +38,10 @@ class HomeViewModel(
             return@combine HomeState(isLoading = false)
         }
 
-        val avgPeriodLength = 5 // Will be pulled from profile via a separate flow if needed
+        val avgPeriodLength = 5
         val progressRatio = (cycleDay.toFloat() / avgCycleLength.toFloat()).coerceIn(0f, 1f)
         val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength)
+        val (insightTitle, insightText) = buildInsight(phase, cycleDay, avgCycleLength)
 
         HomeState(
             isLoading = false,
@@ -52,7 +53,9 @@ class HomeViewModel(
             subLabelText = subLabel,
             userName = user.name,
             hasCycle = cycle != null,
-            currentPhase = phase
+            currentPhase = phase,
+            insightTitle = insightTitle,
+            insightText = insightText
         )
     }.stateIn(
         scope = viewModelScope,
@@ -94,6 +97,30 @@ class HomeViewModel(
             CyclePhase.LATE_LUTEAL -> {
                 val daysUntil = maxOf(cycleLength - cycleDay, 1)
                 "Period in ~$daysUntil days"
+            }
+        }
+    }
+
+    private fun buildInsight(
+        phase: CyclePhase,
+        cycleDay: Int,
+        cycleLength: Int
+    ): Pair<String, String> {
+        return when (phase) {
+            CyclePhase.MENSTRUATION -> {
+                "Menstrual Phase Insight" to "Estrogen and progesterone are at baseline. Prioritize iron-rich foods, restorative hydration, and gentle movement today."
+            }
+            CyclePhase.FOLLICULAR -> {
+                "Follicular Phase Insight" to "Estrogen is rising steadily. Your natural energy and cognitive focus are peaking—ideal for high-intensity training and creative projects."
+            }
+            CyclePhase.FERTILE_WINDOW -> {
+                "Peak Fertility Window" to "Your luteinizing hormone (LH) is surging. Likelihood of ovulation is peaking over the next 24–48 hours."
+            }
+            CyclePhase.LUTEAL -> {
+                "Luteal Phase Insight" to "Progesterone is the dominant hormone right now. Consider swapping high-intensity cardio for calming yoga or walking to balance cortisol."
+            }
+            CyclePhase.LATE_LUTEAL -> {
+                "Pre-Menstrual Insight" to "Progesterone is tapering down before your period. Staying well-hydrated and increasing magnesium intake can help prevent PMS headaches."
             }
         }
     }

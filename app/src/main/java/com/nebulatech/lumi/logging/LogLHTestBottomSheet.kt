@@ -68,7 +68,7 @@ enum class LHIntensity(
 fun LogLHTestBottomSheet(
     onDismissRequest: () -> Unit,
     onSaveResult: (LHIntensity, String, String?) -> Unit = { _, _, _ -> },
-    sheetState: SheetState = rememberModalBottomSheetState(),
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier
 ) {
     var selectedIntensity by remember { mutableStateOf(LHIntensity.HIGH) }

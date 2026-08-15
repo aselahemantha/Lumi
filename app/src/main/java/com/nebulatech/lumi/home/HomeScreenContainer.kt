@@ -53,6 +53,8 @@ fun HomeScreenContainer(
                                 progressRatio = state.progressRatio,
                                 subLabelText = state.subLabelText,
                                 userName = state.userName,
+                                insightTitle = state.insightTitle,
+                                insightText = state.insightText,
                                 loggingViewModel = loggingVm,
                                 onTabSelected = { selectedBottomTab = it }
                             )

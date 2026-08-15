@@ -60,6 +60,8 @@ fun CycleRingHomeScreen(
     progressRatio: Float = 0f,
     subLabelText: String = "",
     userName: String = "",
+    insightTitle: String = "Lumi Insight",
+    insightText: String = "",
     loggingViewModel: LoggingViewModel? = null,
     onLogFlowClick: () -> Unit = {},
     onTabSelected: (HomeTab) -> Unit = {},
@@ -97,12 +99,22 @@ fun CycleRingHomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            // 1. Cycle Ring Arc
             CycleRingWidget(
                 cycleDay = cycleDay,
                 subLabelText = subLabelText.ifBlank { "Day $cycleDay of $cycleDayTotal" },
                 progressRatio = progressRatio
             )
 
+            // 2. Lumi Insight Card (Shown right below Cycle Ring)
+            LumiInsightCard(
+                title = insightTitle.ifBlank { "Lumi Insight" },
+                text = insightText.ifBlank {
+                    "Your last 3 cycles have varied by 8 days. To help stabilize ovulation this week, try swapping high-intensity workouts for yoga."
+                }
+            )
+
+            // 3. Primary Log Flow Button
             Button(
                 onClick = {
                     showLogSheet = true
@@ -130,11 +142,7 @@ fun CycleRingHomeScreen(
                 }
             }
 
-            LumiInsightCard(
-                title = "Lumi Insight",
-                text = "Your last 3 cycles have varied by 8 days. To help stabilize ovulation this week, try swapping high-intensity workouts for yoga."
-            )
-
+            // 4. Next 7 Days Calendar Strip
             Next7DaysCalendarStrip()
 
             Spacer(modifier = Modifier.height(16.dp))

@@ -72,7 +72,7 @@ enum class MoodItem(val label: String, val icon: ImageVector) {
 fun LogFlowBottomSheet(
     onDismissRequest: () -> Unit,
     onSaveLog: (FlowIntensity?, Set<String>, MoodItem?) -> Unit = { _, _, _ -> },
-    sheetState: SheetState = rememberModalBottomSheetState(),
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier
 ) {
     var selectedFlow by remember { mutableStateOf<FlowIntensity?>(FlowIntensity.MEDIUM) }

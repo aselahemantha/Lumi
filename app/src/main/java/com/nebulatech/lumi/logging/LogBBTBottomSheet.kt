@@ -55,7 +55,7 @@ import com.nebulatech.lumi.ui.theme.Primary
 fun LogBBTBottomSheet(
     onDismissRequest: () -> Unit,
     onSaveReading: (String, Boolean, Boolean) -> Unit = { _, _, _ -> },
-    sheetState: SheetState = rememberModalBottomSheetState(),
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier
 ) {
     var tempValue by remember { mutableStateOf("97.8") }
