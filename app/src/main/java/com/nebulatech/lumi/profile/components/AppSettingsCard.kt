@@ -1,5 +1,6 @@
 package com.nebulatech.lumi.profile.components
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -24,9 +25,11 @@ import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Fingerprint
 import androidx.compose.material.icons.outlined.HealthAndSafety
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.PrivacyTip
 import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -49,9 +52,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
+import com.nebulatech.lumi.security.BiometricAuthManager
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -69,7 +75,13 @@ fun AppSettingsCard(
     onPrivacyClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     var showIntegrationsDialog by remember { mutableStateOf(false) }
+
+    var isBiometricLockOn by remember {
+        mutableStateOf(BiometricAuthManager.isBiometricEnabled(context))
+    }
+    var isAnonymousAnalyticsOn by remember { mutableStateOf(true) }
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -202,10 +214,147 @@ fun AppSettingsCard(
                 color = Color(0xFFF2ECEF)
             )
 
-            // 2. Data Privacy & Export Item
+            // 2. Biometric App Lock (Real Android BiometricPrompt implementation)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Fingerprint,
+                        contentDescription = null,
+                        tint = Color(0xFF4A3A43),
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Column {
+                        Text(
+                            text = "Biometric App Lock",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF26181F)
+                        )
+                        Text(
+                            text = "Require fingerprint or Face ID to open Lumi",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 12.sp,
+                            color = Color(0xFF8A7A83)
+                        )
+                    }
+                }
+
+                Switch(
+                    checked = isBiometricLockOn,
+                    onCheckedChange = { turnOn ->
+                        val activity = context as? FragmentActivity
+                        if (activity != null) {
+                            if (turnOn) {
+                                if (BiometricAuthManager.canAuthenticate(context)) {
+                                    BiometricAuthManager.showBiometricPrompt(
+                                        activity = activity,
+                                        title = "Enable Biometric Lock",
+                                        subtitle = "Scan your fingerprint or face to verify identity",
+                                        onSuccess = {
+                                            BiometricAuthManager.setBiometricEnabled(context, true)
+                                            isBiometricLockOn = true
+                                            Toast.makeText(context, "Biometric lock enabled", Toast.LENGTH_SHORT).show()
+                                        },
+                                        onError = {
+                                            isBiometricLockOn = false
+                                        }
+                                    )
+                                } else {
+                                    Toast.makeText(context, "Biometric authentication not supported or enrolled on this device", Toast.LENGTH_LONG).show()
+                                }
+                            } else {
+                                BiometricAuthManager.showBiometricPrompt(
+                                    activity = activity,
+                                    title = "Disable Biometric Lock",
+                                    subtitle = "Confirm your identity to turn off app lock",
+                                    onSuccess = {
+                                        BiometricAuthManager.setBiometricEnabled(context, false)
+                                        isBiometricLockOn = false
+                                        Toast.makeText(context, "Biometric lock disabled", Toast.LENGTH_SHORT).show()
+                                    }
+                                )
+                            }
+                        }
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = Primary,
+                        uncheckedThumbColor = Color.White,
+                        uncheckedTrackColor = Color(0xFFE4DCDD)
+                    )
+                )
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp),
+                color = Color(0xFFF2ECEF)
+            )
+
+            // 3. Anonymous Diagnostic Insights
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.PrivacyTip,
+                        contentDescription = null,
+                        tint = Color(0xFF4A3A43),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Column {
+                        Text(
+                            text = "Anonymous Diagnostics",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF26181F)
+                        )
+                        Text(
+                            text = "Improve cycle algorithms without personal IDs",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 12.sp,
+                            color = Color(0xFF8A7A83)
+                        )
+                    }
+                }
+
+                Switch(
+                    checked = isAnonymousAnalyticsOn,
+                    onCheckedChange = { isAnonymousAnalyticsOn = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = Primary,
+                        uncheckedThumbColor = Color.White,
+                        uncheckedTrackColor = Color(0xFFE4DCDD)
+                    )
+                )
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp),
+                color = Color(0xFFF2ECEF)
+            )
+
+            // 4. Data Privacy & Export Item
             SettingsRowItem(
                 icon = Icons.Outlined.Security,
                 title = "Data Privacy & Export",
+                subtitle = "Clinical summary export, encryption & erasure",
                 onClick = onPrivacyClick
             )
 
@@ -214,7 +363,7 @@ fun AppSettingsCard(
                 color = Color(0xFFF2ECEF)
             )
 
-            // 3. App Integrations Item (Marked as Available Soon)
+            // 5. App Integrations Item (Marked as Available Soon)
             SettingsRowItem(
                 icon = Icons.Outlined.HealthAndSafety,
                 title = "App Integrations",
