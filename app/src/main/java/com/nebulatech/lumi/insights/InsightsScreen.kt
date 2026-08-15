@@ -34,8 +34,8 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun InsightsScreen(
-    onTabSelected: (HomeTab) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onTabSelected: (HomeTab) -> Unit = {}
 ) {
     val viewModel: InsightsViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()

@@ -68,8 +68,8 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileTopBar(
-    onNotificationClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNotificationClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -100,9 +100,9 @@ fun ProfileTopBar(
 
 @Composable
 fun ProfileScreen(
+    modifier: Modifier = Modifier,
     onTabSelected: (HomeTab) -> Unit = {},
-    onNotificationClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onNotificationClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val profileVm: ProfileViewModel = koinViewModel()

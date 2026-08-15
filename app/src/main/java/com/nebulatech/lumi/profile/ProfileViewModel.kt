@@ -144,7 +144,7 @@ class ProfileViewModel(
                 months < 24 -> "Tracking for 1 year"
                 else -> "Tracking for ${months / 12} years"
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             "Tracking with Lumi"
         }
     }

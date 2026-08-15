@@ -18,11 +18,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircleOutline
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,9 +49,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NotificationCenterScreen(
+    modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit = {},
-    onTabSelected: (HomeTab) -> Unit = {},
-    modifier: Modifier = Modifier
+    onTabSelected: (HomeTab) -> Unit = {}
 ) {
     val viewModel: NotificationCenterViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -80,13 +82,25 @@ fun NotificationCenterScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Notification Center",
-                    fontFamily = LiterataFontFamily,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Primary
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier.padding(end = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color(0xFF26181F)
+                        )
+                    }
+                    Text(
+                        text = "Notification Center",
+                        fontFamily = LiterataFontFamily,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Primary
+                    )
+                }
 
                 if (state.notifications.isNotEmpty()) {
                     Text(

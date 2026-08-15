@@ -46,8 +46,8 @@ import java.util.Locale
 
 @Composable
 fun CalendarScreen(
-    onTabSelected: (HomeTab) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onTabSelected: (HomeTab) -> Unit = {}
 ) {
     val calendarVm: CalendarViewModel = koinViewModel()
     val state by calendarVm.state.collectAsStateWithLifecycle()

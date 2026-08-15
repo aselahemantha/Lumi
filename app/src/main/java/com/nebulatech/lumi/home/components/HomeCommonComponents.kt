@@ -2,7 +2,6 @@ package com.nebulatech.lumi.home.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -36,7 +35,6 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Healing
 import androidx.compose.material.icons.outlined.Medication
-import androidx.compose.material.icons.outlined.Opacity
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.SentimentDissatisfied
 import androidx.compose.material.icons.outlined.SentimentSatisfied
@@ -54,7 +52,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,10 +75,10 @@ import com.nebulatech.lumi.ui.theme.Primary
 // ==========================================
 @Composable
 fun CycleRingWidget(
+    modifier: Modifier = Modifier,
     cycleDay: Int = 24,
     subLabelText: String = "Period starts in ~4 days",
-    progressRatio: Float = 0.85f,
-    modifier: Modifier = Modifier
+    progressRatio: Float = 0.85f
 ) {
     val progressAnimatable = remember { Animatable(0f) }
 
@@ -164,9 +161,9 @@ fun CycleRingWidget(
 // ==========================================
 @Composable
 fun LumiInsightCard(
+    modifier: Modifier = Modifier,
     title: String = "Lumi Insight",
-    text: String = "Your last 3 cycles have varied by 8 days. To help stabilize ovulation this week, try swapping high-intensity workouts for yoga.",
-    modifier: Modifier = Modifier
+    text: String = "Your last 3 cycles have varied by 8 days. To help stabilize ovulation this week, try swapping high-intensity workouts for yoga."
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -228,6 +225,7 @@ data class DayItem(
 
 @Composable
 fun Next7DaysCalendarStrip(
+    modifier: Modifier = Modifier,
     days: List<DayItem> = listOf(
         DayItem("Mon", 12),
         DayItem("Tue", 13, isToday = true),
@@ -236,8 +234,7 @@ fun Next7DaysCalendarStrip(
         DayItem("Fri", 16, hasPeriodDot = true),
         DayItem("Sat", 17, hasPeriodDot = true),
         DayItem("Sun", 18, hasPeriodDot = true)
-    ),
-    modifier: Modifier = Modifier
+    )
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
@@ -318,11 +315,11 @@ fun Next7DaysCalendarStrip(
 // ==========================================
 @Composable
 fun LateLutealHeaderCard(
+    modifier: Modifier = Modifier,
     dayNumber: Int = 24,
     title: String = "Late Luteal Phase",
     description: String = "Progesterone is dropping. You may notice shifts in energy and mood.",
-    progressRatio: Float = 0.85f,
-    modifier: Modifier = Modifier
+    progressRatio: Float = 0.85f
 ) {
     val progressAnimatable = remember { Animatable(0f) }
 
@@ -410,6 +407,7 @@ data class SymptomCategory(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun LogSymptomsSection(
+    modifier: Modifier = Modifier,
     symptoms: List<SymptomCategory> = listOf(
         SymptomCategory("energy", "Energy", Icons.Outlined.Spa),
         SymptomCategory("mood", "Mood", Icons.Outlined.SentimentDissatisfied, isSelected = true),
@@ -420,8 +418,7 @@ fun LogSymptomsSection(
     ),
     onSymptomToggle: (SymptomCategory) -> Unit = {},
     onSaveClick: () -> Unit = {},
-    onViewAllClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onViewAllClick: () -> Unit = {}
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -532,9 +529,9 @@ fun LogSymptomsSection(
 // ==========================================
 @Composable
 fun LumiInsightPinkCard(
+    modifier: Modifier = Modifier,
     insightText: String = "You frequently log migraines around Day 24. This is common when estrogen drops.",
-    actionText: String = "Action: Try increasing magnesium intake today.",
-    modifier: Modifier = Modifier
+    actionText: String = "Action: Try increasing magnesium intake today."
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -617,8 +614,8 @@ fun LumiInsightPinkCard(
 // ==========================================
 @Composable
 fun ThirtyDayTrendsCard(
-    mostFrequentSymptom: String = "Headaches",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    mostFrequentSymptom: String = "Headaches"
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -690,12 +687,12 @@ fun ThirtyDayTrendsCard(
 // ==========================================
 @Composable
 fun FertilityHeaderCard(
+    modifier: Modifier = Modifier,
     statusTag: String = "CURRENT STATUS",
     title: String = "High Fertility Today",
     description: String = "Ovulation expected tomorrow. This is your peak window.",
     onLogBBTClick: () -> Unit = {},
-    onLogLHClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onLogLHClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -965,12 +962,12 @@ data class LogEntryItem(
 
 @Composable
 fun TodaysLogsCard(
+    modifier: Modifier = Modifier,
     logs: List<LogEntryItem> = listOf(
         LogEntryItem(Icons.Outlined.WaterDrop, "Egg White", "Cervical Mucus"),
         LogEntryItem(Icons.Outlined.SentimentSatisfied, "Energetic, Calm", "Mood")
     ),
-    onAddMoreLogsClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onAddMoreLogsClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -1047,9 +1044,9 @@ fun TodaysLogsCard(
 // ==========================================
 @Composable
 fun LibraryFeaturedCard(
+    modifier: Modifier = Modifier,
     title: String = "Understanding LH Surges",
-    onReadArticleClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onReadArticleClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),

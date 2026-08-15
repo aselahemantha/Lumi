@@ -46,17 +46,15 @@ fun HomeScreenContainer(
     if (showNotificationCenter) {
         NotificationCenterScreen(
             onNavigateBack = { showNotificationCenter = false },
-            onTabSelected = {
-                selectedBottomTab = it
+            onTabSelected = { tab ->
+                selectedBottomTab = tab
                 showNotificationCenter = false
             }
         )
-        return
-    }
-
-    Column(modifier = modifier.fillMaxSize()) {
-        Box(modifier = Modifier.weight(1f)) {
-            when (selectedBottomTab) {
+    } else {
+        Column(modifier = modifier.fillMaxSize()) {
+            Box(modifier = Modifier.weight(1f)) {
+                when (selectedBottomTab) {
                 HomeTab.TODAY -> {
                     if (state.isLoading) {
                         com.nebulatech.lumi.home.components.HomeScreenSkeleton(
@@ -112,4 +110,5 @@ fun HomeScreenContainer(
             }
         }
     }
+}
 }
