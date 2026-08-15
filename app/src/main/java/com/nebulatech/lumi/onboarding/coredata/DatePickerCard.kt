@@ -51,6 +51,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun DatePickerCard(
     selectedDate: LocalDate,
+    periodDuration: Int = 5,
     onDateSelected: (LocalDate) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -129,7 +130,7 @@ fun DatePickerCard(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
             )
 
-            // Horizontal calendar strip
+            // Horizontal calendar strip highlighting the entire period duration
             val startOfWeek = getStartOfWeek(selectedDate)
             val weekDays = remember(startOfWeek) {
                 (0..6).map { startOfWeek.plusDays(it.toLong()) }
@@ -142,8 +143,9 @@ fun DatePickerCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 weekDays.forEachIndexed { index, day ->
-                    val isSelected = day.isEqual(selectedDate)
-                    val isAfterSelected = day.isAfter(selectedDate)
+                    val isPeriodStart = day.isEqual(selectedDate)
+                    val isPeriodDay = !day.isBefore(selectedDate) &&
+                            day.isBefore(selectedDate.plusDays(periodDuration.toLong()))
 
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -153,12 +155,12 @@ fun DatePickerCard(
                         Text(
                             text = weekdayLabels[index],
                             style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
-                            color = if (isSelected) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            color = when {
+                                isPeriodStart -> MaterialTheme.colorScheme.primary
+                                isPeriodDay -> MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
+                                else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                             },
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            fontWeight = if (isPeriodDay) FontWeight.Bold else FontWeight.Normal
                         )
 
                         Box(
@@ -167,33 +169,36 @@ fun DatePickerCard(
                                 .clip(CircleShape)
                                 .clickable { onDateSelected(day) }
                                 .background(
-                                    color = if (isSelected) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.surfaceContainerLowest
+                                    color = when {
+                                        isPeriodStart -> MaterialTheme.colorScheme.primary
+                                        isPeriodDay -> MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                                        else -> MaterialTheme.colorScheme.surfaceContainerLowest
                                     }
                                 )
                                 .then(
-                                    if (!isSelected && isAfterSelected) {
-                                        Modifier.border(
-                                            BorderStroke(
-                                                1.dp,
-                                                MaterialTheme.colorScheme.outlineVariant
-                                            ), CircleShape
+                                    when {
+                                        isPeriodStart -> Modifier
+                                        isPeriodDay -> Modifier.border(
+                                            BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
+                                            CircleShape
                                         )
-                                    } else Modifier
+                                        else -> Modifier.border(
+                                            BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                                            CircleShape
+                                        )
+                                    }
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = day.dayOfMonth.toString(),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = if (isSelected) {
-                                    MaterialTheme.colorScheme.onPrimary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurface
+                                color = when {
+                                    isPeriodStart -> MaterialTheme.colorScheme.onPrimary
+                                    isPeriodDay -> MaterialTheme.colorScheme.primary
+                                    else -> MaterialTheme.colorScheme.onSurface
                                 },
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                fontWeight = if (isPeriodDay) FontWeight.Bold else FontWeight.Normal
                             )
                         }
                     }

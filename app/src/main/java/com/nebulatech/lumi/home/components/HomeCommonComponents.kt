@@ -15,15 +15,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.Biotech
@@ -77,12 +78,12 @@ fun CycleRingWidget(
 ) {
     Box(
         modifier = modifier
-            .size(240.dp)
-            .padding(16.dp),
+            .size(260.dp)
+            .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.size(200.dp)) {
-            val strokeWidth = 16.dp.toPx()
+        Canvas(modifier = Modifier.size(230.dp)) {
+            val strokeWidth = 14.dp.toPx()
             // Track background arc
             drawArc(
                 color = Color(0xFFF3EAEF),
@@ -95,7 +96,7 @@ fun CycleRingWidget(
             drawArc(
                 color = Primary,
                 startAngle = -220f,
-                sweepAngle = 260f * progressRatio,
+                sweepAngle = (260f * progressRatio).coerceIn(0f, 260f),
                 useCenter = false,
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
@@ -103,27 +104,34 @@ fun CycleRingWidget(
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .padding(horizontal = 28.dp)
+                .offset(y = (-4).dp)
         ) {
             Text(
                 text = "CYCLE DAY",
                 fontFamily = ManropeFontFamily,
-                fontSize = 12.sp,
+                fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
-                letterSpacing = 1.sp,
+                letterSpacing = 1.2.sp,
                 color = Color(0xFF6B5861)
             )
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = "$cycleDay",
                 fontFamily = LiterataFontFamily,
-                fontSize = 52.sp,
+                fontSize = 46.sp,
+                lineHeight = 48.sp,
                 fontWeight = FontWeight.Bold,
                 color = Primary
             )
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = subLabelText,
                 fontFamily = ManropeFontFamily,
-                fontSize = 15.sp,
+                fontSize = 13.sp,
+                lineHeight = 16.sp,
                 color = Color(0xFF4A3B43),
                 textAlign = TextAlign.Center
             )
@@ -1054,7 +1062,7 @@ fun LibraryFeaturedCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
-                        imageVector = Icons.Outlined.ArrowForward,
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
                         contentDescription = null,
                         tint = Color.White,
                         modifier = Modifier.size(14.dp)

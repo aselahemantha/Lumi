@@ -43,6 +43,7 @@ import com.nebulatech.lumi.ui.theme.LumiTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FertilityDashboardHomeScreen(
+    userName: String = "",
     loggingViewModel: LoggingViewModel? = null,
     onLogBBTClick: () -> Unit = {},
     onLogLHClick: () -> Unit = {},
@@ -68,7 +69,7 @@ fun FertilityDashboardHomeScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { HomeTopBar(showNotificationBell = false) },
+        topBar = { HomeTopBar(userName = userName, showNotificationBell = false) },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.TODAY,

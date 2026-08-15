@@ -52,12 +52,14 @@ fun HomeScreenContainer(
                                 cycleDayTotal = state.cycleLength,
                                 progressRatio = state.progressRatio,
                                 subLabelText = state.subLabelText,
+                                userName = state.userName,
                                 loggingViewModel = loggingVm,
                                 onTabSelected = { selectedBottomTab = it }
                             )
                         }
                         HomeLayoutType.FERTILITY_DASHBOARD -> {
                             FertilityDashboardHomeScreen(
+                                userName = state.userName,
                                 loggingViewModel = loggingVm,
                                 onTabSelected = { selectedBottomTab = it }
                             )
@@ -66,6 +68,7 @@ fun HomeScreenContainer(
                             LateLutealHomeScreen(
                                 cycleDay = state.cycleDay,
                                 progressRatio = state.progressRatio,
+                                userName = state.userName,
                                 loggingViewModel = loggingVm,
                                 onTabSelected = { selectedBottomTab = it }
                             )

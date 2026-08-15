@@ -42,6 +42,7 @@ import com.nebulatech.lumi.ui.theme.LumiTheme
 fun LateLutealHomeScreen(
     cycleDay: Int = 24,
     progressRatio: Float = 0.85f,
+    userName: String = "",
     loggingViewModel: LoggingViewModel? = null,
     onViewAllSymptoms: () -> Unit = {},
     onTabSelected: (HomeTab) -> Unit = {},
@@ -60,7 +61,7 @@ fun LateLutealHomeScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { HomeTopBar(showNotificationBell = false) },
+        topBar = { HomeTopBar(userName = userName, showNotificationBell = false) },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.TODAY,

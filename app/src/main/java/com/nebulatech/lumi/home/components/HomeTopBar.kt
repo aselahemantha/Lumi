@@ -27,10 +27,11 @@ import com.nebulatech.lumi.ui.theme.Primary
 
 /**
  * Standard Lumi Top Bar used across Home, Insights, and Calendar screens.
- * Features "Lumi" logo text on left and Profile avatar button on right.
+ * Features "Welcome, [Name]" (or "Lumi") text on left and Profile avatar button on right.
  */
 @Composable
 fun StandardLumiTopBar(
+    userName: String? = null,
     onProfileClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -41,11 +42,12 @@ fun StandardLumiTopBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val titleText = if (!userName.isNullOrBlank()) "Welcome, $userName" else "Lumi"
         Text(
-            text = "Lumi",
+            text = titleText,
             fontFamily = LiterataFontFamily,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Normal,
+            fontSize = if (!userName.isNullOrBlank()) 22.sp else 28.sp,
+            fontWeight = FontWeight.Bold,
             color = Primary
         )
 
@@ -71,12 +73,14 @@ fun StandardLumiTopBar(
 
 @Composable
 fun HomeTopBar(
+    userName: String? = null,
     showNotificationBell: Boolean = false,
     onNotificationClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     StandardLumiTopBar(
+        userName = userName,
         onProfileClick = onProfileClick,
         modifier = modifier
     )

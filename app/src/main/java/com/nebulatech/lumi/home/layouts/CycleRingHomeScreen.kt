@@ -59,6 +59,7 @@ fun CycleRingHomeScreen(
     cycleDayTotal: Int = 28,
     progressRatio: Float = 0f,
     subLabelText: String = "",
+    userName: String = "",
     loggingViewModel: LoggingViewModel? = null,
     onLogFlowClick: () -> Unit = {},
     onTabSelected: (HomeTab) -> Unit = {},
@@ -78,7 +79,7 @@ fun CycleRingHomeScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { HomeTopBar(showNotificationBell = true) },
+        topBar = { HomeTopBar(userName = userName, showNotificationBell = true) },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.TODAY,

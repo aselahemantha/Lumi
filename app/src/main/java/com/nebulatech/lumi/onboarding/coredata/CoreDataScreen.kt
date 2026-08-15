@@ -37,6 +37,7 @@ fun CoreDataScreen(
 
         DatePickerCard(
             selectedDate = state.firstDayOfLastPeriod,
+            periodDuration = state.periodDuration,
             onDateSelected = { onAction(OnboardingAction.UpdateFirstDayOfLastPeriod(it)) }
         )
 
