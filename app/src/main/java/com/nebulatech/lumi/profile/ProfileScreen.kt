@@ -112,6 +112,7 @@ fun ProfileScreen(
     var showPrivacySheet by remember { mutableStateOf(false) }
     var showHelpSheet by remember { mutableStateOf(false) }
     var showTermsSheet by remember { mutableStateOf(false) }
+    var showContactDevSheet by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     ObserveAsEvents(profileVm.events) { event ->
@@ -183,6 +184,7 @@ fun ProfileScreen(
                 SupportAndLogoutCard(
                     onHelpClick = { showHelpSheet = true },
                     onTermsClick = { showTermsSheet = true },
+                    onContactDevClick = { showContactDevSheet = true },
                     onLogoutClick = { showLogoutDialog = true }
                 )
 
@@ -235,6 +237,13 @@ fun ProfileScreen(
         if (showTermsSheet) {
             TermsOfServiceBottomSheet(
                 onDismissRequest = { showTermsSheet = false }
+            )
+        }
+
+        // Contact Developer Bottom Sheet Modal
+        if (showContactDevSheet) {
+            com.nebulatech.lumi.profile.components.ContactDeveloperBottomSheet(
+                onDismissRequest = { showContactDevSheet = false }
             )
         }
 

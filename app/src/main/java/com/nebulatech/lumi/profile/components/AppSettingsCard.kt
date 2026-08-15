@@ -30,6 +30,7 @@ import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Fingerprint
 import androidx.compose.material.icons.outlined.HealthAndSafety
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PrivacyTip
 import androidx.compose.material.icons.outlined.Security
@@ -526,10 +527,11 @@ private fun Modifier.size(scale: Float, defaultSize: androidx.compose.ui.unit.Dp
 
 @Composable
 fun SupportAndLogoutCard(
+    modifier: Modifier = Modifier,
     onHelpClick: () -> Unit = {},
     onTermsClick: () -> Unit = {},
-    onLogoutClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onContactDevClick: () -> Unit = {},
+    onLogoutClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -559,6 +561,19 @@ fun SupportAndLogoutCard(
                 icon = Icons.Outlined.Description,
                 title = "Terms of Service",
                 onClick = onTermsClick
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp),
+                color = Color(0xFFF2ECEF)
+            )
+
+            // Contact Developer Item
+            SettingsRowItem(
+                icon = Icons.Outlined.MailOutline,
+                title = "Contact Developer",
+                subtitle = "Send direct feedback or questions",
+                onClick = onContactDevClick
             )
 
             Spacer(modifier = Modifier.height(20.dp))
