@@ -18,6 +18,7 @@ import com.nebulatech.lumi.home.layouts.FertilityDashboardHomeScreen
 import com.nebulatech.lumi.home.layouts.LateLutealHomeScreen
 import com.nebulatech.lumi.insights.InsightsScreen
 import com.nebulatech.lumi.logging.LoggingViewModel
+import com.nebulatech.lumi.notifications.NotificationCenterScreen
 import com.nebulatech.lumi.profile.ProfileScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -35,10 +36,22 @@ fun HomeScreenContainer(
     val state by homeVm.state.collectAsStateWithLifecycle()
 
     var selectedBottomTab by remember { mutableStateOf(HomeTab.TODAY) }
+    var showNotificationCenter by remember { mutableStateOf(false) }
 
     // Handle VM events (e.g. navigate to onboarding if no user)
     LaunchedEffect(homeVm.events) {
         homeVm.events.collect { /* future: handle NavigateToOnboarding */ }
+    }
+
+    if (showNotificationCenter) {
+        NotificationCenterScreen(
+            onNavigateBack = { showNotificationCenter = false },
+            onTabSelected = {
+                selectedBottomTab = it
+                showNotificationCenter = false
+            }
+        )
+        return
     }
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -84,7 +97,10 @@ fun HomeScreenContainer(
                     InsightsScreen(onTabSelected = { selectedBottomTab = it })
                 }
                 HomeTab.PROFILE -> {
-                    ProfileScreen(onTabSelected = { selectedBottomTab = it })
+                    ProfileScreen(
+                        onTabSelected = { selectedBottomTab = it },
+                        onNotificationClick = { showNotificationCenter = true }
+                    )
                 }
             }
         }

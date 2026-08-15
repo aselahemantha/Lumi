@@ -80,6 +80,7 @@ fun ProfileTopBar(
 @Composable
 fun ProfileScreen(
     onTabSelected: (HomeTab) -> Unit = {},
+    onNotificationClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val profileVm: ProfileViewModel = koinViewModel()
@@ -89,7 +90,7 @@ fun ProfileScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { ProfileTopBar() },
+        topBar = { ProfileTopBar(onNotificationClick = onNotificationClick) },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.PROFILE,
