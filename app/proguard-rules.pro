@@ -12,10 +12,25 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Preserve source file and line numbers for deobfuscated stack traces
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Kotlinx Serialization
+-keepattributes *Annotation*, Signature, InnerClasses, EnclosingMethod
+-keepclassmembers class * {
+    *** Companion;
+}
+-keepclasseswithmembers class * {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+# Room Database
+-keep class * extends androidx.room.RoomDatabase
+-dontwarn androidx.room.paging.**
+
+# Supabase
+-keep class io.github.jan.supabase.** { *; }
+
+# Lottie
+-keep class com.airbnb.lottie.** { *; }
