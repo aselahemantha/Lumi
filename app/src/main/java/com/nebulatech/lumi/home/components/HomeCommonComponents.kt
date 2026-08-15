@@ -1,5 +1,8 @@
 package com.nebulatech.lumi.home.components
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -49,6 +52,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -76,6 +80,15 @@ fun CycleRingWidget(
     progressRatio: Float = 0.85f,
     modifier: Modifier = Modifier
 ) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = progressRatio.coerceIn(0f, 1f),
+        animationSpec = tween(
+            durationMillis = 1200,
+            easing = FastOutSlowInEasing
+        ),
+        label = "CycleProgressArcAnimation"
+    )
+
     Box(
         modifier = modifier
             .size(260.dp)
@@ -96,7 +109,7 @@ fun CycleRingWidget(
             drawArc(
                 color = Primary,
                 startAngle = -220f,
-                sweepAngle = (260f * progressRatio).coerceIn(0f, 260f),
+                sweepAngle = (260f * animatedProgress).coerceIn(0f, 260f),
                 useCenter = false,
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
@@ -304,6 +317,15 @@ fun LateLutealHeaderCard(
     progressRatio: Float = 0.85f,
     modifier: Modifier = Modifier
 ) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = progressRatio.coerceIn(0f, 1f),
+        animationSpec = tween(
+            durationMillis = 1200,
+            easing = FastOutSlowInEasing
+        ),
+        label = "LateLutealProgressAnimation"
+    )
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -351,7 +373,7 @@ fun LateLutealHeaderCard(
             )
             Spacer(modifier = Modifier.height(20.dp))
             LinearProgressIndicator(
-                progress = { progressRatio },
+                progress = { animatedProgress },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)

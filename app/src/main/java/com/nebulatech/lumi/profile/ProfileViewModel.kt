@@ -7,9 +7,11 @@ import com.nebulatech.lumi.data.model.UserProfile
 import com.nebulatech.lumi.data.repository.NotificationRepository
 import com.nebulatech.lumi.data.repository.RoomUserRepository
 import com.nebulatech.lumi.data.repository.UserRepository
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -24,6 +26,9 @@ class ProfileViewModel(
 ) : ViewModel() {
 
     private val userId = RoomUserRepository.DEFAULT_LOCAL_USER_ID
+
+    private val _events = Channel<ProfileEvent>()
+    val events = _events.receiveAsFlow()
 
     val state: StateFlow<ProfileState> = combine(
         userRepository.getCurrentUser(),
@@ -115,6 +120,12 @@ class ProfileViewModel(
             is ProfileAction.ToggleNotificationSetting -> {
                 viewModelScope.launch {
                     notificationRepository.updateSetting(userId, action.type, action.enabled)
+                }
+            }
+            ProfileAction.LogoutAndClearData -> {
+                viewModelScope.launch {
+                    userRepository.clearAllData()
+                    _events.send(ProfileEvent.LoggedOutAndAppClosed)
                 }
             }
         }

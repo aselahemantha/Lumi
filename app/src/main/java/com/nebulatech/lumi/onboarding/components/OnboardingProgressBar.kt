@@ -1,5 +1,8 @@
 package com.nebulatech.lumi.onboarding.components
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +12,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,13 +35,22 @@ fun OnboardingProgressBar(
 
     if (step == 0) return // Don't show progress bar on Welcome/Intro screen
 
+    val animatedProgress by animateFloatAsState(
+        targetValue = (step.toFloat() / totalSteps).coerceIn(0f, 1f),
+        animationSpec = tween(
+            durationMillis = 600,
+            easing = FastOutSlowInEasing
+        ),
+        label = "OnboardingStepProgressAnimation"
+    )
+
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         LinearProgressIndicator(
-            progress = { step.toFloat() / totalSteps },
+            progress = { animatedProgress },
             modifier = Modifier
                 .weight(1f)
                 .height(6.dp)

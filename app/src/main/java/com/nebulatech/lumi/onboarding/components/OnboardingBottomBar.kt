@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,9 +24,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.R
+import com.nebulatech.lumi.ui.theme.ManropeFontFamily
+import com.nebulatech.lumi.ui.theme.Primary
 
 @Composable
 fun OnboardingBottomBar(
@@ -38,16 +44,17 @@ fun OnboardingBottomBar(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = 24.dp, vertical = 24.dp),
+            .navigationBarsPadding()
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedButton(
             onClick = onBackClick,
-            shape = RoundedCornerShape(percent = 100),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            shape = RoundedCornerShape(100),
+            border = BorderStroke(1.dp, Color(0xFFD4C2C8)),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.primary
+                contentColor = Primary
             ),
             contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
         ) {
@@ -59,26 +66,30 @@ fun OnboardingBottomBar(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = stringResource(R.string.back_button),
-                style = MaterialTheme.typography.labelLarge
+                fontFamily = ManropeFontFamily,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold
             )
         }
 
         Button(
             onClick = onContinueClick,
             enabled = isContinueEnabled,
-            shape = RoundedCornerShape(percent = 100),
+            shape = RoundedCornerShape(100),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                containerColor = Primary,
+                contentColor = Color.White,
+                disabledContainerColor = Color(0xFFE4E2E0),
+                disabledContentColor = Color(0xFF827379).copy(alpha = 0.6f)
             ),
             contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
         ) {
             Text(
                 text = stringResource(R.string.continue_button),
-                style = MaterialTheme.typography.labelLarge
+                fontFamily = ManropeFontFamily,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.width(8.dp))
             Icon(

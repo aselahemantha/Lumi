@@ -35,8 +35,10 @@ sealed interface ProfileAction {
     ) : ProfileAction
     data class UpdateNotifications(val enabled: Boolean) : ProfileAction
     data class ToggleNotificationSetting(val type: String, val enabled: Boolean) : ProfileAction
+    data object LogoutAndClearData : ProfileAction
 }
 
 sealed interface ProfileEvent {
     data object NavigateToSignIn : ProfileEvent
+    data object LoggedOutAndAppClosed : ProfileEvent
 }

@@ -23,6 +23,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Fingerprint
@@ -78,6 +80,7 @@ fun AppSettingsCard(
     val context = LocalContext.current
     var showIntegrationsDialog by remember { mutableStateOf(false) }
 
+    var isNotificationsExpanded by remember { mutableStateOf(false) }
     var isBiometricLockOn by remember {
         mutableStateOf(BiometricAuthManager.isBiometricEnabled(context))
     }
@@ -104,13 +107,22 @@ fun AppSettingsCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 1. Master Notifications Item with Switch
+            // 1. Master Notifications Item with Expandable Trigger & Switch
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable(enabled = notificationsEnabled) {
+                            isNotificationsExpanded = !isNotificationsExpanded
+                        }
+                        .padding(vertical = 4.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Outlined.Notifications,
                         contentDescription = null,
@@ -118,26 +130,46 @@ fun AppSettingsCard(
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(14.dp))
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "Notifications",
+                                fontFamily = ManropeFontFamily,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF26181F)
+                            )
+                            if (notificationsEnabled) {
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Icon(
+                                    imageVector = if (isNotificationsExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                    contentDescription = if (isNotificationsExpanded) "Collapse" else "Expand",
+                                    tint = Primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
                         Text(
-                            text = "Notifications",
-                            fontFamily = ManropeFontFamily,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF26181F)
-                        )
-                        Text(
-                            text = if (notificationsEnabled) "All reminders active" else "All reminders paused",
+                            text = when {
+                                !notificationsEnabled -> "All reminders paused"
+                                isNotificationsExpanded -> "Tap to hide individual reminders"
+                                else -> "Tap to customize 5 reminders"
+                            },
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
-                            color = Color(0xFF8A7A83)
+                            color = if (notificationsEnabled) Primary else Color(0xFF8A7A83)
                         )
                     }
                 }
 
+                Spacer(modifier = Modifier.width(8.dp))
+
                 Switch(
                     checked = notificationsEnabled,
-                    onCheckedChange = onNotificationsToggle,
+                    onCheckedChange = { enabled ->
+                        if (!enabled) isNotificationsExpanded = false
+                        onNotificationsToggle(enabled)
+                    },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
                         checkedTrackColor = Primary,
@@ -147,9 +179,9 @@ fun AppSettingsCard(
                 )
             }
 
-            // Expandable Granular Reminders Sub-section
+            // Expandable Granular Reminders Sub-section (Only visible when expanded)
             AnimatedVisibility(
-                visible = notificationsEnabled,
+                visible = notificationsEnabled && isNotificationsExpanded,
                 enter = expandVertically() + fadeIn(),
                 exit = shrinkVertically() + fadeOut()
             ) {

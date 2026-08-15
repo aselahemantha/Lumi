@@ -6,12 +6,12 @@ import com.nebulatech.lumi.core.domain.Result
 import com.nebulatech.lumi.data.local.dao.HealthConditionDao
 import com.nebulatech.lumi.data.local.dao.UserDao
 import com.nebulatech.lumi.data.local.dao.UserProfileDao
+import com.nebulatech.lumi.data.local.database.LumiDatabase
 import com.nebulatech.lumi.data.local.entity.HealthConditionEntity
 import com.nebulatech.lumi.data.mapper.toUser
 import com.nebulatech.lumi.data.mapper.toUserEntity
 import com.nebulatech.lumi.data.mapper.toUserProfile
 import com.nebulatech.lumi.data.mapper.toUserProfileEntity
-import com.nebulatech.lumi.data.model.HealthConditionType
 import com.nebulatech.lumi.data.model.User
 import com.nebulatech.lumi.data.model.UserProfile
 import kotlinx.coroutines.flow.Flow
@@ -27,12 +27,14 @@ interface UserRepository {
     fun getUserProfileFlow(userId: String): Flow<UserProfile?>
     suspend fun saveUserProfile(profile: UserProfile): EmptyResult<DataError.Local>
     suspend fun updateEmailAndAuth(userId: String, email: String, supabaseUid: String): EmptyResult<DataError.Local>
+    suspend fun clearAllData(): EmptyResult<DataError.Local>
 }
 
 class RoomUserRepository(
     private val userDao: UserDao,
     private val userProfileDao: UserProfileDao,
-    private val healthConditionDao: HealthConditionDao
+    private val healthConditionDao: HealthConditionDao,
+    private val database: LumiDatabase
 ) : UserRepository {
 
     companion object {
@@ -69,12 +71,8 @@ class RoomUserRepository(
     override suspend fun getUserProfile(userId: String): Result<UserProfile?, DataError.Local> {
         return try {
             val profileEntity = userProfileDao.getProfile(userId)
-            if (profileEntity != null) {
-                val conditions = healthConditionDao.getConditions(userId)
-                Result.Success(profileEntity.toUserProfile(conditions))
-            } else {
-                Result.Success(null)
-            }
+            val conditions = healthConditionDao.getConditions(userId)
+            Result.Success(profileEntity?.toUserProfile(conditions))
         } catch (e: Exception) {
             e.printStackTrace()
             Result.Error(DataError.Local.UNKNOWN)
@@ -85,26 +83,26 @@ class RoomUserRepository(
         return combine(
             userProfileDao.getProfileFlow(userId),
             healthConditionDao.getConditionsFlow(userId)
-        ) { profileEntity, conditions ->
-            profileEntity?.toUserProfile(conditions)
+        ) { profileEntity, conditionEntities ->
+            profileEntity?.toUserProfile(conditionEntities)
         }
     }
 
     override suspend fun saveUserProfile(profile: UserProfile): EmptyResult<DataError.Local> {
         return try {
             userProfileDao.insertOrUpdate(profile.toUserProfileEntity())
-            healthConditionDao.deleteConditionsForUser(profile.userId)
+            val now = Instant.now().toString()
             val conditionEntities = profile.healthConditions.map { condition ->
                 HealthConditionEntity(
                     id = UUID.randomUUID().toString(),
                     userId = profile.userId,
                     condition = condition.name,
-                    createdAt = Instant.now().toString()
+                    createdAt = now,
+                    isSynced = false
                 )
             }
-            if (conditionEntities.isNotEmpty()) {
-                healthConditionDao.insertAll(conditionEntities)
-            }
+            healthConditionDao.deleteConditionsForUser(profile.userId)
+            healthConditionDao.insertAll(conditionEntities)
             Result.Success(Unit)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -118,12 +116,27 @@ class RoomUserRepository(
         supabaseUid: String
     ): EmptyResult<DataError.Local> {
         return try {
-            userDao.updateEmailAndAuth(
-                userId = userId,
-                email = email,
-                supabaseUid = supabaseUid,
-                updatedAt = Instant.now().toString()
-            )
+            val user = userDao.getUserById(userId)
+            if (user != null) {
+                val updated = user.copy(
+                    email = email,
+                    supabaseUid = supabaseUid,
+                    updatedAt = Instant.now().toString()
+                )
+                userDao.insertOrUpdate(updated)
+                Result.Success(Unit)
+            } else {
+                Result.Error(DataError.Local.NOT_FOUND)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+    }
+
+    override suspend fun clearAllData(): EmptyResult<DataError.Local> {
+        return try {
+            database.clearAllTables()
             Result.Success(Unit)
         } catch (e: Exception) {
             e.printStackTrace()
