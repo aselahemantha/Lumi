@@ -38,8 +38,10 @@ import com.nebulatech.lumi.profile.components.AppSettingsCard
 import com.nebulatech.lumi.profile.components.DataPrivacyBottomSheet
 import com.nebulatech.lumi.profile.components.EditHealthProfileBottomSheet
 import com.nebulatech.lumi.profile.components.HealthProfileCard
+import com.nebulatech.lumi.profile.components.HelpCenterBottomSheet
 import com.nebulatech.lumi.profile.components.HeroUserCard
 import com.nebulatech.lumi.profile.components.SupportAndLogoutCard
+import com.nebulatech.lumi.profile.components.TermsOfServiceBottomSheet
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.Primary
@@ -88,6 +90,8 @@ fun ProfileScreen(
 
     var showEditSheet by remember { mutableStateOf(false) }
     var showPrivacySheet by remember { mutableStateOf(false) }
+    var showHelpSheet by remember { mutableStateOf(false) }
+    var showTermsSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -141,7 +145,10 @@ fun ProfileScreen(
             )
 
             // 4. Support & Log Out Card
-            SupportAndLogoutCard()
+            SupportAndLogoutCard(
+                onHelpClick = { showHelpSheet = true },
+                onTermsClick = { showTermsSheet = true }
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -170,6 +177,20 @@ fun ProfileScreen(
         if (showPrivacySheet) {
             DataPrivacyBottomSheet(
                 onDismissRequest = { showPrivacySheet = false }
+            )
+        }
+
+        // Help Center Bottom Sheet Modal
+        if (showHelpSheet) {
+            HelpCenterBottomSheet(
+                onDismissRequest = { showHelpSheet = false }
+            )
+        }
+
+        // Terms of Service Bottom Sheet Modal
+        if (showTermsSheet) {
+            TermsOfServiceBottomSheet(
+                onDismissRequest = { showTermsSheet = false }
             )
         }
     }
