@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -37,25 +38,11 @@ import com.nebulatech.lumi.calendar.components.PhaseDetailCard
 import com.nebulatech.lumi.data.model.CyclePhase
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
-import com.nebulatech.lumi.home.components.StandardLumiTopBar
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
 import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-
-@Composable
-fun CalendarTopBar(
-    userName: String? = null,
-    onProfileClick: () -> Unit = {},
-    modifier: Modifier = Modifier
-) {
-    StandardLumiTopBar(
-        userName = userName,
-        onProfileClick = onProfileClick,
-        modifier = modifier
-    )
-}
 
 @Composable
 fun CalendarScreen(
@@ -71,12 +58,6 @@ fun CalendarScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            CalendarTopBar(
-                userName = state.userName,
-                onProfileClick = { onTabSelected(HomeTab.PROFILE) }
-            )
-        },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.CALENDAR,
@@ -89,15 +70,16 @@ fun CalendarScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 8.dp),
+                .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Month Header Row with Interactive Navigation Arrows (< and >)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .padding(top = 4.dp, bottom = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -157,9 +139,10 @@ fun CalendarScreen(
                 daysUntilNextPeriod = state.daysUntilNextPeriod
             )
 
-            // 4. Cycle Status Banner Card
+            // 4. Cycle Status Banner Card (View All navigates to Insights)
             CycleStatusBannerCard(
-                text = "Your average cycle length is steady at ${state.cycleLength} days."
+                text = "Your average cycle length is steady at ${state.cycleLength} days.",
+                onViewAllClick = { onTabSelected(HomeTab.INSIGHTS) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))

@@ -199,7 +199,7 @@ fun CycleStatusBannerCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(38.dp)
                     .clip(CircleShape)
                     .background(Color.White),
                 contentAlignment = Alignment.Center
@@ -208,7 +208,7 @@ fun CycleStatusBannerCard(
                     imageVector = Icons.Outlined.Lightbulb,
                     contentDescription = null,
                     tint = Primary,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
@@ -218,16 +218,19 @@ fun CycleStatusBannerCard(
                 fontSize = 14.sp,
                 color = Color(0xFF3B2C34),
                 modifier = Modifier.weight(1f),
-                lineHeight = 19.sp
+                lineHeight = 20.sp
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = "View\nAll",
+                text = "View All",
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = Primary,
-                modifier = Modifier.clickable { onViewAllClick() }
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onViewAllClick() }
+                    .padding(horizontal = 4.dp, vertical = 4.dp)
             )
         }
     }
