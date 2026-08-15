@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,79 +33,60 @@ import com.nebulatech.lumi.ui.theme.Primary
 
 @Composable
 fun HeroUserCard(
-    userName: String = "Sarah\nMitchell",
+    userName: String = "Sarah Mitchell",
     trackingDuration: String = "Tracking for 14 months",
-    memberStatus: String = "Premium Member",
+    memberStatus: String = "Free Member",
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(240.dp)
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            Color(0xFF8A727D),
+                            Color(0xFF7A606E),
                             Color(0xFF4A3440),
-                            Color(0xFF23161D)
+                            Color(0xFF261820)
                         )
                     )
                 )
+                .padding(horizontal = 20.dp, vertical = 20.dp)
         ) {
-            // Dark gradient overlay at bottom
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.6f)
-                            )
-                        )
-                    )
-            )
-
-            // Bottom Content overlay
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.Bottom
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = userName,
                         fontFamily = LiterataFontFamily,
-                        fontSize = 28.sp,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        lineHeight = 32.sp
+                        color = Color.White
                     )
 
-                    // Premium Member Tag
+                    // Membership Badge
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(14.dp))
+                            .clip(RoundedCornerShape(12.dp))
                             .background(Primary.copy(alpha = 0.85f))
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                            .padding(horizontal = 10.dp, vertical = 5.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Outlined.Star,
                                 contentDescription = null,
                                 tint = Color(0xFFFFE58F),
-                                modifier = Modifier.size(14.dp)
+                                modifier = Modifier.size(13.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
@@ -120,7 +100,7 @@ fun HeroUserCard(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = trackingDuration,

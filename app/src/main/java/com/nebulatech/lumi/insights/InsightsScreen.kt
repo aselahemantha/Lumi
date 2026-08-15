@@ -23,9 +23,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.insights.components.CycleAtAGlanceSection
-import com.nebulatech.lumi.insights.components.HormoneSymptomTrendsCard
+import com.nebulatech.lumi.insights.components.HormonePhaseStatusCard
 import com.nebulatech.lumi.insights.components.InsightsLumiBannerCard
-import com.nebulatech.lumi.insights.components.InteractiveHormoneChartCard
 import com.nebulatech.lumi.insights.components.LearnArticlesSection
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
@@ -78,31 +77,27 @@ fun InsightsScreen(
                 )
             }
 
-            // 1. Cycle At A Glance (Room cycles history)
-            CycleAtAGlanceSection(
-                cycles = state.cycleHistory
-            )
-
-            // 2. Interactive Hormone Cycle Tracker Chart (defaults to user's active cycle day)
-            InteractiveHormoneChartCard(
-                initialDay = state.currentCycleDay
-            )
-
-            // 3. Hormone & Symptom Trends Summary (Room dynamic symptoms & active phase)
-            HormoneSymptomTrendsCard(
+            // 1. Hormone & Phase Status Widget (Clean non-chart status card, moved up!)
+            HormonePhaseStatusCard(
+                currentPhase = state.currentPhase,
                 currentCycleDay = state.currentCycleDay,
                 cycleLength = state.cycleLength,
                 loggedSymptoms = state.loggedSymptomPoints
             )
 
-            // 4. Dynamic Lumi Insight Dark Banner
+            // 2. Dynamic Lumi AI Insight Dark Banner
             InsightsLumiBannerCard(
                 text = state.dynamicInsightText.ifBlank {
                     "We noticed your high-energy days consistently align with your Follicular phase. This is a great time for creative projects or intense workouts."
                 }
             )
 
-            // 5. Learn Section (Online Cloud Sync banner)
+            // 3. Cycle At A Glance (Room cycles history)
+            CycleAtAGlanceSection(
+                cycles = state.cycleHistory
+            )
+
+            // 4. Learn Section (Online Cloud Sync banner)
             LearnArticlesSection()
 
             Spacer(modifier = Modifier.height(16.dp))

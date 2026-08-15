@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +47,6 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileTopBar(
-    onMenuClick: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -58,19 +58,11 @@ fun ProfileTopBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onMenuClick) {
-            Icon(
-                imageVector = Icons.Outlined.Menu,
-                contentDescription = "Menu",
-                tint = Color(0xFF3B2D34),
-                modifier = Modifier.size(24.dp)
-            )
-        }
-
         Text(
-            text = "Lumi",
+            text = "Profile",
             fontFamily = LiterataFontFamily,
-            fontSize = 24.sp,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
             color = Primary
         )
 
