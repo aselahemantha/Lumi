@@ -20,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.profile.components.AppSettingsCard
@@ -40,6 +40,7 @@ import com.nebulatech.lumi.profile.components.SupportAndLogoutCard
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.Primary
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileTopBar(
@@ -86,16 +87,14 @@ fun ProfileScreen(
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var cycleLengthDays by remember { mutableIntStateOf(28) }
-    var periodDurationDays by remember { mutableIntStateOf(5) }
-    var primaryGoal by remember { mutableStateOf("Track Cycles") }
+    val profileVm: ProfileViewModel = koinViewModel()
+    val state by profileVm.state.collectAsStateWithLifecycle()
+
     var showEditSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            ProfileTopBar()
-        },
+        topBar = { ProfileTopBar() },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.PROFILE,
@@ -114,16 +113,19 @@ fun ProfileScreen(
         ) {
             // 1. Hero User Banner Card
             HeroUserCard(
-                userName = "Sarah\nMitchell",
-                trackingDuration = "Tracking for 14 months",
-                memberStatus = "Premium Member"
+                userName = state.userName.ifBlank { "Lumi User" },
+                trackingDuration = state.trackingDuration.ifBlank { "Tracking with Lumi" },
+                memberStatus = if (state.isPremium) "Premium Member" else "Free Member"
             )
 
             // 2. Health Profile Card (Editable)
             HealthProfileCard(
-                cycleLengthDays = cycleLengthDays,
-                periodDurationDays = periodDurationDays,
-                primaryGoal = primaryGoal,
+                cycleLengthDays = state.cycleLength,
+                periodDurationDays = state.periodDuration,
+                primaryGoal = state.primaryGoal.name
+                    .replace('_', ' ')
+                    .lowercase()
+                    .replaceFirstChar { it.uppercase() },
                 onEditClick = { showEditSheet = true }
             )
 
@@ -139,14 +141,15 @@ fun ProfileScreen(
         // Edit Health Profile Bottom Sheet Modal
         if (showEditSheet) {
             EditHealthProfileBottomSheet(
-                initialCycleLength = cycleLengthDays,
-                initialPeriodDuration = periodDurationDays,
-                initialPrimaryGoal = primaryGoal,
+                initialCycleLength = state.cycleLength,
+                initialPeriodDuration = state.periodDuration,
+                initialPrimaryGoal = state.primaryGoal.name
+                    .replace('_', ' ')
+                    .lowercase()
+                    .replaceFirstChar { it.uppercase() },
                 onDismissRequest = { showEditSheet = false },
-                onSave = { newLength, newDuration, newGoal ->
-                    cycleLengthDays = newLength
-                    periodDurationDays = newDuration
-                    primaryGoal = newGoal
+                onSave = { _, _, _ ->
+                    // Future: ProfileViewModel.onAction(UpdateCycleSettings(...))
                     showEditSheet = false
                 }
             )

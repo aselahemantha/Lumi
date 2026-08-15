@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,16 +31,19 @@ import com.nebulatech.lumi.home.components.TodaysLogsCard
 import com.nebulatech.lumi.logging.LogBBTBottomSheet
 import com.nebulatech.lumi.logging.LogFlowBottomSheet
 import com.nebulatech.lumi.logging.LogLHTestBottomSheet
+import com.nebulatech.lumi.logging.LoggingAction
+import com.nebulatech.lumi.logging.LoggingEvent
+import com.nebulatech.lumi.logging.LoggingViewModel
 import com.nebulatech.lumi.ui.theme.LumiTheme
 
 /**
  * Layout 3: High Fertility Dashboard Screen
- * Triggered during FERTILE_WINDOW phase (Days 11–15 of a 28-day cycle).
- * Focuses on peak ovulation status, BBT/LH logging, temperature trends, and ovulation insights.
+ * Triggered during FERTILE_WINDOW phase.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FertilityDashboardHomeScreen(
+    loggingViewModel: LoggingViewModel? = null,
     onLogBBTClick: () -> Unit = {},
     onLogLHClick: () -> Unit = {},
     onAddMoreLogsClick: () -> Unit = {},
@@ -51,11 +55,20 @@ fun FertilityDashboardHomeScreen(
     var showLHSheet by remember { mutableStateOf(false) }
     var showFlowSheet by remember { mutableStateOf(false) }
 
+    LaunchedEffect(loggingViewModel) {
+        loggingViewModel?.events?.collect { event ->
+            when (event) {
+                is LoggingEvent.BbtSaved -> showBBTSheet = false
+                is LoggingEvent.LhSaved -> showLHSheet = false
+                is LoggingEvent.FlowSaved -> showFlowSheet = false
+                else -> Unit
+            }
+        }
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            HomeTopBar(showNotificationBell = false)
-        },
+        topBar = { HomeTopBar(showNotificationBell = false) },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.TODAY,
@@ -72,7 +85,6 @@ fun FertilityDashboardHomeScreen(
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 1. Fertility Header Card
             FertilityHeaderCard(
                 statusTag = "CURRENT STATUS",
                 title = "High Fertility Today",
@@ -87,16 +99,13 @@ fun FertilityDashboardHomeScreen(
                 }
             )
 
-            // 2. Daily Insight Card
             LumiInsightCard(
                 title = "Daily Insight",
                 text = "Your BBT spiked by 0.6° today and you logged egg-white cervical mucus. Likelihood of ovulation is peaking. If you are trying to conceive, today and tomorrow are optimal."
             )
 
-            // 3. Basal Body Temp Chart
             BasalBodyTempChartCard()
 
-            // 4. Today's Logs Card
             TodaysLogsCard(
                 onAddMoreLogsClick = {
                     showFlowSheet = true
@@ -104,7 +113,6 @@ fun FertilityDashboardHomeScreen(
                 }
             )
 
-            // 5. Contextual Library Card
             LibraryFeaturedCard(
                 title = "Understanding LH Surges",
                 onReadArticleClick = onReadArticleClick
@@ -113,27 +121,47 @@ fun FertilityDashboardHomeScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Log BBT Bottom Sheet
         if (showBBTSheet) {
             LogBBTBottomSheet(
                 onDismissRequest = { showBBTSheet = false },
-                onSaveReading = { _, _, _ -> showBBTSheet = false }
+                onSaveReading = { tempStr, disturbedSleep, feverIllness ->
+                    loggingViewModel?.onAction(
+                        LoggingAction.SaveBbt(
+                            temperatureStr = tempStr,
+                            disturbedSleep = disturbedSleep,
+                            feverIllness = feverIllness
+                        )
+                    ) ?: run { showBBTSheet = false }
+                }
             )
         }
 
-        // Log LH Test Bottom Sheet
         if (showLHSheet) {
             LogLHTestBottomSheet(
                 onDismissRequest = { showLHSheet = false },
-                onSaveResult = { _, _, _ -> showLHSheet = false }
+                onSaveResult = { intensity, brand, _ ->
+                    loggingViewModel?.onAction(
+                        LoggingAction.SaveLhTest(
+                            intensity = intensity,
+                            brand = brand.takeIf { it.isNotBlank() }
+                        )
+                    ) ?: run { showLHSheet = false }
+                }
             )
         }
 
-        // Log Flow / General Log Bottom Sheet
         if (showFlowSheet) {
             LogFlowBottomSheet(
                 onDismissRequest = { showFlowSheet = false },
-                onSaveLog = { _, _, _ -> showFlowSheet = false }
+                onSaveLog = { flow, symptoms, mood ->
+                    loggingViewModel?.onAction(
+                        LoggingAction.SaveFlowLog(
+                            flow = flow,
+                            mood = mood,
+                            symptoms = symptoms
+                        )
+                    ) ?: run { showFlowSheet = false }
+                }
             )
         }
     }

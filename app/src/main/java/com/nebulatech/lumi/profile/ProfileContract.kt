@@ -1,0 +1,31 @@
+package com.nebulatech.lumi.profile
+
+import com.nebulatech.lumi.data.model.HealthConditionType
+import com.nebulatech.lumi.data.model.PrimaryGoal
+import com.nebulatech.lumi.data.model.WeightUnit
+
+data class ProfileState(
+    val isLoading: Boolean = true,
+    val userName: String = "",
+    val userEmail: String? = null,
+    val isPremium: Boolean = false,
+    val memberSince: String = "",
+    val trackingDuration: String = "",
+    val cycleLength: Int = 28,
+    val periodDuration: Int = 5,
+    val primaryGoal: PrimaryGoal = PrimaryGoal.TRACK_CYCLE,
+    val age: Int? = null,
+    val weight: Double? = null,
+    val weightUnit: WeightUnit = WeightUnit.KG,
+    val healthConditions: List<HealthConditionType> = emptyList(),
+    val notificationsEnabled: Boolean = true
+)
+
+sealed interface ProfileAction {
+    data object LoadProfile : ProfileAction
+    data class UpdateNotifications(val enabled: Boolean) : ProfileAction
+}
+
+sealed interface ProfileEvent {
+    data object NavigateToSignIn : ProfileEvent
+}

@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,28 +28,39 @@ import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.home.components.LumiInsightPinkCard
 import com.nebulatech.lumi.home.components.ThirtyDayTrendsCard
 import com.nebulatech.lumi.logging.LogFlowBottomSheet
+import com.nebulatech.lumi.logging.LoggingAction
+import com.nebulatech.lumi.logging.LoggingEvent
+import com.nebulatech.lumi.logging.LoggingViewModel
 import com.nebulatech.lumi.ui.theme.LumiTheme
 
 /**
  * Layout 1: Late Luteal / Symptom Grid Screen
- * Triggered on Days 22–28 of a 28-day cycle (LATE_LUTEAL phase).
- * Focuses on daily PMS symptom logging and trend tracking.
+ * Triggered during LATE_LUTEAL phase.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LateLutealHomeScreen(
-    onSaveLog: () -> Unit = {},
+    cycleDay: Int = 24,
+    progressRatio: Float = 0.85f,
+    loggingViewModel: LoggingViewModel? = null,
     onViewAllSymptoms: () -> Unit = {},
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var showLogSheet by remember { mutableStateOf(false) }
 
+    LaunchedEffect(loggingViewModel) {
+        loggingViewModel?.events?.collect { event ->
+            when (event) {
+                is LoggingEvent.FlowSaved -> showLogSheet = false
+                else -> Unit
+            }
+        }
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            HomeTopBar(showNotificationBell = false)
-        },
+        topBar = { HomeTopBar(showNotificationBell = false) },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.TODAY,
@@ -66,22 +78,19 @@ fun LateLutealHomeScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             LateLutealHeaderCard(
-                dayNumber = 24,
+                dayNumber = cycleDay,
                 title = "Late Luteal Phase",
                 description = "Progesterone is dropping. You may notice shifts in energy and mood.",
-                progressRatio = 0.85f
+                progressRatio = progressRatio
             )
 
             LogSymptomsSection(
-                onSaveClick = {
-                    showLogSheet = true
-                    onSaveLog()
-                },
+                onSaveClick = { showLogSheet = true },
                 onViewAllClick = onViewAllSymptoms
             )
 
             LumiInsightPinkCard(
-                insightText = "You frequently log migraines around Day 24. This is common when estrogen drops.",
+                insightText = "You frequently log migraines around Day $cycleDay. This is common when estrogen drops.",
                 actionText = "Action: Try increasing magnesium intake today."
             )
 
@@ -92,11 +101,18 @@ fun LateLutealHomeScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Log Flow Bottom Sheet Modal
         if (showLogSheet) {
             LogFlowBottomSheet(
                 onDismissRequest = { showLogSheet = false },
-                onSaveLog = { _, _, _ -> showLogSheet = false }
+                onSaveLog = { flow, symptoms, mood ->
+                    loggingViewModel?.onAction(
+                        LoggingAction.SaveFlowLog(
+                            flow = flow,
+                            mood = mood,
+                            symptoms = symptoms
+                        )
+                    ) ?: run { showLogSheet = false }
+                }
             )
         }
     }
@@ -106,6 +122,6 @@ fun LateLutealHomeScreen(
 @Composable
 private fun LateLutealHomeScreenPreview() {
     LumiTheme {
-        LateLutealHomeScreen()
+        LateLutealHomeScreen(cycleDay = 24, progressRatio = 0.85f)
     }
 }

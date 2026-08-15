@@ -2,14 +2,28 @@ package com.nebulatech.lumi.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nebulatech.lumi.data.model.HealthConditionType
+import com.nebulatech.lumi.data.model.PrimaryGoal
+import com.nebulatech.lumi.data.model.UserProfile
+import com.nebulatech.lumi.data.model.WeightUnit
+import com.nebulatech.lumi.data.repository.CycleRepository
+import com.nebulatech.lumi.data.repository.RoomUserRepository
+import com.nebulatech.lumi.data.repository.UserRepository
+import com.nebulatech.lumi.core.domain.Result
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.util.UUID
 
-class OnboardingViewModel : ViewModel() {
+class OnboardingViewModel(
+    private val userRepository: UserRepository,
+    private val cycleRepository: CycleRepository
+) : ViewModel() {
+
     private val _state = MutableStateFlow(OnboardingState())
     val state = _state.asStateFlow()
 
@@ -96,13 +110,70 @@ class OnboardingViewModel : ViewModel() {
                     }
                     OnboardingStep.HEALTH_PROFILE -> {
                         state.value.selectedGoal?.let { goal ->
-                            viewModelScope.launch {
-                                _events.send(OnboardingEvent.NavigateNext(goal))
-                            }
+                            persistAndNavigate(goal)
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun persistAndNavigate(goal: OnboardingGoal) {
+        viewModelScope.launch {
+            _state.update { it.copy(isSaving = true) }
+            val s = state.value
+            val now = Instant.now().toString()
+
+            // 1. Create or get user
+            val userResult = userRepository.getOrCreateUser(
+                name = s.name.ifBlank { "Lumi User" }
+            )
+            if (userResult is Result.Error) {
+                _state.update { it.copy(isSaving = false) }
+                return@launch
+            }
+            val user = (userResult as Result.Success).data
+
+            // 2. Save user profile
+            val profile = UserProfile(
+                id = UUID.randomUUID().toString(),
+                userId = user.id,
+                age = s.age.toIntOrNull(),
+                weight = s.weight.toDoubleOrNull(),
+                weightUnit = if (s.weightUnit.lowercase() == "lbs") WeightUnit.LBS else WeightUnit.KG,
+                cycleLength = s.cycleLength,
+                periodDuration = s.periodDuration,
+                primaryGoal = goal.toPrimaryGoal(),
+                notificationsEnabled = true,
+                trackingStartedDate = now,
+                healthConditions = s.selectedConditions.mapNotNull { it.toHealthCondition() },
+                updatedAt = now
+            )
+            val profileResult = userRepository.saveUserProfile(profile)
+            if (profileResult is Result.Error) {
+                _state.update { it.copy(isSaving = false) }
+                return@launch
+            }
+
+            // 3. Start the first cycle from the entered period date
+            cycleRepository.startNewCycle(user.id, s.firstDayOfLastPeriod)
+
+            _state.update { it.copy(isSaving = false) }
+            _events.send(OnboardingEvent.NavigateNext(goal))
+        }
+    }
+
+    private fun OnboardingGoal.toPrimaryGoal(): PrimaryGoal = when (this) {
+        OnboardingGoal.TRACK_CYCLE -> PrimaryGoal.TRACK_CYCLE
+        OnboardingGoal.UNDERSTAND_SYMPTOMS -> PrimaryGoal.UNDERSTAND_SYMPTOMS
+        OnboardingGoal.OPTIMIZE_FERTILITY -> PrimaryGoal.OPTIMIZE_FERTILITY
+    }
+
+    private fun String.toHealthCondition(): HealthConditionType? = when (this.uppercase()) {
+        "PCOS" -> HealthConditionType.PCOS
+        "ENDOMETRIOSIS" -> HealthConditionType.ENDOMETRIOSIS
+        "THYROID" -> HealthConditionType.THYROID
+        "NONE OF THE ABOVE" -> null
+        else -> null
     }
 }

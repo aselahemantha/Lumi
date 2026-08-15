@@ -29,7 +29,8 @@ data class OnboardingState(
     val weight: String = "",
     val weightUnit: String = "kg",
     val selectedConditions: Set<String> = emptySet(),
-    val name: String = ""
+    val name: String = "",
+    val isSaving: Boolean = false
 )
 
 sealed interface OnboardingAction {

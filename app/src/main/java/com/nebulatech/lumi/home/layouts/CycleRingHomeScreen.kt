@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,9 @@ import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.home.components.LumiInsightCard
 import com.nebulatech.lumi.home.components.Next7DaysCalendarStrip
 import com.nebulatech.lumi.logging.LogFlowBottomSheet
+import com.nebulatech.lumi.logging.LoggingAction
+import com.nebulatech.lumi.logging.LoggingEvent
+import com.nebulatech.lumi.logging.LoggingViewModel
 import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -47,24 +51,34 @@ import com.nebulatech.lumi.ui.theme.Primary
 /**
  * Layout 2: Standard Cycle Ring Screen
  * Triggered during MENSTRUATION, FOLLICULAR, and LUTEAL phases.
- * Provides cycle progress awareness, period prediction, and quick logging.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CycleRingHomeScreen(
-    cycleDay: Int = 24,
-    subLabelText: String = "Period starts in ~4 days",
+    cycleDay: Int = 1,
+    cycleDayTotal: Int = 28,
+    progressRatio: Float = 0f,
+    subLabelText: String = "",
+    loggingViewModel: LoggingViewModel? = null,
     onLogFlowClick: () -> Unit = {},
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var showLogSheet by remember { mutableStateOf(false) }
 
+    // Dismiss sheet when save succeeds
+    LaunchedEffect(loggingViewModel) {
+        loggingViewModel?.events?.collect { event ->
+            when (event) {
+                is LoggingEvent.FlowSaved -> showLogSheet = false
+                else -> Unit
+            }
+        }
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            HomeTopBar(showNotificationBell = true)
-        },
+        topBar = { HomeTopBar(showNotificationBell = true) },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.TODAY,
@@ -82,14 +96,12 @@ fun CycleRingHomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // 1. Cycle Ring Arc
             CycleRingWidget(
                 cycleDay = cycleDay,
-                subLabelText = subLabelText,
-                progressRatio = 0.85f
+                subLabelText = subLabelText.ifBlank { "Day $cycleDay of $cycleDayTotal" },
+                progressRatio = progressRatio
             )
 
-            // 2. Primary Log Flow Button
             Button(
                 onClick = {
                     showLogSheet = true
@@ -117,23 +129,28 @@ fun CycleRingHomeScreen(
                 }
             }
 
-            // 3. Lumi Insight Card
             LumiInsightCard(
                 title = "Lumi Insight",
                 text = "Your last 3 cycles have varied by 8 days. To help stabilize ovulation this week, try swapping high-intensity workouts for yoga."
             )
 
-            // 4. Next 7 Days Strip
             Next7DaysCalendarStrip()
 
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Log Flow Bottom Sheet Modal
         if (showLogSheet) {
             LogFlowBottomSheet(
                 onDismissRequest = { showLogSheet = false },
-                onSaveLog = { _, _, _ -> showLogSheet = false }
+                onSaveLog = { flow, symptoms, mood ->
+                    loggingViewModel?.onAction(
+                        LoggingAction.SaveFlowLog(
+                            flow = flow,
+                            mood = mood,
+                            symptoms = symptoms
+                        )
+                    ) ?: run { showLogSheet = false }
+                }
             )
         }
     }
@@ -143,6 +160,11 @@ fun CycleRingHomeScreen(
 @Composable
 private fun CycleRingHomeScreenPreview() {
     LumiTheme {
-        CycleRingHomeScreen()
+        CycleRingHomeScreen(
+            cycleDay = 12,
+            cycleDayTotal = 28,
+            progressRatio = 0.43f,
+            subLabelText = "Fertile window in ~2 days"
+        )
     }
 }
