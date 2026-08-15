@@ -43,7 +43,6 @@ fun HealthProfileCard(
     periodDurationDays: Int = 5,
     primaryGoal: String = "Track Cycles",
     onEditClick: () -> Unit = {},
-    onGoalClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -68,7 +67,8 @@ fun HealthProfileCard(
                     fontFamily = LiterataFontFamily,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Primary
+                    color = Primary,
+                    modifier = Modifier.clickable { onEditClick() }
                 )
 
                 IconButton(
@@ -86,14 +86,16 @@ fun HealthProfileCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Metric Cards (2 Columns)
+            // Metric Cards (2 Columns) - Clickable to edit!
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 // Card 1: Cycle Length
                 Card(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onEditClick() },
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F5F3)),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -142,7 +144,9 @@ fun HealthProfileCard(
 
                 // Card 2: Period Duration
                 Card(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onEditClick() },
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F5F3)),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -192,11 +196,11 @@ fun HealthProfileCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Primary Goal Card Row
+            // Primary Goal Card Row - Clickable to edit!
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onGoalClick() },
+                    .clickable { onEditClick() },
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F5F3)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)

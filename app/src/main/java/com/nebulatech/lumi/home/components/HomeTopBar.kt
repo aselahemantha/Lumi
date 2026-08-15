@@ -10,28 +10,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
 
+/**
+ * Standard Lumi Top Bar used across Home, Insights, and Calendar screens.
+ * Features "Lumi" logo text on left and Profile avatar button on right.
+ */
 @Composable
-fun HomeTopBar(
-    modifier: Modifier = Modifier,
-    showNotificationBell: Boolean = false,
-    onNotificationClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+fun StandardLumiTopBar(
+    onProfileClick: () -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -40,67 +41,43 @@ fun HomeTopBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (!showNotificationBell) {
-            // Profile avatar on left, Lumi on right or vice versa
-            Text(
-                text = "Lumi",
-                fontFamily = LiterataFontFamily,
-                fontSize = 24.sp,
-                color = Primary
-            )
-            IconButton(onClick = onProfileClick) {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .border(1.dp, Primary.copy(alpha = 0.2f), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Person,
-                        contentDescription = "Profile",
-                        tint = Primary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
-        } else {
-            // Layout 2 style: Profile avatar on left, Lumi text center-left, Bell on right
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+        Text(
+            text = "Lumi",
+            fontFamily = LiterataFontFamily,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Normal,
+            color = Primary
+        )
+
+        IconButton(onClick = onProfileClick) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFEFE8EB))
+                    .border(1.dp, Primary.copy(alpha = 0.15f), CircleShape),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .border(1.dp, Primary.copy(alpha = 0.2f), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Person,
-                        contentDescription = "Profile",
-                        tint = Primary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-                Text(
-                    text = "Lumi",
-                    fontFamily = LiterataFontFamily,
-                    fontSize = 24.sp,
-                    color = Primary
-                )
-            }
-            IconButton(onClick = onNotificationClick) {
                 Icon(
-                    imageVector = Icons.Outlined.Notifications,
-                    contentDescription = "Notifications",
-                    tint = Color(0xFF4A4045),
-                    modifier = Modifier.size(24.dp)
+                    imageVector = Icons.Outlined.Person,
+                    contentDescription = "Profile",
+                    tint = Color(0xFF4A3A43),
+                    modifier = Modifier.size(22.dp)
                 )
             }
         }
     }
+}
+
+@Composable
+fun HomeTopBar(
+    showNotificationBell: Boolean = false,
+    onNotificationClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    StandardLumiTopBar(
+        onProfileClick = onProfileClick,
+        modifier = modifier
+    )
 }

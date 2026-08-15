@@ -1,7 +1,9 @@
 package com.nebulatech.lumi.profile.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,15 +12,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.HealthAndSafety
 import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Security
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -34,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -46,10 +54,10 @@ import com.nebulatech.lumi.ui.theme.Primary
 @Composable
 fun AppSettingsCard(
     onPrivacyClick: () -> Unit = {},
-    onIntegrationsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var notificationsEnabled by remember { mutableStateOf(true) }
+    var showIntegrationsDialog by remember { mutableStateOf(false) }
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -72,7 +80,7 @@ fun AppSettingsCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Notifications Item with Switch
+            // 1. Notifications Item with Switch
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -111,7 +119,7 @@ fun AppSettingsCard(
                 color = Color(0xFFF2ECEF)
             )
 
-            // Data Privacy & Export Item
+            // 2. Data Privacy & Export Item
             SettingsRowItem(
                 icon = Icons.Outlined.Security,
                 title = "Data Privacy & Export",
@@ -123,14 +131,70 @@ fun AppSettingsCard(
                 color = Color(0xFFF2ECEF)
             )
 
-            // Integrations Item
+            // 3. App Integrations Item (Marked as Available Soon)
             SettingsRowItem(
                 icon = Icons.Outlined.HealthAndSafety,
-                title = "Integrations",
-                subtitle = "Apple Health connected",
-                onClick = onIntegrationsClick
+                title = "App Integrations",
+                subtitle = "Apple Health, Health Connect & Oura Ring",
+                badgeText = "Available Soon",
+                onClick = { showIntegrationsDialog = true }
             )
         }
+    }
+
+    // "Available Soon" Dialog
+    if (showIntegrationsDialog) {
+        AlertDialog(
+            onDismissRequest = { showIntegrationsDialog = false },
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFF9E4EB)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.AutoAwesome,
+                        contentDescription = null,
+                        tint = Primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = "Integrations Available Soon",
+                    fontFamily = LiterataFontFamily,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Primary
+                )
+            },
+            text = {
+                Text(
+                    text = "We are currently building seamless synchronization with Apple Health, Health Connect, Oura Ring, and Garmin to automatically sync your BBT and sleep data.",
+                    fontFamily = ManropeFontFamily,
+                    fontSize = 14.sp,
+                    color = Color(0xFF5E4E57)
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = { showIntegrationsDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = Primary),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Text(
+                        text = "Got it",
+                        fontFamily = ManropeFontFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(24.dp)
+        )
     }
 }
 
@@ -180,7 +244,7 @@ fun SupportAndLogoutCard(
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(14.dp),
-                colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(contentColor = Primary),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Primary),
                 border = androidx.compose.foundation.BorderStroke(1.dp, Primary)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -207,6 +271,7 @@ private fun SettingsRowItem(
     icon: ImageVector,
     title: String,
     subtitle: String? = null,
+    badgeText: String? = null,
     onClick: () -> Unit
 ) {
     Row(
@@ -216,7 +281,10 @@ private fun SettingsRowItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+        ) {
             Icon(
                 imageVector = icon,
                 contentDescription = title,
@@ -225,18 +293,37 @@ private fun SettingsRowItem(
             )
             Spacer(modifier = Modifier.width(14.dp))
             Column {
-                Text(
-                    text = title,
-                    fontFamily = ManropeFontFamily,
-                    fontSize = 15.sp,
-                    color = Color(0xFF26181F)
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = title,
+                        fontFamily = ManropeFontFamily,
+                        fontSize = 15.sp,
+                        color = Color(0xFF26181F)
+                    )
+                    if (badgeText != null) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color(0xFFF9E4EB))
+                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                        ) {
+                            Text(
+                                text = badgeText,
+                                fontFamily = ManropeFontFamily,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Primary
+                            )
+                        }
+                    }
+                }
                 if (subtitle != null) {
                     Text(
                         text = subtitle,
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        color = Primary
+                        color = Color(0xFF8A7B84)
                     )
                 }
             }

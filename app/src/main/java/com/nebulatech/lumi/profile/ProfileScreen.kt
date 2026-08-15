@@ -19,6 +19,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.profile.components.AppSettingsCard
+import com.nebulatech.lumi.profile.components.EditHealthProfileBottomSheet
 import com.nebulatech.lumi.profile.components.HealthProfileCard
 import com.nebulatech.lumi.profile.components.HeroUserCard
 import com.nebulatech.lumi.profile.components.SupportAndLogoutCard
@@ -80,6 +86,11 @@ fun ProfileScreen(
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var cycleLengthDays by remember { mutableIntStateOf(28) }
+    var periodDurationDays by remember { mutableIntStateOf(5) }
+    var primaryGoal by remember { mutableStateOf("Track Cycles") }
+    var showEditSheet by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -108,11 +119,12 @@ fun ProfileScreen(
                 memberStatus = "Premium Member"
             )
 
-            // 2. Health Profile Card
+            // 2. Health Profile Card (Editable)
             HealthProfileCard(
-                cycleLengthDays = 28,
-                periodDurationDays = 5,
-                primaryGoal = "Track Cycles"
+                cycleLengthDays = cycleLengthDays,
+                periodDurationDays = periodDurationDays,
+                primaryGoal = primaryGoal,
+                onEditClick = { showEditSheet = true }
             )
 
             // 3. App Settings Card
@@ -122,6 +134,22 @@ fun ProfileScreen(
             SupportAndLogoutCard()
 
             Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // Edit Health Profile Bottom Sheet Modal
+        if (showEditSheet) {
+            EditHealthProfileBottomSheet(
+                initialCycleLength = cycleLengthDays,
+                initialPeriodDuration = periodDurationDays,
+                initialPrimaryGoal = primaryGoal,
+                onDismissRequest = { showEditSheet = false },
+                onSave = { newLength, newDuration, newGoal ->
+                    cycleLengthDays = newLength
+                    periodDurationDays = newDuration
+                    primaryGoal = newGoal
+                    showEditSheet = false
+                }
+            )
         }
     }
 }
