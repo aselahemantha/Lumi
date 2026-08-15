@@ -6,6 +6,9 @@ import com.nebulatech.lumi.di.databaseModule
 import com.nebulatech.lumi.home.HomeViewModel
 import com.nebulatech.lumi.insights.InsightsViewModel
 import com.nebulatech.lumi.logging.LoggingViewModel
+import com.nebulatech.lumi.notifications.LumiNotificationChannels
+import com.nebulatech.lumi.notifications.LumiNotificationScheduler
+import com.nebulatech.lumi.notifications.NotificationCenterViewModel
 import com.nebulatech.lumi.onboarding.OnboardingViewModel
 import com.nebulatech.lumi.profile.ProfileViewModel
 import org.koin.android.ext.koin.androidContext
@@ -21,6 +24,7 @@ val appModule = module {
     viewModelOf(::ProfileViewModel)
     viewModelOf(::CalendarViewModel)
     viewModelOf(::InsightsViewModel)
+    viewModelOf(::NotificationCenterViewModel)
 }
 
 class LumiApp : Application() {
@@ -33,5 +37,11 @@ class LumiApp : Application() {
                 databaseModule
             )
         }
+
+        // Initialize Android Notification Channels across all categories
+        LumiNotificationChannels.createChannels(this)
+
+        // Schedule exact alarms for daily reflections, morning BBT, and cycle alerts
+        LumiNotificationScheduler.scheduleAllReminders(this)
     }
 }
