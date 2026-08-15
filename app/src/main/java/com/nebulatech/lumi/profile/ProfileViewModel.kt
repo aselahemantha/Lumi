@@ -2,6 +2,8 @@ package com.nebulatech.lumi.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nebulatech.lumi.core.domain.Result
+import com.nebulatech.lumi.data.model.UserProfile
 import com.nebulatech.lumi.data.repository.RoomUserRepository
 import com.nebulatech.lumi.data.repository.UserRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,6 +15,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 class ProfileViewModel(
     private val userRepository: UserRepository
@@ -50,10 +53,51 @@ class ProfileViewModel(
 
     fun onAction(action: ProfileAction) {
         when (action) {
-            ProfileAction.LoadProfile -> Unit // handled by init
+            ProfileAction.LoadProfile -> Unit
+            is ProfileAction.UpdateHealthProfile -> {
+                viewModelScope.launch {
+                    val currentProfileResult = userRepository.getUserProfile(userId)
+                    val currentProfile = (currentProfileResult as? Result.Success)?.data
+                    val now = Instant.now().toString()
+                    val updated = (currentProfile ?: UserProfile(
+                        id = UUID.randomUUID().toString(),
+                        userId = userId,
+                        cycleLength = action.cycleLength,
+                        periodDuration = action.periodDuration,
+                        primaryGoal = action.primaryGoal,
+                        notificationsEnabled = true,
+                        trackingStartedDate = now,
+                        healthConditions = emptyList(),
+                        updatedAt = now
+                    )).copy(
+                        cycleLength = action.cycleLength,
+                        periodDuration = action.periodDuration,
+                        primaryGoal = action.primaryGoal,
+                        updatedAt = now
+                    )
+                    userRepository.saveUserProfile(updated)
+                }
+            }
             is ProfileAction.UpdateNotifications -> {
                 viewModelScope.launch {
-                    // Future: update notification settings in NotificationSettingRepository
+                    val currentProfileResult = userRepository.getUserProfile(userId)
+                    val currentProfile = (currentProfileResult as? Result.Success)?.data
+                    val now = Instant.now().toString()
+                    val updated = (currentProfile ?: UserProfile(
+                        id = UUID.randomUUID().toString(),
+                        userId = userId,
+                        cycleLength = 28,
+                        periodDuration = 5,
+                        primaryGoal = com.nebulatech.lumi.data.model.PrimaryGoal.TRACK_CYCLE,
+                        notificationsEnabled = action.enabled,
+                        trackingStartedDate = now,
+                        healthConditions = emptyList(),
+                        updatedAt = now
+                    )).copy(
+                        notificationsEnabled = action.enabled,
+                        updatedAt = now
+                    )
+                    userRepository.saveUserProfile(updated)
                 }
             }
         }

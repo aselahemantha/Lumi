@@ -23,6 +23,11 @@ data class ProfileState(
 
 sealed interface ProfileAction {
     data object LoadProfile : ProfileAction
+    data class UpdateHealthProfile(
+        val cycleLength: Int,
+        val periodDuration: Int,
+        val primaryGoal: PrimaryGoal
+    ) : ProfileAction
     data class UpdateNotifications(val enabled: Boolean) : ProfileAction
 }
 

@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.data.model.PrimaryGoal
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.profile.components.AppSettingsCard
@@ -122,15 +123,17 @@ fun ProfileScreen(
             HealthProfileCard(
                 cycleLengthDays = state.cycleLength,
                 periodDurationDays = state.periodDuration,
-                primaryGoal = state.primaryGoal.name
-                    .replace('_', ' ')
-                    .lowercase()
-                    .replaceFirstChar { it.uppercase() },
+                primaryGoal = state.primaryGoal.toDisplayName(),
                 onEditClick = { showEditSheet = true }
             )
 
             // 3. App Settings Card
-            AppSettingsCard()
+            AppSettingsCard(
+                notificationsEnabled = state.notificationsEnabled,
+                onNotificationsToggle = { enabled ->
+                    profileVm.onAction(ProfileAction.UpdateNotifications(enabled))
+                }
+            )
 
             // 4. Support & Log Out Card
             SupportAndLogoutCard()
@@ -143,18 +146,36 @@ fun ProfileScreen(
             EditHealthProfileBottomSheet(
                 initialCycleLength = state.cycleLength,
                 initialPeriodDuration = state.periodDuration,
-                initialPrimaryGoal = state.primaryGoal.name
-                    .replace('_', ' ')
-                    .lowercase()
-                    .replaceFirstChar { it.uppercase() },
+                initialPrimaryGoal = state.primaryGoal.toDisplayName(),
                 onDismissRequest = { showEditSheet = false },
-                onSave = { _, _, _ ->
-                    // Future: ProfileViewModel.onAction(UpdateCycleSettings(...))
+                onSave = { newLength, newDuration, newGoal ->
+                    profileVm.onAction(
+                        ProfileAction.UpdateHealthProfile(
+                            cycleLength = newLength,
+                            periodDuration = newDuration,
+                            primaryGoal = newGoal.toPrimaryGoal()
+                        )
+                    )
                     showEditSheet = false
                 }
             )
         }
     }
+}
+
+private fun PrimaryGoal.toDisplayName(): String = when (this) {
+    PrimaryGoal.TRACK_CYCLE -> "Track Cycles"
+    PrimaryGoal.UNDERSTAND_SYMPTOMS -> "Understand Symptoms"
+    PrimaryGoal.OPTIMIZE_FERTILITY -> "Optimize Fertility"
+    PrimaryGoal.AVOID_PREGNANCY -> "Avoid Pregnancy"
+}
+
+private fun String.toPrimaryGoal(): PrimaryGoal = when (this) {
+    "Track Cycles" -> PrimaryGoal.TRACK_CYCLE
+    "Understand Symptoms" -> PrimaryGoal.UNDERSTAND_SYMPTOMS
+    "Optimize Fertility" -> PrimaryGoal.OPTIMIZE_FERTILITY
+    "Avoid Pregnancy" -> PrimaryGoal.AVOID_PREGNANCY
+    else -> PrimaryGoal.TRACK_CYCLE
 }
 
 @Preview(showBackground = true)

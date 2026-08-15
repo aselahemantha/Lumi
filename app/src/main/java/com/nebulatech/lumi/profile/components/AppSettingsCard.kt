@@ -20,7 +20,7 @@ import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.HealthAndSafety
-import androidx.compose.material.icons.outlined.HelpOutline
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material3.AlertDialog
@@ -53,10 +53,11 @@ import com.nebulatech.lumi.ui.theme.Primary
 
 @Composable
 fun AppSettingsCard(
+    notificationsEnabled: Boolean = true,
+    onNotificationsToggle: (Boolean) -> Unit = {},
     onPrivacyClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var notificationsEnabled by remember { mutableStateOf(true) }
     var showIntegrationsDialog by remember { mutableStateOf(false) }
 
     Card(
@@ -104,7 +105,7 @@ fun AppSettingsCard(
 
                 Switch(
                     checked = notificationsEnabled,
-                    onCheckedChange = { notificationsEnabled = it },
+                    onCheckedChange = onNotificationsToggle,
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
                         checkedTrackColor = Primary,
@@ -218,7 +219,7 @@ fun SupportAndLogoutCard(
         ) {
             // Help Center Item
             SettingsRowItem(
-                icon = Icons.Outlined.HelpOutline,
+                icon = Icons.Outlined.Info,
                 title = "Help Center",
                 onClick = onHelpClick
             )

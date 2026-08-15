@@ -57,9 +57,9 @@ fun EditHealthProfileBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    var cycleLength by remember { mutableIntStateOf(initialCycleLength) }
-    var periodDuration by remember { mutableIntStateOf(initialPeriodDuration) }
-    var primaryGoal by remember { mutableStateOf(initialPrimaryGoal) }
+    var cycleLength by remember(initialCycleLength) { mutableIntStateOf(initialCycleLength) }
+    var periodDuration by remember(initialPeriodDuration) { mutableIntStateOf(initialPeriodDuration) }
+    var primaryGoal by remember(initialPrimaryGoal) { mutableStateOf(initialPrimaryGoal) }
 
     val goalsList = listOf(
         "Track Cycles",
