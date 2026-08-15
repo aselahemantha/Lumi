@@ -6,10 +6,12 @@ import com.nebulatech.lumi.data.repository.BbtRepository
 import com.nebulatech.lumi.data.repository.CycleRepository
 import com.nebulatech.lumi.data.repository.DailyLogRepository
 import com.nebulatech.lumi.data.repository.LhTestRepository
+import com.nebulatech.lumi.data.repository.NotificationRepository
 import com.nebulatech.lumi.data.repository.RoomBbtRepository
 import com.nebulatech.lumi.data.repository.RoomCycleRepository
 import com.nebulatech.lumi.data.repository.RoomDailyLogRepository
 import com.nebulatech.lumi.data.repository.RoomLhTestRepository
+import com.nebulatech.lumi.data.repository.RoomNotificationRepository
 import com.nebulatech.lumi.data.repository.RoomUserRepository
 import com.nebulatech.lumi.data.repository.UserRepository
 import org.koin.android.ext.koin.androidContext
@@ -39,6 +41,7 @@ val databaseModule = module {
     single { get<LumiDatabase>().customSymptomDao() }
     single { get<LumiDatabase>().notificationSettingDao() }
     single { get<LumiDatabase>().syncQueueDao() }
+    single { get<LumiDatabase>().appNotificationDao() }
 
     // Repositories
     singleOf(::RoomUserRepository) { bind<UserRepository>() }
@@ -46,4 +49,5 @@ val databaseModule = module {
     singleOf(::RoomDailyLogRepository) { bind<DailyLogRepository>() }
     singleOf(::RoomBbtRepository) { bind<BbtRepository>() }
     singleOf(::RoomLhTestRepository) { bind<LhTestRepository>() }
+    singleOf(::RoomNotificationRepository) { bind<NotificationRepository>() }
 }

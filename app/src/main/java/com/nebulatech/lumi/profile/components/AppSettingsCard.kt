@@ -1,5 +1,10 @@
 package com.nebulatech.lumi.profile.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,7 +59,13 @@ import com.nebulatech.lumi.ui.theme.Primary
 @Composable
 fun AppSettingsCard(
     notificationsEnabled: Boolean = true,
+    notifDailyLog: Boolean = true,
+    notifMorningBbt: Boolean = true,
+    notifPeriodAlerts: Boolean = true,
+    notifFertilityAlerts: Boolean = true,
+    notifPhaseInsights: Boolean = true,
     onNotificationsToggle: (Boolean) -> Unit = {},
+    onGranularToggle: (type: String, enabled: Boolean) -> Unit = { _, _ -> },
     onPrivacyClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -81,7 +92,7 @@ fun AppSettingsCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 1. Notifications Item with Switch
+            // 1. Master Notifications Item with Switch
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -95,12 +106,21 @@ fun AppSettingsCard(
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(14.dp))
-                    Text(
-                        text = "Notifications",
-                        fontFamily = ManropeFontFamily,
-                        fontSize = 15.sp,
-                        color = Color(0xFF26181F)
-                    )
+                    Column {
+                        Text(
+                            text = "Notifications",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF26181F)
+                        )
+                        Text(
+                            text = if (notificationsEnabled) "All reminders active" else "All reminders paused",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 12.sp,
+                            color = Color(0xFF8A7A83)
+                        )
+                    }
                 }
 
                 Switch(
@@ -115,8 +135,70 @@ fun AppSettingsCard(
                 )
             }
 
+            // Expandable Granular Reminders Sub-section
+            AnimatedVisibility(
+                visible = notificationsEnabled,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 14.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(Color(0xFFFBF8F9))
+                        .padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Sub-item 1: Daily Log Reflection
+                    NotificationSubToggleRow(
+                        title = "Daily Log Reflection",
+                        timeBadge = "8:30 PM",
+                        isChecked = notifDailyLog,
+                        onCheckedChange = { onGranularToggle("DAILY_LOG", it) }
+                    )
+
+                    HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
+
+                    // Sub-item 2: Morning BBT Reminder
+                    NotificationSubToggleRow(
+                        title = "Morning BBT Reminder",
+                        timeBadge = "7:00 AM",
+                        isChecked = notifMorningBbt,
+                        onCheckedChange = { onGranularToggle("BBT_REMINDER", it) }
+                    )
+
+                    HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
+
+                    // Sub-item 3: Period Predictions & 2-Day Alerts
+                    NotificationSubToggleRow(
+                        title = "Period Predictions & 2-Day Alerts",
+                        isChecked = notifPeriodAlerts,
+                        onCheckedChange = { onGranularToggle("PERIOD_START", it) }
+                    )
+
+                    HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
+
+                    // Sub-item 4: Fertile Window & Ovulation Alerts
+                    NotificationSubToggleRow(
+                        title = "Fertile Window & Ovulation Alerts",
+                        isChecked = notifFertilityAlerts,
+                        onCheckedChange = { onGranularToggle("FERTILE_WINDOW", it) }
+                    )
+
+                    HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
+
+                    // Sub-item 5: Phase Shift Insights
+                    NotificationSubToggleRow(
+                        title = "Phase Shift & Wellness Insights",
+                        isChecked = notifPhaseInsights,
+                        onCheckedChange = { onGranularToggle("PHASE_INSIGHT", it) }
+                    )
+                }
+            }
+
             HorizontalDivider(
-                modifier = Modifier.padding(vertical = 12.dp),
+                modifier = Modifier.padding(vertical = 14.dp),
                 color = Color(0xFFF2ECEF)
             )
 
@@ -197,6 +279,68 @@ fun AppSettingsCard(
             shape = RoundedCornerShape(24.dp)
         )
     }
+}
+
+@Composable
+private fun NotificationSubToggleRow(
+    title: String,
+    timeBadge: String? = null,
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = title,
+                fontFamily = ManropeFontFamily,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF26181F)
+            )
+
+            if (timeBadge != null) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFFF0E5EB))
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = timeBadge,
+                        fontFamily = ManropeFontFamily,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Primary
+                    )
+                }
+            }
+        }
+
+        Switch(
+            checked = isChecked,
+            onCheckedChange = onCheckedChange,
+            modifier = Modifier.size(scale = 0.8f, defaultSize = 36.dp),
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = Primary,
+                uncheckedThumbColor = Color.White,
+                uncheckedTrackColor = Color(0xFFE4DCDD)
+            )
+        )
+    }
+}
+
+@Composable
+private fun Modifier.size(scale: Float, defaultSize: androidx.compose.ui.unit.Dp): Modifier {
+    return this.height(defaultSize)
 }
 
 @Composable

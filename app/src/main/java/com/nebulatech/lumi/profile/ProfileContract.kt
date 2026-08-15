@@ -18,7 +18,12 @@ data class ProfileState(
     val weight: Double? = null,
     val weightUnit: WeightUnit = WeightUnit.KG,
     val healthConditions: List<HealthConditionType> = emptyList(),
-    val notificationsEnabled: Boolean = true
+    val notificationsEnabled: Boolean = true,
+    val notifDailyLog: Boolean = true,
+    val notifMorningBbt: Boolean = true,
+    val notifPeriodAlerts: Boolean = true,
+    val notifFertilityAlerts: Boolean = true,
+    val notifPhaseInsights: Boolean = true
 )
 
 sealed interface ProfileAction {
@@ -29,6 +34,7 @@ sealed interface ProfileAction {
         val primaryGoal: PrimaryGoal
     ) : ProfileAction
     data class UpdateNotifications(val enabled: Boolean) : ProfileAction
+    data class ToggleNotificationSetting(val type: String, val enabled: Boolean) : ProfileAction
 }
 
 sealed interface ProfileEvent {

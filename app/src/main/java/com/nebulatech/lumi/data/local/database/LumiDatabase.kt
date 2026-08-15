@@ -2,6 +2,7 @@ package com.nebulatech.lumi.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.nebulatech.lumi.data.local.dao.AppNotificationDao
 import com.nebulatech.lumi.data.local.dao.BbtReadingDao
 import com.nebulatech.lumi.data.local.dao.CustomSymptomDao
 import com.nebulatech.lumi.data.local.dao.CycleDao
@@ -13,6 +14,7 @@ import com.nebulatech.lumi.data.local.dao.NotificationSettingDao
 import com.nebulatech.lumi.data.local.dao.SyncQueueDao
 import com.nebulatech.lumi.data.local.dao.UserDao
 import com.nebulatech.lumi.data.local.dao.UserProfileDao
+import com.nebulatech.lumi.data.local.entity.AppNotificationEntity
 import com.nebulatech.lumi.data.local.entity.BbtReadingEntity
 import com.nebulatech.lumi.data.local.entity.CustomSymptomEntity
 import com.nebulatech.lumi.data.local.entity.CycleEntity
@@ -37,9 +39,10 @@ import com.nebulatech.lumi.data.local.entity.UserProfileEntity
         LhTestEntity::class,
         CustomSymptomEntity::class,
         NotificationSettingEntity::class,
-        SyncQueueEntity::class
+        SyncQueueEntity::class,
+        AppNotificationEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class LumiDatabase : RoomDatabase() {
@@ -54,6 +57,7 @@ abstract class LumiDatabase : RoomDatabase() {
     abstract fun customSymptomDao(): CustomSymptomDao
     abstract fun notificationSettingDao(): NotificationSettingDao
     abstract fun syncQueueDao(): SyncQueueDao
+    abstract fun appNotificationDao(): AppNotificationDao
 
     companion object {
         const val DATABASE_NAME = "lumi.db"

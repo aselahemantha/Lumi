@@ -122,11 +122,19 @@ fun ProfileScreen(
                 onEditClick = { showEditSheet = true }
             )
 
-            // 3. App Settings Card
+            // 3. App Settings Card (with expanding reminder manager)
             AppSettingsCard(
                 notificationsEnabled = state.notificationsEnabled,
+                notifDailyLog = state.notifDailyLog,
+                notifMorningBbt = state.notifMorningBbt,
+                notifPeriodAlerts = state.notifPeriodAlerts,
+                notifFertilityAlerts = state.notifFertilityAlerts,
+                notifPhaseInsights = state.notifPhaseInsights,
                 onNotificationsToggle = { enabled ->
                     profileVm.onAction(ProfileAction.UpdateNotifications(enabled))
+                },
+                onGranularToggle = { type, enabled ->
+                    profileVm.onAction(ProfileAction.ToggleNotificationSetting(type, enabled))
                 }
             )
 

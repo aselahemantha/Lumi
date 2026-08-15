@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nebulatech.lumi.core.domain.Result
 import com.nebulatech.lumi.data.model.UserProfile
+import com.nebulatech.lumi.data.repository.NotificationRepository
 import com.nebulatech.lumi.data.repository.RoomUserRepository
 import com.nebulatech.lumi.data.repository.UserRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,16 +19,21 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class ProfileViewModel(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
 
     private val userId = RoomUserRepository.DEFAULT_LOCAL_USER_ID
 
     val state: StateFlow<ProfileState> = combine(
         userRepository.getCurrentUser(),
-        userRepository.getUserProfileFlow(userId)
-    ) { user, profile ->
+        userRepository.getUserProfileFlow(userId),
+        notificationRepository.getSettingsFlow(userId)
+    ) { user, profile, settings ->
         if (user == null) return@combine ProfileState(isLoading = false)
+
+        val settingsMap = settings.associate { it.reminderType to it.isEnabled }
+        val masterEnabled = profile?.notificationsEnabled ?: true
 
         ProfileState(
             isLoading = false,
@@ -43,7 +49,12 @@ class ProfileViewModel(
             weight = profile?.weight,
             weightUnit = profile?.weightUnit ?: com.nebulatech.lumi.data.model.WeightUnit.KG,
             healthConditions = profile?.healthConditions ?: emptyList(),
-            notificationsEnabled = profile?.notificationsEnabled ?: true
+            notificationsEnabled = masterEnabled,
+            notifDailyLog = settingsMap["DAILY_LOG"] ?: masterEnabled,
+            notifMorningBbt = settingsMap["BBT_REMINDER"] ?: masterEnabled,
+            notifPeriodAlerts = settingsMap["PERIOD_START"] ?: masterEnabled,
+            notifFertilityAlerts = settingsMap["FERTILE_WINDOW"] ?: masterEnabled,
+            notifPhaseInsights = settingsMap["PHASE_INSIGHT"] ?: masterEnabled
         )
     }.stateIn(
         scope = viewModelScope,
@@ -98,6 +109,12 @@ class ProfileViewModel(
                         updatedAt = now
                     )
                     userRepository.saveUserProfile(updated)
+                    notificationRepository.toggleAllSettings(userId, action.enabled)
+                }
+            }
+            is ProfileAction.ToggleNotificationSetting -> {
+                viewModelScope.launch {
+                    notificationRepository.updateSetting(userId, action.type, action.enabled)
                 }
             }
         }
