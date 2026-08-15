@@ -1,14 +1,11 @@
 package com.nebulatech.lumi.insights.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,8 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccessTime
+import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.CloudQueue
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -30,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
@@ -92,30 +91,8 @@ fun InsightsLumiBannerCard(
     }
 }
 
-data class LearnArticleItem(
-    val category: String,
-    val title: String,
-    val readTimeMinutes: Int,
-    val gradientColors: List<Color>
-)
-
 @Composable
 fun LearnArticlesSection(
-    articles: List<LearnArticleItem> = listOf(
-        LearnArticleItem(
-            category = "Sleep & Cycle",
-            title = "Why Estrogen Impacts Sleep",
-            readTimeMinutes = 4,
-            gradientColors = listOf(Color(0xFFF3D7DF), Color(0xFFE9C5D0))
-        ),
-        LearnArticleItem(
-            category = "Nutrition",
-            title = "The Science of Luteal Cravings",
-            readTimeMinutes = 3,
-            gradientColors = listOf(Color(0xFFFDE4C3), Color(0xFFF5CD8B))
-        )
-    ),
-    onArticleClick: (LearnArticleItem) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -129,78 +106,77 @@ fun LearnArticlesSection(
             modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
         )
 
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            articles.forEach { article ->
-                Card(
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(96.dp)
-                        .clickable { onArticleClick(article) },
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                        .size(54.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFFDF0F4)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Left Thumbnail Box with smooth gradient wave effect
-                        Box(
-                            modifier = Modifier
-                                .width(96.dp)
-                                .fillMaxHeight()
-                                .background(
-                                    brush = Brush.linearGradient(colors = article.gradientColors)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.White.copy(alpha = 0.5f))
-                            )
-                        }
+                    Icon(
+                        imageVector = Icons.Outlined.CloudQueue,
+                        contentDescription = null,
+                        tint = Primary,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
 
-                        // Right Title & Metadata
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = article.category,
-                                fontFamily = ManropeFontFamily,
-                                fontSize = 12.sp,
-                                color = Color(0xFF7A6A73)
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = article.title,
-                                fontFamily = LiterataFontFamily,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF26181F),
-                                maxLines = 1
-                            )
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Outlined.AccessTime,
-                                    contentDescription = null,
-                                    tint = Color(0xFF8A7A83),
-                                    modifier = Modifier.size(13.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "${article.readTimeMinutes} min read",
-                                    fontFamily = ManropeFontFamily,
-                                    fontSize = 11.sp,
-                                    color = Color(0xFF8A7A83)
-                                )
-                            }
-                        }
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Text(
+                    text = "Personalized Health Articles",
+                    fontFamily = LiterataFontFamily,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF26181F)
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "Evidence-based research, sleep studies, and nutrition guides will be available when connected online or syncing with Lumi Cloud.",
+                    fontFamily = ManropeFontFamily,
+                    fontSize = 13.sp,
+                    lineHeight = 20.sp,
+                    color = Color(0xFF6E5E67),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFFF4EDF0))
+                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.MenuBook,
+                            contentDescription = null,
+                            tint = Primary,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Online Library Coming Soon",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Primary
+                        )
                     }
                 }
             }

@@ -6,20 +6,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
-import com.nebulatech.lumi.home.components.StandardLumiTopBar
 import com.nebulatech.lumi.insights.components.CycleAtAGlanceSection
 import com.nebulatech.lumi.insights.components.HormoneSymptomTrendsCard
 import com.nebulatech.lumi.insights.components.InsightsLumiBannerCard
@@ -29,30 +31,18 @@ import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
-
-@Composable
-fun InsightsTopBar(
-    onProfileClick: () -> Unit = {},
-    modifier: Modifier = Modifier
-) {
-    StandardLumiTopBar(
-        onProfileClick = onProfileClick,
-        modifier = modifier
-    )
-}
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun InsightsScreen(
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val viewModel: InsightsViewModel = koinViewModel()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            InsightsTopBar(
-                onProfileClick = { onTabSelected(HomeTab.PROFILE) }
-            )
-        },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.INSIGHTS,
@@ -65,12 +55,13 @@ fun InsightsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 8.dp),
+                .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             // Header Title & Subtitle
-            Column {
+            Column(modifier = Modifier.padding(top = 4.dp)) {
                 Text(
                     text = "Insights",
                     fontFamily = LiterataFontFamily,
@@ -87,19 +78,31 @@ fun InsightsScreen(
                 )
             }
 
-            // 1. Cycle At A Glance
-            CycleAtAGlanceSection()
+            // 1. Cycle At A Glance (Room cycles history)
+            CycleAtAGlanceSection(
+                cycles = state.cycleHistory
+            )
 
-            // 2. Interactive Hormone Cycle Tracker Chart
-            InteractiveHormoneChartCard()
+            // 2. Interactive Hormone Cycle Tracker Chart (defaults to user's active cycle day)
+            InteractiveHormoneChartCard(
+                initialDay = state.currentCycleDay
+            )
 
-            // 3. Hormone & Symptom Trends Summary
-            HormoneSymptomTrendsCard()
+            // 3. Hormone & Symptom Trends Summary (Room dynamic symptoms & active phase)
+            HormoneSymptomTrendsCard(
+                currentCycleDay = state.currentCycleDay,
+                cycleLength = state.cycleLength,
+                loggedSymptoms = state.loggedSymptomPoints
+            )
 
-            // 4. Lumi Insight Dark Banner
-            InsightsLumiBannerCard()
+            // 4. Dynamic Lumi Insight Dark Banner
+            InsightsLumiBannerCard(
+                text = state.dynamicInsightText.ifBlank {
+                    "We noticed your high-energy days consistently align with your Follicular phase. This is a great time for creative projects or intense workouts."
+                }
+            )
 
-            // 5. Learn Section
+            // 5. Learn Section (Online Cloud Sync banner)
             LearnArticlesSection()
 
             Spacer(modifier = Modifier.height(16.dp))

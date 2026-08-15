@@ -47,6 +47,8 @@ import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
 
+import com.nebulatech.lumi.insights.SymptomTrendPoint
+
 enum class HormoneFilter {
     ALL,
     ESTROGEN,
@@ -56,23 +58,34 @@ enum class HormoneFilter {
 
 @Composable
 fun HormoneSymptomTrendsCard(
+    currentCycleDay: Int = 1,
+    cycleLength: Int = 28,
+    loggedSymptoms: List<SymptomTrendPoint> = emptyList(),
     modifier: Modifier = Modifier
 ) {
-    var cursorRatio by remember { mutableFloatStateOf(0.76f) } // Default ~Day 21 (Luteal)
+    val initialRatio = remember(currentCycleDay, cycleLength) {
+        (currentCycleDay.toFloat() / cycleLength.toFloat()).coerceIn(0.05f, 0.95f)
+    }
+    var cursorRatio by remember(initialRatio) { mutableFloatStateOf(initialRatio) }
     var selectedFilter by remember { mutableStateOf(HormoneFilter.ALL) }
     var activeTooltip by remember { mutableStateOf<String?>(null) }
 
-    // Resolve current phase & logged symptom dynamically from cursor position
+    // Resolve current phase dynamically from cursor position
     val currentPhase = when {
         cursorRatio <= 0.33f -> "Menstrual"
         cursorRatio <= 0.68f -> "Follicular"
         else -> "Luteal"
     }
 
+    // Find nearest logged symptom to cursor or fallback
+    val nearestSymptom = loggedSymptoms.minByOrNull { kotlin.math.abs(it.dayRatio - cursorRatio) }
     val loggedSymptom = when {
-        cursorRatio <= 0.33f -> "Cramps logged"
-        cursorRatio <= 0.68f -> "High Energy logged"
-        else -> "Headaches logged"
+        nearestSymptom != null && kotlin.math.abs(nearestSymptom.dayRatio - cursorRatio) < 0.15f -> {
+            "${nearestSymptom.symptomName} (Day ${nearestSymptom.cycleDay})"
+        }
+        cursorRatio <= 0.33f -> "Menstrual Flow"
+        cursorRatio <= 0.68f -> "Estrogen Surge"
+        else -> "Progesterone Peak"
     }
 
     val estrogenColor = Color(0xFF704257)

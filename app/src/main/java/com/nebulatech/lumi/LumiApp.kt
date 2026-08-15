@@ -4,6 +4,7 @@ import android.app.Application
 import com.nebulatech.lumi.calendar.CalendarViewModel
 import com.nebulatech.lumi.di.databaseModule
 import com.nebulatech.lumi.home.HomeViewModel
+import com.nebulatech.lumi.insights.InsightsViewModel
 import com.nebulatech.lumi.logging.LoggingViewModel
 import com.nebulatech.lumi.onboarding.OnboardingViewModel
 import com.nebulatech.lumi.profile.ProfileViewModel
@@ -19,6 +20,7 @@ val appModule = module {
     viewModelOf(::LoggingViewModel)
     viewModelOf(::ProfileViewModel)
     viewModelOf(::CalendarViewModel)
+    viewModelOf(::InsightsViewModel)
 }
 
 class LumiApp : Application() {

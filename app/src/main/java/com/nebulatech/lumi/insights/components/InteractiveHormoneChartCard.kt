@@ -99,9 +99,10 @@ fun calculateHormonesForDay(day: Float): HormoneLevels {
 
 @Composable
 fun InteractiveHormoneChartCard(
+    initialDay: Int = 1,
     modifier: Modifier = Modifier
 ) {
-    var selectedDay by remember { mutableFloatStateOf(1f) }
+    var selectedDay by remember(initialDay) { mutableFloatStateOf(initialDay.toFloat().coerceIn(1f, 28f)) }
     val currentHormones = remember(selectedDay) { calculateHormonesForDay(selectedDay) }
 
     val estrogenColor = Color(0xFF1E65D8)     // Blue
