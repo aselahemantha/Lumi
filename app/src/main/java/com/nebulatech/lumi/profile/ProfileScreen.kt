@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +35,7 @@ import com.nebulatech.lumi.data.model.PrimaryGoal
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.profile.components.AppSettingsCard
+import com.nebulatech.lumi.profile.components.DataPrivacyBottomSheet
 import com.nebulatech.lumi.profile.components.EditHealthProfileBottomSheet
 import com.nebulatech.lumi.profile.components.HealthProfileCard
 import com.nebulatech.lumi.profile.components.HeroUserCard
@@ -70,7 +70,7 @@ fun ProfileTopBar(
             Icon(
                 imageVector = Icons.Outlined.Notifications,
                 contentDescription = "Notifications",
-                tint = Color(0xFF3B2D34),
+                tint = Color(0xFF4A3A43),
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -87,6 +87,7 @@ fun ProfileScreen(
     val state by profileVm.state.collectAsStateWithLifecycle()
 
     var showEditSheet by remember { mutableStateOf(false) }
+    var showPrivacySheet by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -122,7 +123,7 @@ fun ProfileScreen(
                 onEditClick = { showEditSheet = true }
             )
 
-            // 3. App Settings Card (with expanding reminder manager)
+            // 3. App Settings Card (with expanding reminder manager & privacy sheet)
             AppSettingsCard(
                 notificationsEnabled = state.notificationsEnabled,
                 notifDailyLog = state.notifDailyLog,
@@ -135,7 +136,8 @@ fun ProfileScreen(
                 },
                 onGranularToggle = { type, enabled ->
                     profileVm.onAction(ProfileAction.ToggleNotificationSetting(type, enabled))
-                }
+                },
+                onPrivacyClick = { showPrivacySheet = true }
             )
 
             // 4. Support & Log Out Card
@@ -161,6 +163,13 @@ fun ProfileScreen(
                     )
                     showEditSheet = false
                 }
+            )
+        }
+
+        // Data Privacy & Export Bottom Sheet Modal
+        if (showPrivacySheet) {
+            DataPrivacyBottomSheet(
+                onDismissRequest = { showPrivacySheet = false }
             )
         }
     }

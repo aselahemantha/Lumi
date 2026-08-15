@@ -2,18 +2,21 @@ package com.nebulatech.lumi.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nebulatech.lumi.core.domain.Result
+import com.nebulatech.lumi.data.model.Cycle
 import com.nebulatech.lumi.data.model.HealthConditionType
 import com.nebulatech.lumi.data.model.PrimaryGoal
 import com.nebulatech.lumi.data.model.UserProfile
 import com.nebulatech.lumi.data.model.WeightUnit
 import com.nebulatech.lumi.data.repository.CycleRepository
-import com.nebulatech.lumi.data.repository.RoomUserRepository
 import com.nebulatech.lumi.data.repository.UserRepository
-import com.nebulatech.lumi.core.domain.Result
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -25,7 +28,7 @@ class OnboardingViewModel(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(OnboardingState())
-    val state = _state.asStateFlow()
+    val state: StateFlow<OnboardingState> = _state.asStateFlow()
 
     private val _events = Channel<OnboardingEvent>()
     val events = _events.receiveAsFlow()
@@ -44,11 +47,14 @@ class OnboardingViewModel(
             is OnboardingAction.UpdateCycleLength -> {
                 _state.update { it.copy(cycleLength = action.length) }
             }
+            is OnboardingAction.UpdateCustomPastCycles -> {
+                _state.update { it.copy(customPastCycles = action.cycles) }
+            }
             is OnboardingAction.UpdateAge -> {
-                _state.update { it.copy(age = action.age.filter { char -> char.isDigit() }) }
+                _state.update { it.copy(age = action.age) }
             }
             is OnboardingAction.UpdateWeight -> {
-                _state.update { it.copy(weight = action.weight.filter { char -> char.isDigit() || char == '.' }) }
+                _state.update { it.copy(weight = action.weight) }
             }
             is OnboardingAction.UpdateWeightUnit -> {
                 _state.update { it.copy(weightUnit = action.unit) }
@@ -56,13 +62,9 @@ class OnboardingViewModel(
             is OnboardingAction.ToggleCondition -> {
                 _state.update { currentState ->
                     val updatedConditions = currentState.selectedConditions.toMutableSet()
-                    if (action.condition == "None of the above") {
-                        if (updatedConditions.contains(action.condition)) {
-                            updatedConditions.remove(action.condition)
-                        } else {
-                            updatedConditions.clear()
-                            updatedConditions.add(action.condition)
-                        }
+                    if (action.condition.equals("None of the above", ignoreCase = true)) {
+                        updatedConditions.clear()
+                        updatedConditions.add(action.condition)
                     } else {
                         updatedConditions.remove("None of the above")
                         if (updatedConditions.contains(action.condition)) {
@@ -155,14 +157,57 @@ class OnboardingViewModel(
                 return@launch
             }
 
-            // 3. Seed 3 months of baseline historical cycles + start current active cycle
-            cycleRepository.seedHistoricalCycles(
-                userId = user.id,
-                currentCycleStartDate = s.firstDayOfLastPeriod,
-                cycleLength = s.cycleLength,
-                periodDuration = s.periodDuration,
-                numberOfPastCycles = 3
-            )
+            // 3. Seed 3 months of baseline historical cycles (or custom manual past cycles) + start current active cycle
+            val manualCycles = s.customPastCycles
+            if (manualCycles != null && manualCycles.size == 3) {
+                for (i in 0 until 3) {
+                    val c = manualCycles[2 - i]
+                    val cycleStart = c.startDate
+                    val cycleEnd = cycleStart.plusDays((c.cycleLength - 1).toLong())
+                    val ovulationDay = maxOf(c.cycleLength - 14, c.periodDuration + 1)
+                    val ovulationDate = cycleStart.plusDays(ovulationDay.toLong()).toString()
+                    val histCycle = Cycle(
+                        id = UUID.randomUUID().toString(),
+                        userId = user.id,
+                        cycleNumber = i + 1,
+                        startDate = cycleStart.toString(),
+                        endDate = cycleEnd.toString(),
+                        cycleLength = c.cycleLength,
+                        periodLength = c.periodDuration,
+                        ovulationDate = ovulationDate,
+                        isCurrent = false,
+                        isRegular = true,
+                        notes = "Manual historical cycle entry",
+                        createdAt = now,
+                        updatedAt = now
+                    )
+                    cycleRepository.updateCycle(histCycle)
+                }
+                val currentCycle = Cycle(
+                    id = UUID.randomUUID().toString(),
+                    userId = user.id,
+                    cycleNumber = 4,
+                    startDate = s.firstDayOfLastPeriod.toString(),
+                    endDate = null,
+                    cycleLength = null,
+                    periodLength = s.periodDuration,
+                    ovulationDate = null,
+                    isCurrent = true,
+                    isRegular = true,
+                    notes = null,
+                    createdAt = now,
+                    updatedAt = now
+                )
+                cycleRepository.updateCycle(currentCycle)
+            } else {
+                cycleRepository.seedHistoricalCycles(
+                    userId = user.id,
+                    currentCycleStartDate = s.firstDayOfLastPeriod,
+                    cycleLength = s.cycleLength,
+                    periodDuration = s.periodDuration,
+                    numberOfPastCycles = 3
+                )
+            }
 
             _state.update { it.copy(isSaving = false) }
             _events.send(OnboardingEvent.NavigateNext(goal))

@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,6 +25,8 @@ fun CoreDataScreen(
     onAction: (OnboardingAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showManualPastCyclesSheet by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.Start
@@ -61,6 +67,20 @@ fun CoreDataScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CalibrationInfoBox()
+        CalibrationInfoBox(
+            hasManualData = state.customPastCycles != null,
+            onEnterManuallyClick = { showManualPastCyclesSheet = true }
+        )
+    }
+
+    if (showManualPastCyclesSheet) {
+        ManualPastCyclesBottomSheet(
+            firstDayOfLastPeriod = state.firstDayOfLastPeriod,
+            defaultCycleLength = state.cycleLength,
+            defaultPeriodDuration = state.periodDuration,
+            initialPastCycles = state.customPastCycles,
+            onDismissRequest = { showManualPastCyclesSheet = false },
+            onSave = { onAction(OnboardingAction.UpdateCustomPastCycles(it)) }
+        )
     }
 }

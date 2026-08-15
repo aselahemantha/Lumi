@@ -13,19 +13,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -37,11 +39,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.R
+import com.nebulatech.lumi.ui.theme.LiterataFontFamily
+import com.nebulatech.lumi.ui.theme.ManropeFontFamily
+import com.nebulatech.lumi.ui.theme.Primary
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -59,13 +65,9 @@ fun DatePickerCard(
     val dateFormatter = remember { DateTimeFormatter.ofPattern("MMM dd, yyyy") }
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(24.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
-        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         modifier = modifier.fillMaxWidth()
     ) {
         Column(
@@ -75,14 +77,17 @@ fun DatePickerCard(
         ) {
             Text(
                 text = stringResource(R.string.last_period_title),
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurface
+                fontFamily = LiterataFontFamily,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Primary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.last_period_subtitle),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                fontFamily = ManropeFontFamily,
+                fontSize = 14.sp,
+                color = Color(0xFF6E5E67)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -91,12 +96,12 @@ fun DatePickerCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(
-                        BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        BorderStroke(1.dp, Color(0xFFE8DFE4)),
                         RoundedCornerShape(16.dp)
                     )
                     .clip(RoundedCornerShape(16.dp))
                     .clickable { showDatePicker = true }
-                    .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                    .background(Color(0xFFFAF7F8))
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -108,26 +113,28 @@ fun DatePickerCard(
                     Icon(
                         imageVector = Icons.Default.DateRange,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = Primary,
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
                         text = selectedDate.format(dateFormatter),
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                        color = MaterialTheme.colorScheme.onSurface
+                        fontFamily = ManropeFontFamily,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF26181F)
                     )
                 }
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = Color(0xFF8A7A83),
                     modifier = Modifier.size(20.dp)
                 )
             }
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                color = Color(0xFFF2ECEF)
             )
 
             // Horizontal calendar strip highlighting the entire period duration
@@ -154,11 +161,12 @@ fun DatePickerCard(
                     ) {
                         Text(
                             text = weekdayLabels[index],
-                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 11.sp,
                             color = when {
-                                isPeriodStart -> MaterialTheme.colorScheme.primary
-                                isPeriodDay -> MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
-                                else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                isPeriodStart -> Primary
+                                isPeriodDay -> Primary.copy(alpha = 0.85f)
+                                else -> Color(0xFF8A7A83)
                             },
                             fontWeight = if (isPeriodDay) FontWeight.Bold else FontWeight.Normal
                         )
@@ -170,20 +178,20 @@ fun DatePickerCard(
                                 .clickable { onDateSelected(day) }
                                 .background(
                                     color = when {
-                                        isPeriodStart -> MaterialTheme.colorScheme.primary
-                                        isPeriodDay -> MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                                        else -> MaterialTheme.colorScheme.surfaceContainerLowest
+                                        isPeriodStart -> Primary
+                                        isPeriodDay -> Color(0xFFFCE8EF)
+                                        else -> Color(0xFFFAF7F8)
                                     }
                                 )
                                 .then(
                                     when {
                                         isPeriodStart -> Modifier
                                         isPeriodDay -> Modifier.border(
-                                            BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
+                                            BorderStroke(1.dp, Primary.copy(alpha = 0.35f)),
                                             CircleShape
                                         )
                                         else -> Modifier.border(
-                                            BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                                            BorderStroke(1.dp, Color(0xFFE8DFE4)),
                                             CircleShape
                                         )
                                     }
@@ -192,11 +200,12 @@ fun DatePickerCard(
                         ) {
                             Text(
                                 text = day.dayOfMonth.toString(),
-                                style = MaterialTheme.typography.bodyMedium,
+                                fontFamily = ManropeFontFamily,
+                                fontSize = 13.sp,
                                 color = when {
-                                    isPeriodStart -> MaterialTheme.colorScheme.onPrimary
-                                    isPeriodDay -> MaterialTheme.colorScheme.primary
-                                    else -> MaterialTheme.colorScheme.onSurface
+                                    isPeriodStart -> Color.White
+                                    isPeriodDay -> Primary
+                                    else -> Color(0xFF26181F)
                                 },
                                 fontWeight = if (isPeriodDay) FontWeight.Bold else FontWeight.Normal
                             )
@@ -207,7 +216,7 @@ fun DatePickerCard(
         }
     }
 
-    // Material 3 Date Picker Dialog
+    // Material 3 Date Picker Dialog with Lumi Theme Colors
     if (showDatePicker) {
         val initialSelectedMillis = remember(selectedDate) {
             selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -215,28 +224,67 @@ fun DatePickerCard(
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = initialSelectedMillis
         )
+
+        val lumiDatePickerColors = DatePickerDefaults.colors(
+            containerColor = Color(0xFFFAF7F5),
+            titleContentColor = Primary,
+            headlineContentColor = Primary,
+            weekdayContentColor = Color(0xFF7A6A73),
+            subheadContentColor = Color(0xFF5E4E57),
+            yearContentColor = Color(0xFF26181F),
+            currentYearContentColor = Primary,
+            selectedYearContentColor = Color.White,
+            selectedYearContainerColor = Primary,
+            dayContentColor = Color(0xFF26181F),
+            selectedDayContentColor = Color.White,
+            selectedDayContainerColor = Primary,
+            todayContentColor = Primary,
+            todayDateBorderColor = Primary
+        )
+
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
-                TextButton(onClick = {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        val newDate = Instant.ofEpochMilli(millis)
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate()
-                        onDateSelected(newDate)
-                    }
-                    showDatePicker = false
-                }) {
-                    Text("OK")
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            val newDate = Instant.ofEpochMilli(millis)
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                            onDateSelected(newDate)
+                        }
+                        showDatePicker = false
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Primary)
+                ) {
+                    Text(
+                        text = "OK",
+                        fontFamily = ManropeFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel")
+                TextButton(
+                    onClick = { showDatePicker = false },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF7A6A73))
+                ) {
+                    Text(
+                        text = "Cancel",
+                        fontFamily = ManropeFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    )
                 }
-            }
+            },
+            shape = RoundedCornerShape(28.dp),
+            colors = lumiDatePickerColors
         ) {
-            DatePicker(state = datePickerState)
+            DatePicker(
+                state = datePickerState,
+                colors = lumiDatePickerColors
+            )
         }
     }
 }
