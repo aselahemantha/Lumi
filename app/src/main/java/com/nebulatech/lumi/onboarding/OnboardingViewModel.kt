@@ -155,8 +155,14 @@ class OnboardingViewModel(
                 return@launch
             }
 
-            // 3. Start the first cycle from the entered period date
-            cycleRepository.startNewCycle(user.id, s.firstDayOfLastPeriod)
+            // 3. Seed 3 months of baseline historical cycles + start current active cycle
+            cycleRepository.seedHistoricalCycles(
+                userId = user.id,
+                currentCycleStartDate = s.firstDayOfLastPeriod,
+                cycleLength = s.cycleLength,
+                periodDuration = s.periodDuration,
+                numberOfPastCycles = 3
+            )
 
             _state.update { it.copy(isSaving = false) }
             _events.send(OnboardingEvent.NavigateNext(goal))

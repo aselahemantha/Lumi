@@ -22,6 +22,13 @@ interface CycleRepository {
     fun getAllCycles(userId: String): Flow<List<Cycle>>
     fun getLastNCycles(userId: String, n: Int = 6): Flow<List<Cycle>>
     suspend fun startNewCycle(userId: String, startDate: LocalDate): Result<Cycle, DataError.Local>
+    suspend fun seedHistoricalCycles(
+        userId: String,
+        currentCycleStartDate: LocalDate,
+        cycleLength: Int,
+        periodDuration: Int,
+        numberOfPastCycles: Int = 3
+    ): EmptyResult<DataError.Local>
     suspend fun updateCycle(cycle: Cycle): EmptyResult<DataError.Local>
     fun getCycleDay(userId: String, targetDate: LocalDate = LocalDate.now()): Flow<Int>
     fun getAverageCycleLength(userId: String): Flow<Int>
@@ -85,6 +92,70 @@ class RoomCycleRepository(
             )
             cycleDao.insertOrUpdate(newCycle.toCycleEntity())
             Result.Success(newCycle)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+    }
+
+    override suspend fun seedHistoricalCycles(
+        userId: String,
+        currentCycleStartDate: LocalDate,
+        cycleLength: Int,
+        periodDuration: Int,
+        numberOfPastCycles: Int
+    ): EmptyResult<DataError.Local> {
+        return try {
+            val now = Instant.now().toString()
+            val safeCycleLength = if (cycleLength in 20..45) cycleLength else 28
+            val safePeriodLength = if (periodDuration in 2..10) periodDuration else 5
+
+            // Generate past completed cycles backwards
+            for (i in numberOfPastCycles downTo 1) {
+                val cycleNum = numberOfPastCycles - i + 1
+                val cycleStart = currentCycleStartDate.minusDays((safeCycleLength * i).toLong())
+                val cycleEnd = currentCycleStartDate.minusDays((safeCycleLength * (i - 1) + 1).toLong())
+                val ovulationDay = maxOf(safeCycleLength - 14, safePeriodLength + 1)
+                val ovulationDate = cycleStart.plusDays(ovulationDay.toLong()).toString()
+
+                val historicalCycle = Cycle(
+                    id = UUID.randomUUID().toString(),
+                    userId = userId,
+                    cycleNumber = cycleNum,
+                    startDate = cycleStart.toString(),
+                    endDate = cycleEnd.toString(),
+                    cycleLength = safeCycleLength,
+                    periodLength = safePeriodLength,
+                    ovulationDate = ovulationDate,
+                    isCurrent = false,
+                    isRegular = true,
+                    notes = "Historical baseline cycle",
+                    createdAt = now,
+                    updatedAt = now
+                )
+                cycleDao.insertOrUpdate(historicalCycle.toCycleEntity())
+            }
+
+            // Create current active cycle with correct cycleNumber
+            val currentCycle = Cycle(
+                id = UUID.randomUUID().toString(),
+                userId = userId,
+                cycleNumber = numberOfPastCycles + 1,
+                startDate = currentCycleStartDate.toString(),
+                endDate = null,
+                cycleLength = null,
+                periodLength = safePeriodLength,
+                ovulationDate = null,
+                isCurrent = true,
+                isRegular = true,
+                notes = null,
+                createdAt = now,
+                updatedAt = now
+            )
+            cycleDao.markAllNotCurrent(userId, now)
+            cycleDao.insertOrUpdate(currentCycle.toCycleEntity())
+
+            Result.Success(Unit)
         } catch (e: Exception) {
             e.printStackTrace()
             Result.Error(DataError.Local.UNKNOWN)
