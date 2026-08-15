@@ -2,6 +2,7 @@ package com.nebulatech.lumi.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -13,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,7 +28,7 @@ import com.nebulatech.lumi.ui.theme.Primary
 
 /**
  * Standard Lumi Top Bar used across Home, Insights, and Calendar screens.
- * Features "Welcome, [Name]" (or "Lumi") text on left and Profile avatar button on right.
+ * Features "Welcome, [Name]" on left and personalized avatar button on right.
  */
 @Composable
 fun StandardLumiTopBar(
@@ -40,32 +40,43 @@ fun StandardLumiTopBar(
         modifier = modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val titleText = if (!userName.isNullOrBlank()) "Welcome, $userName" else "Lumi"
+        val titleText = if (!userName.isNullOrBlank()) "Welcome, $userName" else "Welcome"
         Text(
             text = titleText,
             fontFamily = LiterataFontFamily,
-            fontSize = if (!userName.isNullOrBlank()) 22.sp else 28.sp,
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Primary
         )
 
-        IconButton(onClick = onProfileClick) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFFEFE8EB))
-                    .border(1.dp, Primary.copy(alpha = 0.15f), CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
+        // Personalized Profile Avatar Pill
+        Box(
+            modifier = Modifier
+                .size(42.dp)
+                .clip(CircleShape)
+                .background(Color(0xFFF7DDE6))
+                .border(1.5.dp, Primary.copy(alpha = 0.25f), CircleShape)
+                .clickable { onProfileClick() },
+            contentAlignment = Alignment.Center
+        ) {
+            val initial = userName?.trim()?.firstOrNull()?.uppercase()
+            if (!initial.isNullOrBlank()) {
+                Text(
+                    text = initial,
+                    fontFamily = LiterataFontFamily,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Primary
+                )
+            } else {
                 Icon(
                     imageVector = Icons.Outlined.Person,
                     contentDescription = "Profile",
-                    tint = Color(0xFF4A3A43),
+                    tint = Primary,
                     modifier = Modifier.size(22.dp)
                 )
             }

@@ -61,7 +61,13 @@ fun LateLutealHomeScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { HomeTopBar(userName = userName, showNotificationBell = false) },
+        topBar = {
+            HomeTopBar(
+                userName = userName,
+                showNotificationBell = false,
+                onProfileClick = { onTabSelected(HomeTab.PROFILE) }
+            )
+        },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.TODAY,

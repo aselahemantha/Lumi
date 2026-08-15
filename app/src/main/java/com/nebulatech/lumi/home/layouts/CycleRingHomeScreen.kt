@@ -81,7 +81,13 @@ fun CycleRingHomeScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { HomeTopBar(userName = userName, showNotificationBell = true) },
+        topBar = {
+            HomeTopBar(
+                userName = userName,
+                showNotificationBell = true,
+                onProfileClick = { onTabSelected(HomeTab.PROFILE) }
+            )
+        },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.TODAY,

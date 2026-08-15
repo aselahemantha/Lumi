@@ -91,12 +91,12 @@ fun CycleRingWidget(
 
     Box(
         modifier = modifier
-            .size(260.dp)
-            .padding(8.dp),
+            .size(270.dp)
+            .padding(6.dp),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.size(230.dp)) {
-            val strokeWidth = 14.dp.toPx()
+        Canvas(modifier = Modifier.size(234.dp)) {
+            val strokeWidth = 22.dp.toPx()
             // Track background arc
             drawArc(
                 color = Color(0xFFF3EAEF),
