@@ -74,6 +74,7 @@ fun HomeScreenContainer(
                                     insightText = state.insightText,
                                     isPeriodPredicted = state.isPeriodPredicted,
                                     loggingViewModel = loggingVm,
+                                    onNotificationClick = { showNotificationCenter = true },
                                     onTabSelected = { selectedBottomTab = it }
                                 )
                             }
@@ -81,6 +82,7 @@ fun HomeScreenContainer(
                                 FertilityDashboardHomeScreen(
                                     userName = state.userName,
                                     loggingViewModel = loggingVm,
+                                    onNotificationClick = { showNotificationCenter = true },
                                     onTabSelected = { selectedBottomTab = it }
                                 )
                             }
@@ -90,6 +92,7 @@ fun HomeScreenContainer(
                                     progressRatio = state.progressRatio,
                                     userName = state.userName,
                                     loggingViewModel = loggingVm,
+                                    onNotificationClick = { showNotificationCenter = true },
                                     onTabSelected = { selectedBottomTab = it }
                                 )
                             }

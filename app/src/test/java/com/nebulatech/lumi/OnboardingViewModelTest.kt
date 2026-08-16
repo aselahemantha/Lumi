@@ -37,6 +37,7 @@ class OnboardingViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var fakeUserRepository: FakeUserRepository
     private lateinit var fakeCycleRepository: FakeCycleRepository
+    private lateinit var fakeNotificationRepository: FakeNotificationRepository
     private lateinit var viewModel: OnboardingViewModel
 
     @Before
@@ -44,7 +45,8 @@ class OnboardingViewModelTest {
         Dispatchers.setMain(testDispatcher)
         fakeUserRepository = FakeUserRepository()
         fakeCycleRepository = FakeCycleRepository()
-        viewModel = OnboardingViewModel(fakeUserRepository, fakeCycleRepository)
+        fakeNotificationRepository = FakeNotificationRepository()
+        viewModel = OnboardingViewModel(fakeUserRepository, fakeCycleRepository, fakeNotificationRepository)
     }
 
     @After
@@ -177,5 +179,15 @@ class OnboardingViewModelTest {
         override fun getAveragePeriodLength(userId: String): Flow<Int> = flowOf(5)
         override fun getCurrentPhase(userId: String, targetDate: LocalDate): Flow<CyclePhase> =
             flowOf(CyclePhase.FOLLICULAR)
+    }
+
+    private class FakeNotificationRepository : com.nebulatech.lumi.data.repository.NotificationRepository {
+        override fun getNotificationsFlow(userId: String): Flow<List<com.nebulatech.lumi.notifications.LumiNotificationItem>> = flowOf(emptyList())
+        override suspend fun addNotification(userId: String, item: com.nebulatech.lumi.notifications.LumiNotificationItem): EmptyResult<DataError.Local> = Result.Success(Unit)
+        override suspend fun clearAll(userId: String): EmptyResult<DataError.Local> = Result.Success(Unit)
+        override suspend fun deleteNotification(id: String): EmptyResult<DataError.Local> = Result.Success(Unit)
+        override fun getSettingsFlow(userId: String): Flow<List<com.nebulatech.lumi.data.local.entity.NotificationSettingEntity>> = flowOf(emptyList())
+        override suspend fun updateSetting(userId: String, type: String, isEnabled: Boolean): EmptyResult<DataError.Local> = Result.Success(Unit)
+        override suspend fun toggleAllSettings(userId: String, isEnabled: Boolean): EmptyResult<DataError.Local> = Result.Success(Unit)
     }
 }

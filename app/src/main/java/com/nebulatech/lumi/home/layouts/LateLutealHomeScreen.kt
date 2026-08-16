@@ -45,6 +45,7 @@ fun LateLutealHomeScreen(
     userName: String = "",
     loggingViewModel: LoggingViewModel? = null,
     onViewAllSymptoms: () -> Unit = {},
+    onNotificationClick: () -> Unit = {},
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -64,7 +65,8 @@ fun LateLutealHomeScreen(
         topBar = {
             HomeTopBar(
                 userName = userName,
-                showNotificationBell = false,
+                showNotificationBell = true,
+                onNotificationClick = onNotificationClick,
                 onProfileClick = { onTabSelected(HomeTab.PROFILE) }
             )
         },

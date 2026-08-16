@@ -11,6 +11,9 @@ import com.nebulatech.lumi.data.model.UserProfile
 import com.nebulatech.lumi.data.model.WeightUnit
 import com.nebulatech.lumi.data.repository.CycleRepository
 import com.nebulatech.lumi.data.repository.UserRepository
+import com.nebulatech.lumi.data.repository.NotificationRepository
+import com.nebulatech.lumi.notifications.LumiNotificationItem
+import com.nebulatech.lumi.notifications.NotificationCategory
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,7 +28,8 @@ import java.util.UUID
 
 class OnboardingViewModel(
     private val userRepository: UserRepository,
-    private val cycleRepository: CycleRepository
+    private val cycleRepository: CycleRepository,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(OnboardingState())
@@ -206,6 +210,18 @@ class OnboardingViewModel(
                     numberOfPastCycles = 3
                 )
             }
+
+            // 4. Seed initial welcome notification
+            notificationRepository.addNotification(
+                userId = user.id,
+                item = LumiNotificationItem(
+                    id = UUID.randomUUID().toString(),
+                    category = NotificationCategory.PHASE_INSIGHT,
+                    title = "Welcome to Lumi",
+                    body = "Your ${avgCycleLength}-day cycle has been configured. We'll send you reminders and phase forecasts right on time.",
+                    timeText = "Just now"
+                )
+            )
 
             _state.update { it.copy(isSaving = false) }
             _events.send(OnboardingEvent.NavigateNext(goal))

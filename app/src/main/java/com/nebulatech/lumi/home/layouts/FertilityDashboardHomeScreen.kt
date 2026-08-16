@@ -49,6 +49,7 @@ fun FertilityDashboardHomeScreen(
     onLogLHClick: () -> Unit = {},
     onAddMoreLogsClick: () -> Unit = {},
     onReadArticleClick: () -> Unit = {},
+    onNotificationClick: () -> Unit = {},
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -72,7 +73,8 @@ fun FertilityDashboardHomeScreen(
         topBar = {
             HomeTopBar(
                 userName = userName,
-                showNotificationBell = false,
+                showNotificationBell = true,
+                onNotificationClick = onNotificationClick,
                 onProfileClick = { onTabSelected(HomeTab.PROFILE) }
             )
         },

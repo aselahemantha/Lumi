@@ -8,6 +8,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.nebulatech.lumi.MainActivity
 import com.nebulatech.lumi.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LumiNotificationReceiver : BroadcastReceiver() {
 
@@ -65,6 +68,38 @@ class LumiNotificationReceiver : BroadcastReceiver() {
             notificationManager.notify(notificationId, notification)
         } catch (e: SecurityException) {
             // Permission not granted on Android 13+
+        }
+
+        // Also persist to Room database so it is visible in the In-App Notification Center
+        val category = when (channelId) {
+            LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS -> NotificationCategory.PERIOD_PREDICTION
+            LumiNotificationChannels.CHANNEL_FERTILITY_ALERTS -> NotificationCategory.FERTILITY_INSIGHT
+            LumiNotificationChannels.CHANNEL_PHASE_INSIGHTS -> NotificationCategory.PHASE_INSIGHT
+            else -> NotificationCategory.DAILY_REFLECTION
+        }
+
+        val pendingResult = goAsync()
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+            try {
+                val notificationRepo = runCatching {
+                    org.koin.java.KoinJavaComponent.getKoin().get<com.nebulatech.lumi.data.repository.NotificationRepository>()
+                }.getOrNull()
+
+                notificationRepo?.addNotification(
+                    userId = com.nebulatech.lumi.data.repository.RoomUserRepository.DEFAULT_LOCAL_USER_ID,
+                    item = LumiNotificationItem(
+                        id = java.util.UUID.randomUUID().toString(),
+                        category = category,
+                        title = title,
+                        body = body,
+                        timeText = "Just now"
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                pendingResult.finish()
+            }
         }
     }
 }

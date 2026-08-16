@@ -65,6 +65,7 @@ fun CycleRingHomeScreen(
     isPeriodPredicted: Boolean = false,
     loggingViewModel: LoggingViewModel? = null,
     onLogFlowClick: () -> Unit = {},
+    onNotificationClick: () -> Unit = {},
     onTabSelected: (HomeTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -86,6 +87,7 @@ fun CycleRingHomeScreen(
             HomeTopBar(
                 userName = userName,
                 showNotificationBell = true,
+                onNotificationClick = onNotificationClick,
                 onProfileClick = { onTabSelected(HomeTab.PROFILE) }
             )
         },

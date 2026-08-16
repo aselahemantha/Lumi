@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -33,6 +34,8 @@ import com.nebulatech.lumi.ui.theme.Primary
 @Composable
 fun StandardLumiTopBar(
     userName: String? = null,
+    showNotificationBell: Boolean = false,
+    onNotificationClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -53,32 +56,55 @@ fun StandardLumiTopBar(
             color = Primary
         )
 
-        // Personalized Profile Avatar Pill
-        Box(
-            modifier = Modifier
-                .size(42.dp)
-                .clip(CircleShape)
-                .background(Color(0xFFF7DDE6))
-                .border(1.5.dp, Primary.copy(alpha = 0.25f), CircleShape)
-                .clickable { onProfileClick() },
-            contentAlignment = Alignment.Center
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            val initial = userName?.trim()?.firstOrNull()?.uppercase()
-            if (!initial.isNullOrBlank()) {
-                Text(
-                    text = initial,
-                    fontFamily = LiterataFontFamily,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Primary
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Outlined.Person,
-                    contentDescription = "Profile",
-                    tint = Primary,
-                    modifier = Modifier.size(22.dp)
-                )
+            if (showNotificationBell) {
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFFDF0F4))
+                        .clickable { onNotificationClick() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Notifications,
+                        contentDescription = "Notifications",
+                        tint = Primary,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
+
+            // Personalized Profile Avatar Pill
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFF7DDE6))
+                    .border(1.5.dp, Primary.copy(alpha = 0.25f), CircleShape)
+                    .clickable { onProfileClick() },
+                contentAlignment = Alignment.Center
+            ) {
+                val initial = userName?.trim()?.firstOrNull()?.uppercase()
+                if (!initial.isNullOrBlank()) {
+                    Text(
+                        text = initial,
+                        fontFamily = LiterataFontFamily,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Primary
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Outlined.Person,
+                        contentDescription = "Profile",
+                        tint = Primary,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
             }
         }
     }
@@ -87,13 +113,15 @@ fun StandardLumiTopBar(
 @Composable
 fun HomeTopBar(
     userName: String? = null,
-    showNotificationBell: Boolean = false,
+    showNotificationBell: Boolean = true,
     onNotificationClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     StandardLumiTopBar(
         userName = userName,
+        showNotificationBell = showNotificationBell,
+        onNotificationClick = onNotificationClick,
         onProfileClick = onProfileClick,
         modifier = modifier
     )
