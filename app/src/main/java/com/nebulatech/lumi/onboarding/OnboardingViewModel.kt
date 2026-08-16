@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.nebulatech.lumi.core.domain.Result
 import com.nebulatech.lumi.data.model.Cycle
 import com.nebulatech.lumi.data.model.HealthConditionType
+import com.nebulatech.lumi.data.model.PastCycleInput
 import com.nebulatech.lumi.data.model.PrimaryGoal
 import com.nebulatech.lumi.data.model.UserProfile
 import com.nebulatech.lumi.data.model.WeightUnit
@@ -136,6 +137,18 @@ class OnboardingViewModel(
             }
             val user = (userResult as Result.Success).data
 
+            val manualCycles = s.customPastCycles
+            val avgCycleLength = if (!manualCycles.isNullOrEmpty()) {
+                manualCycles.map { it.cycleLength }.average().toInt()
+            } else {
+                s.cycleLength
+            }
+            val avgPeriodDuration = if (!manualCycles.isNullOrEmpty()) {
+                manualCycles.map { it.periodDuration }.average().toInt()
+            } else {
+                s.periodDuration
+            }
+
             // 2. Save user profile
             val profile = UserProfile(
                 id = UUID.randomUUID().toString(),
@@ -143,8 +156,8 @@ class OnboardingViewModel(
                 age = s.age.toIntOrNull(),
                 weight = s.weight.toDoubleOrNull(),
                 weightUnit = if (s.weightUnit.lowercase() == "lbs") WeightUnit.LBS else WeightUnit.KG,
-                cycleLength = s.cycleLength,
-                periodDuration = s.periodDuration,
+                cycleLength = avgCycleLength,
+                periodDuration = avgPeriodDuration,
                 primaryGoal = goal.toPrimaryGoal(),
                 notificationsEnabled = true,
                 trackingStartedDate = now,
@@ -157,48 +170,20 @@ class OnboardingViewModel(
                 return@launch
             }
 
-            // 3. Seed 3 months of baseline historical cycles (or custom manual past cycles) + start current active cycle
-            val manualCycles = s.customPastCycles
-            if (manualCycles != null && manualCycles.size == 3) {
-                for (i in 0 until 3) {
-                    val c = manualCycles[2 - i]
-                    val cycleStart = c.startDate
-                    val cycleEnd = cycleStart.plusDays((c.cycleLength - 1).toLong())
-                    val ovulationDay = maxOf(c.cycleLength - 14, c.periodDuration + 1)
-                    val ovulationDate = cycleStart.plusDays(ovulationDay.toLong()).toString()
-                    val histCycle = Cycle(
-                        id = UUID.randomUUID().toString(),
-                        userId = user.id,
-                        cycleNumber = i + 1,
-                        startDate = cycleStart.toString(),
-                        endDate = cycleEnd.toString(),
-                        cycleLength = c.cycleLength,
-                        periodLength = c.periodDuration,
-                        ovulationDate = ovulationDate,
-                        isCurrent = false,
-                        isRegular = true,
-                        notes = "Manual historical cycle entry",
-                        createdAt = now,
-                        updatedAt = now
-                    )
-                    cycleRepository.updateCycle(histCycle)
-                }
-                val currentCycle = Cycle(
-                    id = UUID.randomUUID().toString(),
+            // 3. Seed historical cycles + start current active cycle
+            if (!manualCycles.isNullOrEmpty()) {
+                cycleRepository.seedManualHistoricalCycles(
                     userId = user.id,
-                    cycleNumber = 4,
-                    startDate = s.firstDayOfLastPeriod.toString(),
-                    endDate = null,
-                    cycleLength = null,
-                    periodLength = s.periodDuration,
-                    ovulationDate = null,
-                    isCurrent = true,
-                    isRegular = true,
-                    notes = null,
-                    createdAt = now,
-                    updatedAt = now
+                    currentCycleStartDate = s.firstDayOfLastPeriod,
+                    pastCycles = manualCycles.map {
+                        PastCycleInput(
+                            startDate = it.startDate,
+                            cycleLength = it.cycleLength,
+                            periodDuration = it.periodDuration
+                        )
+                    },
+                    currentPeriodDuration = avgPeriodDuration
                 )
-                cycleRepository.updateCycle(currentCycle)
             } else {
                 cycleRepository.seedHistoricalCycles(
                     userId = user.id,

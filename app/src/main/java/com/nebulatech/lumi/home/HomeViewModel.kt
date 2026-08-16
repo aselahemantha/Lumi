@@ -27,20 +27,24 @@ class HomeViewModel(
     val events = _events.receiveAsFlow()
 
     val state: StateFlow<HomeState> = combine(
-        userRepository.getCurrentUser(),
-        cycleRepository.getCurrentCycle(userId),
-        cycleRepository.getCycleDay(userId, today),
-        cycleRepository.getAverageCycleLength(userId),
-        cycleRepository.getCurrentPhase(userId, today)
-    ) { user, cycle, cycleDay, avgCycleLength, phase ->
+        combine(
+            userRepository.getCurrentUser(),
+            cycleRepository.getCurrentCycle(userId),
+            cycleRepository.getCycleDay(userId, today)
+        ) { user, cycle, cycleDay -> Triple(user, cycle, cycleDay) },
+        combine(
+            cycleRepository.getAverageCycleLength(userId),
+            cycleRepository.getAveragePeriodLength(userId),
+            cycleRepository.getCurrentPhase(userId, today)
+        ) { avgCycle, avgPeriod, phase -> Triple(avgCycle, avgPeriod, phase) }
+    ) { (user, cycle, cycleDay), (avgCycleLength, avgPeriodLength, phase) ->
         if (user == null) {
             viewModelScope.launch { _events.send(HomeEvent.NavigateToOnboarding) }
             return@combine HomeState(isLoading = false)
         }
 
-        val avgPeriodLength = 5
         val progressRatio = (cycleDay.toFloat() / avgCycleLength.toFloat()).coerceIn(0f, 1f)
-        val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength)
+        val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength, avgPeriodLength)
         val (insightTitle, insightText) = buildInsight(phase, cycleDay, avgCycleLength)
 
         HomeState(
@@ -81,20 +85,17 @@ class HomeViewModel(
         CyclePhase.LATE_LUTEAL -> HomeLayoutType.SYMPTOM_GRID
     }
 
-    private fun buildSubLabel(phase: CyclePhase, cycleDay: Int, cycleLength: Int): String {
+    private fun buildSubLabel(phase: CyclePhase, cycleDay: Int, cycleLength: Int, periodLength: Int): String {
         return when (phase) {
             CyclePhase.MENSTRUATION -> "Day $cycleDay of your period"
             CyclePhase.FOLLICULAR -> {
-                val fertileStart = maxOf(cycleLength - 14 - 3, 1)
+                val ovulationDay = cycleLength - 14
+                val fertileStart = maxOf(ovulationDay - 3, periodLength + 1)
                 val daysUntil = maxOf(fertileStart - cycleDay, 1)
                 "Fertile window in ~$daysUntil days"
             }
             CyclePhase.FERTILE_WINDOW -> "Peak fertility window"
-            CyclePhase.LUTEAL -> {
-                val daysUntil = maxOf(cycleLength - cycleDay, 1)
-                "Period in ~$daysUntil days"
-            }
-            CyclePhase.LATE_LUTEAL -> {
+            CyclePhase.LUTEAL, CyclePhase.LATE_LUTEAL -> {
                 val daysUntil = maxOf(cycleLength - cycleDay, 1)
                 "Period in ~$daysUntil days"
             }

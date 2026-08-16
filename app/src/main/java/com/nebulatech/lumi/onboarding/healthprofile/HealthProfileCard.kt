@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -101,8 +102,10 @@ fun HealthProfileCard(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                         cursorColor = MaterialTheme.colorScheme.primary,
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+                        focusedTextColor = Color(0xFF26181F),
+                        unfocusedTextColor = Color(0xFF26181F),
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -124,7 +127,7 @@ fun HealthProfileCard(
                             BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                             RoundedCornerShape(16.dp)
                         )
-                        .background(MaterialTheme.colorScheme.surfaceContainerLowest),
+                        .background(Color.White),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Weight input text field
@@ -146,7 +149,7 @@ fun HealthProfileCard(
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             textStyle = MaterialTheme.typography.bodyMedium.copy(
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = Color(0xFF26181F)
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )

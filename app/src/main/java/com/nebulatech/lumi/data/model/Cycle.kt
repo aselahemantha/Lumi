@@ -18,3 +18,9 @@ data class Cycle(
     val updatedAt: String = Instant.now().toString(),
     val isSynced: Boolean = false
 )
+
+data class PastCycleInput(
+    val startDate: java.time.LocalDate,
+    val cycleLength: Int = 28,
+    val periodDuration: Int = 5
+)
