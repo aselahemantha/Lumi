@@ -3,7 +3,6 @@ package com.nebulatech.lumi.onboarding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nebulatech.lumi.core.domain.Result
-import com.nebulatech.lumi.data.model.Cycle
 import com.nebulatech.lumi.data.model.HealthConditionType
 import com.nebulatech.lumi.data.model.PastCycleInput
 import com.nebulatech.lumi.data.model.PrimaryGoal
@@ -16,11 +15,9 @@ import com.nebulatech.lumi.notifications.LumiNotificationItem
 import com.nebulatech.lumi.notifications.NotificationCategory
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant

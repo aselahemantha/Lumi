@@ -64,6 +64,7 @@ enum class SymptomCategoryType {
     OTHER
 }
 
+@Suppress("unused")
 enum class ReminderType {
     PERIOD_START,
     FERTILE_WINDOW,
@@ -73,6 +74,7 @@ enum class ReminderType {
     PERIOD_END
 }
 
+@Suppress("unused")
 enum class SyncStatus {
     PENDING,
     IN_PROGRESS,
@@ -80,6 +82,7 @@ enum class SyncStatus {
     FAILED
 }
 
+@Suppress("unused")
 enum class SyncOperation {
     INSERT,
     UPDATE,

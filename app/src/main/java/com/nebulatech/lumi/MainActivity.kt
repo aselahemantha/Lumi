@@ -78,7 +78,7 @@ class MainActivity : FragmentActivity() {
 
                 val permissionLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestPermission()
-                ) { isGranted ->
+                ) { _ ->
                     // Notification permission granted/denied
                 }
 
@@ -189,10 +189,11 @@ class MainActivity : FragmentActivity() {
                 val startDestination: Any =
                     if (isExistingUser == true) HomeRoute else OnboardingRoute
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = startDestination
+                        startDestination = startDestination,
+                        modifier = Modifier.padding(innerPadding)
                     ) {
                         composable<OnboardingRoute> {
                             OnboardingRoot(

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -30,7 +28,6 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
@@ -485,7 +482,6 @@ private fun PastCycleInputCard(
                 MiniCounterBox(
                     label = "Cycle Length",
                     value = cycleLength,
-                    unit = "days",
                     onDecrease = { if (cycleLength > 20) onLengthChange(cycleLength - 1) },
                     onIncrease = { if (cycleLength < 45) onLengthChange(cycleLength + 1) },
                     modifier = Modifier.weight(1f)
@@ -495,7 +491,6 @@ private fun PastCycleInputCard(
                 MiniCounterBox(
                     label = "Period Flow",
                     value = periodDuration,
-                    unit = "days",
                     onDecrease = { if (periodDuration > 2) onDurationChange(periodDuration - 1) },
                     onIncrease = { if (periodDuration < 10) onDurationChange(periodDuration + 1) },
                     modifier = Modifier.weight(1f)
@@ -509,10 +504,10 @@ private fun PastCycleInputCard(
 private fun MiniCounterBox(
     label: String,
     value: Int,
-    unit: String,
     onDecrease: () -> Unit,
     onIncrease: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    unit: String = "days"
 ) {
     Column(
         modifier = modifier

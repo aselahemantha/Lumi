@@ -55,6 +55,7 @@ import com.nebulatech.lumi.ui.theme.Primary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CycleRingHomeScreen(
+    modifier: Modifier = Modifier,
     cycleDay: Int = 1,
     cycleDayTotal: Int = 28,
     progressRatio: Float = 0f,
@@ -66,8 +67,7 @@ fun CycleRingHomeScreen(
     loggingViewModel: LoggingViewModel? = null,
     onLogFlowClick: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
-    onTabSelected: (HomeTab) -> Unit = {},
-    modifier: Modifier = Modifier
+    onTabSelected: (HomeTab) -> Unit = {}
 ) {
     var showLogSheet by remember { mutableStateOf(false) }
 

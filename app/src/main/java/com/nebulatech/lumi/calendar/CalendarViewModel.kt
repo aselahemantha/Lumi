@@ -78,7 +78,7 @@ class CalendarViewModel(
     private fun calculateCycleDay(cycles: List<Cycle>, targetDate: LocalDate): Int {
         val currentCycle = cycles.firstOrNull { it.isCurrent }
         return if (currentCycle != null) {
-            val start = try { LocalDate.parse(currentCycle.startDate) } catch (e: Exception) { targetDate }
+            val start = try { LocalDate.parse(currentCycle.startDate) } catch (_: Exception) { targetDate }
             maxOf(ChronoUnit.DAYS.between(start, targetDate).toInt() + 1, 1)
         } else {
             1
@@ -152,7 +152,7 @@ class CalendarViewModel(
 
         // 2. Cycle-based period and fertility calculation
         for (cycle in cycles) {
-            val cycleStart = try { LocalDate.parse(cycle.startDate) } catch (e: Exception) { null } ?: continue
+            val cycleStart = try { LocalDate.parse(cycle.startDate) } catch (_: Exception) { null } ?: continue
             val periodLen = cycle.periodLength ?: 5
             val cLength = cycle.cycleLength ?: avgCycleLength
 
@@ -178,7 +178,7 @@ class CalendarViewModel(
 
             // Ovulation & Fertile window
             val ovuDate = if (cycle.ovulationDate != null) {
-                try { LocalDate.parse(cycle.ovulationDate) } catch (e: Exception) { null }
+                try { LocalDate.parse(cycle.ovulationDate) } catch (_: Exception) { null }
             } else {
                 cycleStart.plusDays(maxOf(cLength - 14, periodLen + 1).toLong())
             }

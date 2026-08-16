@@ -39,11 +39,11 @@ import com.nebulatech.lumi.ui.theme.Primary
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HormonePhaseStatusCard(
+    modifier: Modifier = Modifier,
     currentPhase: CyclePhase = CyclePhase.FOLLICULAR,
     currentCycleDay: Int = 1,
     cycleLength: Int = 28,
-    loggedSymptoms: List<SymptomTrendPoint> = emptyList(),
-    modifier: Modifier = Modifier
+    loggedSymptoms: List<SymptomTrendPoint> = emptyList()
 ) {
     val phaseName = when (currentPhase) {
         CyclePhase.MENSTRUATION -> "Menstrual Phase"

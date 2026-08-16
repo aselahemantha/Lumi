@@ -40,14 +40,14 @@ import com.nebulatech.lumi.ui.theme.LumiTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LateLutealHomeScreen(
+    modifier: Modifier = Modifier,
     cycleDay: Int = 24,
     progressRatio: Float = 0.85f,
     userName: String = "",
     loggingViewModel: LoggingViewModel? = null,
     onViewAllSymptoms: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
-    onTabSelected: (HomeTab) -> Unit = {},
-    modifier: Modifier = Modifier
+    onTabSelected: (HomeTab) -> Unit = {}
 ) {
     var showLogSheet by remember { mutableStateOf(false) }
 

@@ -36,6 +36,7 @@ class NotificationCenterViewModel(
         }
     }
 
+    @Suppress("unused")
     fun deleteNotification(id: String) {
         viewModelScope.launch {
             notificationRepository.deleteNotification(id)

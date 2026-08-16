@@ -50,10 +50,10 @@ data class CalendarGridCell(
 
 @Composable
 fun MonthlyCalendarCard(
+    modifier: Modifier = Modifier,
     yearMonth: YearMonth = YearMonth.of(2023, 10),
     cells: List<CalendarGridCell> = generateCalendarCells(yearMonth),
-    onDayClick: (CalendarGridCell) -> Unit = {},
-    modifier: Modifier = Modifier
+    onDayClick: (CalendarGridCell) -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),

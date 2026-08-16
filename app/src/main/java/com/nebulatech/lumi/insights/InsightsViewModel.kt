@@ -16,14 +16,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 import java.time.format.TextStyle
-import java.time.temporal.ChronoUnit
 import java.util.Locale
 import kotlin.math.abs
 
 class InsightsViewModel(
-    private val userRepository: UserRepository,
-    private val cycleRepository: CycleRepository,
-    private val dailyLogRepository: DailyLogRepository
+    userRepository: UserRepository,
+    cycleRepository: CycleRepository,
+    dailyLogRepository: DailyLogRepository
 ) : ViewModel() {
 
     private val userId = RoomUserRepository.DEFAULT_LOCAL_USER_ID
@@ -43,7 +42,7 @@ class InsightsViewModel(
     ) { (user, cycles, avgCycleLength), (cycleDay, currentPhase, logs) ->
         val historyItems = buildCycleHistory(cycles, avgCycleLength)
         val symptomPoints = buildSymptomPoints(logs, avgCycleLength)
-        val insightText = buildDynamicInsight(currentPhase, avgCycleLength, logs)
+        val insightText = buildDynamicInsight(currentPhase, logs)
 
         InsightsState(
             isLoading = false,
@@ -73,7 +72,7 @@ class InsightsViewModel(
         }
 
         return cycles.sortedByDescending { it.startDate }.take(6).map { cycle ->
-            val date = try { LocalDate.parse(cycle.startDate) } catch (e: Exception) { today }
+            val date = try { LocalDate.parse(cycle.startDate) } catch (_: Exception) { today }
             val monthStr = date.month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
             val length = cycle.cycleLength ?: avgCycleLength
             val isRegular = abs(length - avgCycleLength) <= 2
@@ -114,7 +113,6 @@ class InsightsViewModel(
 
     private fun buildDynamicInsight(
         phase: CyclePhase,
-        avgCycleLength: Int,
         logs: List<DailyLog>
     ): String {
         val allSymptoms = logs.flatMap { it.symptoms }.map { it.symptomDisplayName }

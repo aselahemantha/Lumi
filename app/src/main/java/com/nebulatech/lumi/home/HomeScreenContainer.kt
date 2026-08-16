@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nebulatech.lumi.calendar.CalendarScreen
@@ -35,31 +34,31 @@ fun HomeScreenContainer(
     val loggingVm: LoggingViewModel = koinViewModel()
     val state by homeVm.state.collectAsStateWithLifecycle()
 
-    var selectedBottomTab by remember { mutableStateOf(HomeTab.TODAY) }
-    var showNotificationCenter by remember { mutableStateOf(false) }
+    val selectedBottomTab = remember { mutableStateOf(HomeTab.TODAY) }
+    val showNotificationCenter = remember { mutableStateOf(false) }
 
     // Handle VM events (e.g. navigate to onboarding if no user)
     LaunchedEffect(homeVm.events) {
         homeVm.events.collect { /* future: handle NavigateToOnboarding */ }
     }
 
-    if (showNotificationCenter) {
+    if (showNotificationCenter.value) {
         NotificationCenterScreen(
-            onNavigateBack = { showNotificationCenter = false },
+            onNavigateBack = { showNotificationCenter.value = false },
             onTabSelected = { tab ->
-                selectedBottomTab = tab
-                showNotificationCenter = false
+                selectedBottomTab.value = tab
+                showNotificationCenter.value = false
             }
         )
     } else {
         Column(modifier = modifier.fillMaxSize()) {
             Box(modifier = Modifier.weight(1f)) {
-                when (selectedBottomTab) {
+                when (selectedBottomTab.value) {
                 HomeTab.TODAY -> {
                     if (state.isLoading) {
                         com.nebulatech.lumi.home.components.HomeScreenSkeleton(
-                            selectedTab = selectedBottomTab,
-                            onTabSelected = { selectedBottomTab = it }
+                            selectedTab = selectedBottomTab.value,
+                            onTabSelected = { selectedBottomTab.value = it }
                         )
                     } else {
                         when (state.layoutType) {
@@ -74,16 +73,16 @@ fun HomeScreenContainer(
                                     insightText = state.insightText,
                                     isPeriodPredicted = state.isPeriodPredicted,
                                     loggingViewModel = loggingVm,
-                                    onNotificationClick = { showNotificationCenter = true },
-                                    onTabSelected = { selectedBottomTab = it }
+                                    onNotificationClick = { showNotificationCenter.value = true },
+                                    onTabSelected = { selectedBottomTab.value = it }
                                 )
                             }
                             HomeLayoutType.FERTILITY_DASHBOARD -> {
                                 FertilityDashboardHomeScreen(
                                     userName = state.userName,
                                     loggingViewModel = loggingVm,
-                                    onNotificationClick = { showNotificationCenter = true },
-                                    onTabSelected = { selectedBottomTab = it }
+                                    onNotificationClick = { showNotificationCenter.value = true },
+                                    onTabSelected = { selectedBottomTab.value = it }
                                 )
                             }
                             HomeLayoutType.SYMPTOM_GRID -> {
@@ -92,23 +91,23 @@ fun HomeScreenContainer(
                                     progressRatio = state.progressRatio,
                                     userName = state.userName,
                                     loggingViewModel = loggingVm,
-                                    onNotificationClick = { showNotificationCenter = true },
-                                    onTabSelected = { selectedBottomTab = it }
+                                    onNotificationClick = { showNotificationCenter.value = true },
+                                    onTabSelected = { selectedBottomTab.value = it }
                                 )
                             }
                         }
                     }
                 }
                 HomeTab.CALENDAR -> {
-                    CalendarScreen(onTabSelected = { selectedBottomTab = it })
+                    CalendarScreen(onTabSelected = { selectedBottomTab.value = it })
                 }
                 HomeTab.INSIGHTS -> {
-                    InsightsScreen(onTabSelected = { selectedBottomTab = it })
+                    InsightsScreen(onTabSelected = { selectedBottomTab.value = it })
                 }
                 HomeTab.PROFILE -> {
                     ProfileScreen(
-                        onTabSelected = { selectedBottomTab = it },
-                        onNotificationClick = { showNotificationCenter = true }
+                        onTabSelected = { selectedBottomTab.value = it },
+                        onNotificationClick = { showNotificationCenter.value = true }
                     )
                 }
             }

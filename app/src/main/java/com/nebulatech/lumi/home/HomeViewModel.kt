@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class HomeViewModel(
-    private val userRepository: UserRepository,
+    userRepository: UserRepository,
     private val cycleRepository: CycleRepository
 ) : ViewModel() {
 
@@ -45,7 +45,7 @@ class HomeViewModel(
 
         val progressRatio = (cycleDay.toFloat() / avgCycleLength.toFloat()).coerceIn(0f, 1f)
         val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength, avgPeriodLength)
-        val (insightTitle, insightText) = buildInsight(phase, cycleDay, avgCycleLength)
+        val (insightTitle, insightText) = buildInsight(phase)
 
         HomeState(
             isLoading = false,
@@ -109,9 +109,7 @@ class HomeViewModel(
     }
 
     private fun buildInsight(
-        phase: CyclePhase,
-        cycleDay: Int,
-        cycleLength: Int
+        phase: CyclePhase
     ): Pair<String, String> {
         return when (phase) {
             CyclePhase.MENSTRUATION -> {

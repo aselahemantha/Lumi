@@ -29,15 +29,15 @@ import com.nebulatech.lumi.ui.theme.Primary
 
 /**
  * Standard Lumi Top Bar used across Home, Insights, and Calendar screens.
- * Features "Welcome, [Name]" on left and personalized avatar button on right.
+ * Features "Welcome, {Name}" on left and personalized avatar button on right.
  */
 @Composable
 fun StandardLumiTopBar(
+    modifier: Modifier = Modifier,
     userName: String? = null,
     showNotificationBell: Boolean = false,
     onNotificationClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onProfileClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -112,17 +112,17 @@ fun StandardLumiTopBar(
 
 @Composable
 fun HomeTopBar(
+    modifier: Modifier = Modifier,
     userName: String? = null,
     showNotificationBell: Boolean = true,
     onNotificationClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onProfileClick: () -> Unit = {}
 ) {
     StandardLumiTopBar(
+        modifier = modifier,
         userName = userName,
         showNotificationBell = showNotificationBell,
         onNotificationClick = onNotificationClick,
-        onProfileClick = onProfileClick,
-        modifier = modifier
+        onProfileClick = onProfileClick
     )
 }

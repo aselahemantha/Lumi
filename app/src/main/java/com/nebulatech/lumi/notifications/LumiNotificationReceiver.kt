@@ -66,7 +66,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
         try {
             val notificationManager = NotificationManagerCompat.from(context)
             notificationManager.notify(notificationId, notification)
-        } catch (e: SecurityException) {
+        } catch (_: SecurityException) {
             // Permission not granted on Android 13+
         }
 
@@ -79,7 +79,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
         }
 
         val pendingResult = goAsync()
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 val notificationRepo = runCatching {
                     org.koin.java.KoinJavaComponent.getKoin().get<com.nebulatech.lumi.data.repository.NotificationRepository>()
