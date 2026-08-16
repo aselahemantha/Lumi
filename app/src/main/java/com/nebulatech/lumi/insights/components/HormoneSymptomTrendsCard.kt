@@ -51,6 +51,7 @@ fun HormonePhaseStatusCard(
         CyclePhase.FERTILE_WINDOW -> "Fertile Window"
         CyclePhase.LUTEAL -> "Luteal Phase"
         CyclePhase.LATE_LUTEAL -> "Late Luteal Phase"
+        CyclePhase.PERIOD_PREDICTED -> "Period Expected"
     }
 
     val dominantHormone = when (currentPhase) {
@@ -59,6 +60,7 @@ fun HormonePhaseStatusCard(
         CyclePhase.FERTILE_WINDOW -> "LH Surge"
         CyclePhase.LUTEAL -> "Progesterone Dominant"
         CyclePhase.LATE_LUTEAL -> "Hormone Taper"
+        CyclePhase.PERIOD_PREDICTED -> "Hormone Taper"
     }
 
     val estrogenLevel = when (currentPhase) {
@@ -67,6 +69,7 @@ fun HormonePhaseStatusCard(
         CyclePhase.FERTILE_WINDOW -> "Peak ↑↑"
         CyclePhase.LUTEAL -> "Moderate"
         CyclePhase.LATE_LUTEAL -> "Declining ↓"
+        CyclePhase.PERIOD_PREDICTED -> "Low ↓"
     }
 
     val progesteroneLevel = when (currentPhase) {
@@ -75,6 +78,7 @@ fun HormonePhaseStatusCard(
         CyclePhase.FERTILE_WINDOW -> "Rising ↑"
         CyclePhase.LUTEAL -> "Peak ↑↑"
         CyclePhase.LATE_LUTEAL -> "Declining ↓"
+        CyclePhase.PERIOD_PREDICTED -> "Low ↓"
     }
 
     val energyFocus = when (currentPhase) {
@@ -83,6 +87,7 @@ fun HormonePhaseStatusCard(
         CyclePhase.FERTILE_WINDOW -> "High Vitality"
         CyclePhase.LUTEAL -> "Grounded"
         CyclePhase.LATE_LUTEAL -> "Reflective"
+        CyclePhase.PERIOD_PREDICTED -> "Transitioning"
     }
 
     Card(

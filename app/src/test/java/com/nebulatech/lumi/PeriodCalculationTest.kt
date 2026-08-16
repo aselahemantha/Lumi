@@ -248,6 +248,7 @@ class PeriodCalculationTest {
         assertEquals(CyclePhase.LUTEAL, RoomCycleRepository.calculatePhase(21, cycleLength, periodLength))
         assertEquals(CyclePhase.LATE_LUTEAL, RoomCycleRepository.calculatePhase(22, cycleLength, periodLength))
         assertEquals(CyclePhase.LATE_LUTEAL, RoomCycleRepository.calculatePhase(28, cycleLength, periodLength))
+        assertEquals(CyclePhase.PERIOD_PREDICTED, RoomCycleRepository.calculatePhase(29, cycleLength, periodLength))
     }
 
     // ── Fakes ─────────────────────────────────────────────────────────────────

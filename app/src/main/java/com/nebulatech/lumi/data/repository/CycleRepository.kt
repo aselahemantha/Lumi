@@ -316,6 +316,7 @@ class RoomCycleRepository(
             val lateLutealStart = maxOf(cycleLength - 6, fertileEnd + 1)
 
             return when {
+                cycleDay > cycleLength -> CyclePhase.PERIOD_PREDICTED  // Past expected cycle end — period due but not yet confirmed
                 cycleDay in 1..periodLength -> CyclePhase.MENSTRUATION
                 cycleDay in (periodLength + 1) until fertileStart -> CyclePhase.FOLLICULAR
                 cycleDay in fertileStart..fertileEnd -> CyclePhase.FERTILE_WINDOW

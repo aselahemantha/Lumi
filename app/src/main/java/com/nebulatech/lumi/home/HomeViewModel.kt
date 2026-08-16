@@ -59,7 +59,8 @@ class HomeViewModel(
             hasCycle = cycle != null,
             currentPhase = phase,
             insightTitle = insightTitle,
-            insightText = insightText
+            insightText = insightText,
+            isPeriodPredicted = phase == CyclePhase.PERIOD_PREDICTED
         )
     }.stateIn(
         scope = viewModelScope,
@@ -74,6 +75,9 @@ class HomeViewModel(
                     cycleRepository.startNewCycle(userId, today)
                 }
             }
+            // ConfirmPeriodStart is handled at the UI level via LoggingViewModel;
+            // the flow sheet is shown and on save, LoggingViewModel auto-starts the new cycle.
+            HomeAction.ConfirmPeriodStart -> Unit
         }
     }
 
@@ -83,6 +87,7 @@ class HomeViewModel(
         CyclePhase.FERTILE_WINDOW -> HomeLayoutType.FERTILITY_DASHBOARD
         CyclePhase.LUTEAL -> HomeLayoutType.CYCLE_RING
         CyclePhase.LATE_LUTEAL -> HomeLayoutType.SYMPTOM_GRID
+        CyclePhase.PERIOD_PREDICTED -> HomeLayoutType.CYCLE_RING
     }
 
     private fun buildSubLabel(phase: CyclePhase, cycleDay: Int, cycleLength: Int, periodLength: Int): String {
@@ -99,6 +104,7 @@ class HomeViewModel(
                 val daysUntil = maxOf(cycleLength - cycleDay, 1)
                 "Period in ~$daysUntil days"
             }
+            CyclePhase.PERIOD_PREDICTED -> "Period expected · Log flow to confirm"
         }
     }
 
@@ -122,6 +128,9 @@ class HomeViewModel(
             }
             CyclePhase.LATE_LUTEAL -> {
                 "Pre-Menstrual Insight" to "Progesterone is tapering down before your period. Staying well-hydrated and increasing magnesium intake can help prevent PMS headaches."
+            }
+            CyclePhase.PERIOD_PREDICTED -> {
+                "Period Expected" to "Your period is predicted to start today or very soon. Tap the button below to log your flow and confirm the start of your new cycle."
             }
         }
     }

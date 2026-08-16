@@ -62,6 +62,7 @@ fun CycleRingHomeScreen(
     userName: String = "",
     insightTitle: String = "Lumi Insight",
     insightText: String = "",
+    isPeriodPredicted: Boolean = false,
     loggingViewModel: LoggingViewModel? = null,
     onLogFlowClick: () -> Unit = {},
     onTabSelected: (HomeTab) -> Unit = {},
@@ -120,7 +121,7 @@ fun CycleRingHomeScreen(
                 }
             )
 
-            // 3. Primary Log Flow Button
+            // 3. Primary Log Flow / Confirm Period Button
             Button(
                 onClick = {
                     showLogSheet = true
@@ -130,7 +131,9 @@ fun CycleRingHomeScreen(
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Primary)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isPeriodPredicted) Color(0xFF7B3F5E) else Primary
+                )
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -140,7 +143,7 @@ fun CycleRingHomeScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Log Flow",
+                        text = if (isPeriodPredicted) "My Period Started" else "Log Flow",
                         fontFamily = ManropeFontFamily,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold

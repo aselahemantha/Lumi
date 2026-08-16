@@ -156,10 +156,24 @@ class CalendarViewModel(
             val periodLen = cycle.periodLength ?: 5
             val cLength = cycle.cycleLength ?: avgCycleLength
 
-            // Period days
+            // Period days within the cycle
             if (!date.isBefore(cycleStart) && date.isBefore(cycleStart.plusDays(periodLen.toLong()))) {
-                val isFirstOrLast = date.isEqual(cycleStart) || date.isEqual(cycleStart.plusDays(periodLen.toLong() - 1))
-                return if (isFirstOrLast) CalendarDayType.PERIOD_LIGHT else CalendarDayType.PERIOD_HEAVY
+                return if (cycle.isCurrent && !date.isBefore(today)) {
+                    // Future period day on current cycle — unconfirmed prediction
+                    CalendarDayType.PERIOD_PREDICTED
+                } else {
+                    val isFirstOrLast = date.isEqual(cycleStart) || date.isEqual(cycleStart.plusDays(periodLen.toLong() - 1))
+                    if (isFirstOrLast) CalendarDayType.PERIOD_LIGHT else CalendarDayType.PERIOD_HEAVY
+                }
+            }
+
+            // Predicted next period window for the current cycle (when past cycle length)
+            if (cycle.isCurrent) {
+                val predictedNextStart = cycleStart.plusDays(cLength.toLong())
+                val predictedPeriodEnd = predictedNextStart.plusDays(periodLen.toLong())
+                if (!date.isBefore(predictedNextStart) && date.isBefore(predictedPeriodEnd)) {
+                    return CalendarDayType.PERIOD_PREDICTED
+                }
             }
 
             // Ovulation & Fertile window
@@ -191,5 +205,6 @@ class CalendarViewModel(
         CyclePhase.FERTILE_WINDOW -> "Luteinizing hormone is peaking. Conception probability is highest."
         CyclePhase.LUTEAL -> "Progesterone is high. Prioritize restorative movement and balanced nutrition."
         CyclePhase.LATE_LUTEAL -> "Hormones are declining. Hydration and magnesium can help ease PMS symptoms."
+        CyclePhase.PERIOD_PREDICTED -> "Your period is predicted to start soon. Log your flow to confirm the start of your new cycle."
     }
 }

@@ -5,7 +5,8 @@ enum class CyclePhase {
     FOLLICULAR,
     FERTILE_WINDOW,
     LUTEAL,
-    LATE_LUTEAL
+    LATE_LUTEAL,
+    PERIOD_PREDICTED  // Period expected based on cycle length but not yet confirmed by logged flow
 }
 
 enum class PrimaryGoal {

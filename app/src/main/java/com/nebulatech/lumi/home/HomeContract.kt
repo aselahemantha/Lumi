@@ -20,11 +20,13 @@ data class HomeState(
     val hasCycle: Boolean = false,
     val currentPhase: CyclePhase = CyclePhase.FOLLICULAR,
     val insightTitle: String = "Lumi Insight",
-    val insightText: String = ""
+    val insightText: String = "",
+    val isPeriodPredicted: Boolean = false
 )
 
 sealed interface HomeAction {
     data object StartNewPeriod : HomeAction
+    data object ConfirmPeriodStart : HomeAction
 }
 
 sealed interface HomeEvent {
