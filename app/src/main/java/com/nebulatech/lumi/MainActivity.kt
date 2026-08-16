@@ -23,7 +23,6 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -189,25 +188,23 @@ class MainActivity : FragmentActivity() {
                 val startDestination: Any =
                     if (isExistingUser == true) HomeRoute else OnboardingRoute
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = startDestination,
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
-                        composable<OnboardingRoute> {
-                            OnboardingRoot(
-                                onNavigateBack = { finish() },
-                                onNavigateNext = { _ ->
-                                    navController.navigate(HomeRoute) {
-                                        popUpTo<OnboardingRoute> { inclusive = true }
-                                    }
+                NavHost(
+                    navController = navController,
+                    startDestination = startDestination,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    composable<OnboardingRoute> {
+                        OnboardingRoot(
+                            onNavigateBack = { finish() },
+                            onNavigateNext = { _ ->
+                                navController.navigate(HomeRoute) {
+                                    popUpTo<OnboardingRoute> { inclusive = true }
                                 }
-                            )
-                        }
-                        composable<HomeRoute> {
-                            HomeScreenContainer()
-                        }
+                            }
+                        )
+                    }
+                    composable<HomeRoute> {
+                        HomeScreenContainer()
                     }
                 }
             }
