@@ -51,6 +51,7 @@ import com.nebulatech.lumi.ui.theme.Primary
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -219,7 +220,7 @@ fun DatePickerCard(
     // Material 3 Date Picker Dialog with Lumi Theme Colors
     if (showDatePicker) {
         val initialSelectedMillis = remember(selectedDate) {
-            selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            selectedDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
         }
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = initialSelectedMillis
@@ -249,7 +250,7 @@ fun DatePickerCard(
                     onClick = {
                         datePickerState.selectedDateMillis?.let { millis ->
                             val newDate = Instant.ofEpochMilli(millis)
-                                .atZone(ZoneId.systemDefault())
+                                .atZone(ZoneOffset.UTC)
                                 .toLocalDate()
                             onDateSelected(newDate)
                         }

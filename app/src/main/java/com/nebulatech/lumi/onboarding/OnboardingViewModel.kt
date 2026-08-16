@@ -49,7 +49,20 @@ class OnboardingViewModel(
                 _state.update { it.copy(cycleLength = action.length) }
             }
             is OnboardingAction.UpdateCustomPastCycles -> {
-                _state.update { it.copy(customPastCycles = action.cycles) }
+                val cycles = action.cycles
+                if (!cycles.isNullOrEmpty()) {
+                    val avgLength = kotlin.math.round(cycles.map { it.cycleLength }.average()).toInt().coerceIn(20, 45)
+                    val avgDuration = kotlin.math.round(cycles.map { it.periodDuration }.average()).toInt().coerceIn(2, 10)
+                    _state.update {
+                        it.copy(
+                            customPastCycles = cycles,
+                            cycleLength = avgLength,
+                            periodDuration = avgDuration
+                        )
+                    }
+                } else {
+                    _state.update { it.copy(customPastCycles = null) }
+                }
             }
             is OnboardingAction.UpdateAge -> {
                 _state.update { it.copy(age = action.age) }
@@ -139,12 +152,12 @@ class OnboardingViewModel(
 
             val manualCycles = s.customPastCycles
             val avgCycleLength = if (!manualCycles.isNullOrEmpty()) {
-                manualCycles.map { it.cycleLength }.average().toInt()
+                kotlin.math.round(manualCycles.map { it.cycleLength }.average()).toInt().coerceIn(20, 45)
             } else {
                 s.cycleLength
             }
             val avgPeriodDuration = if (!manualCycles.isNullOrEmpty()) {
-                manualCycles.map { it.periodDuration }.average().toInt()
+                kotlin.math.round(manualCycles.map { it.periodDuration }.average()).toInt().coerceIn(2, 10)
             } else {
                 s.periodDuration
             }
