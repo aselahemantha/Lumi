@@ -43,14 +43,15 @@ import com.nebulatech.lumi.ui.theme.LumiTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FertilityDashboardHomeScreen(
+    modifier: Modifier = Modifier,
     userName: String = "",
     loggingViewModel: LoggingViewModel? = null,
     onLogBBTClick: () -> Unit = {},
     onLogLHClick: () -> Unit = {},
     onAddMoreLogsClick: () -> Unit = {},
     onReadArticleClick: () -> Unit = {},
-    onTabSelected: (HomeTab) -> Unit = {},
-    modifier: Modifier = Modifier
+    onNotificationClick: () -> Unit = {},
+    onTabSelected: (HomeTab) -> Unit = {}
 ) {
     var showBBTSheet by remember { mutableStateOf(false) }
     var showLHSheet by remember { mutableStateOf(false) }
@@ -72,7 +73,8 @@ fun FertilityDashboardHomeScreen(
         topBar = {
             HomeTopBar(
                 userName = userName,
-                showNotificationBell = false,
+                showNotificationBell = true,
+                onNotificationClick = onNotificationClick,
                 onProfileClick = { onTabSelected(HomeTab.PROFILE) }
             )
         },

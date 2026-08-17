@@ -114,18 +114,55 @@ object LumiNotificationScheduler {
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis,
-                pendingIntent
-            )
-        } else {
-            alarmManager.setExact(
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        pendingIntent
+                    )
+                } else {
+                    alarmManager.setAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        pendingIntent
+                    )
+                }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    pendingIntent
+                )
+            }
+        } catch (_: SecurityException) {
+            alarmManager.set(
                 AlarmManager.RTC_WAKEUP,
                 calendar.timeInMillis,
                 pendingIntent
             )
         }
+    }
+
+    /**
+     * Instantly fires a notification into the status bar and in-app Notification Center.
+     * Useful for immediate testing and event-driven cycle milestones.
+     */
+    fun triggerNotificationNow(
+        context: Context,
+        title: String = "Lumi Cycle Alert",
+        body: String = "Your daily insights and cycle prediction are ready in Lumi.",
+        channelId: String = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
+        notificationId: Int = 3001
+    ) {
+        val intent = Intent(context, LumiNotificationReceiver::class.java).apply {
+            action = LumiNotificationReceiver.ACTION_PERIOD_ALERT
+            putExtra(LumiNotificationReceiver.EXTRA_TITLE, title)
+            putExtra(LumiNotificationReceiver.EXTRA_BODY, body)
+            putExtra(LumiNotificationReceiver.EXTRA_CHANNEL_ID, channelId)
+            putExtra(LumiNotificationReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+        }
+        context.sendBroadcast(intent)
     }
 }

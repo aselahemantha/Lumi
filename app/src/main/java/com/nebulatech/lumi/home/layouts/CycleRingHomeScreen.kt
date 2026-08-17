@@ -55,6 +55,7 @@ import com.nebulatech.lumi.ui.theme.Primary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CycleRingHomeScreen(
+    modifier: Modifier = Modifier,
     cycleDay: Int = 1,
     cycleDayTotal: Int = 28,
     progressRatio: Float = 0f,
@@ -62,10 +63,12 @@ fun CycleRingHomeScreen(
     userName: String = "",
     insightTitle: String = "Lumi Insight",
     insightText: String = "",
+    isPeriodPredicted: Boolean = false,
+    next7Days: List<com.nebulatech.lumi.home.components.DayItem> = emptyList(),
     loggingViewModel: LoggingViewModel? = null,
     onLogFlowClick: () -> Unit = {},
-    onTabSelected: (HomeTab) -> Unit = {},
-    modifier: Modifier = Modifier
+    onNotificationClick: () -> Unit = {},
+    onTabSelected: (HomeTab) -> Unit = {}
 ) {
     var showLogSheet by remember { mutableStateOf(false) }
 
@@ -85,6 +88,7 @@ fun CycleRingHomeScreen(
             HomeTopBar(
                 userName = userName,
                 showNotificationBell = true,
+                onNotificationClick = onNotificationClick,
                 onProfileClick = { onTabSelected(HomeTab.PROFILE) }
             )
         },
@@ -120,7 +124,7 @@ fun CycleRingHomeScreen(
                 }
             )
 
-            // 3. Primary Log Flow Button
+            // 3. Primary Log Flow / Confirm Period Button
             Button(
                 onClick = {
                     showLogSheet = true
@@ -130,7 +134,9 @@ fun CycleRingHomeScreen(
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Primary)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isPeriodPredicted) Color(0xFF7B3F5E) else Primary
+                )
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -140,7 +146,7 @@ fun CycleRingHomeScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Log Flow",
+                        text = if (isPeriodPredicted) "Confirm Period Start" else "Log Flow",
                         fontFamily = ManropeFontFamily,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -149,7 +155,11 @@ fun CycleRingHomeScreen(
             }
 
             // 4. Next 7 Days Calendar Strip
-            Next7DaysCalendarStrip()
+            if (next7Days.isNotEmpty()) {
+                Next7DaysCalendarStrip(days = next7Days)
+            } else {
+                Next7DaysCalendarStrip()
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
         }

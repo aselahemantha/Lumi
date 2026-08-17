@@ -12,9 +12,9 @@ android {
     defaultConfig {
         applicationId = "com.nebulatech.lumi"
         minSdk = 24
-        targetSdk = 36
-        versionCode = 3
-        versionName = "1.0"
+        targetSdk = 37
+        versionCode = 6
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -85,6 +85,7 @@ dependencies {
     implementation(libs.lottie.compose)
 
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)

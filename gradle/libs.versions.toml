@@ -58,6 +58,9 @@ koin-androidx-workmanager = { group = "io.insert-koin", name = "koin-androidx-wo
 # Biometric
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version = "1.2.0-alpha05" }
 
+# Testing
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version = "1.9.0" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

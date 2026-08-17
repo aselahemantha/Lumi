@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -32,10 +31,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,18 +47,18 @@ import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerCard(
     selectedDate: LocalDate,
-    periodDuration: Int = 5,
     onDateSelected: (LocalDate) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    periodDuration: Int = 5
 ) {
-    var showDatePicker by remember { mutableStateOf(false) }
+    val showDatePicker = remember { mutableStateOf(false) }
     val dateFormatter = remember { DateTimeFormatter.ofPattern("MMM dd, yyyy") }
 
     Card(
@@ -100,7 +97,7 @@ fun DatePickerCard(
                         RoundedCornerShape(16.dp)
                     )
                     .clip(RoundedCornerShape(16.dp))
-                    .clickable { showDatePicker = true }
+                    .clickable { showDatePicker.value = true }
                     .background(Color(0xFFFAF7F8))
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -217,9 +214,9 @@ fun DatePickerCard(
     }
 
     // Material 3 Date Picker Dialog with Lumi Theme Colors
-    if (showDatePicker) {
+    if (showDatePicker.value) {
         val initialSelectedMillis = remember(selectedDate) {
-            selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            selectedDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
         }
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = initialSelectedMillis
@@ -243,17 +240,17 @@ fun DatePickerCard(
         )
 
         DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
+            onDismissRequest = { showDatePicker.value = false },
             confirmButton = {
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let { millis ->
                             val newDate = Instant.ofEpochMilli(millis)
-                                .atZone(ZoneId.systemDefault())
+                                .atZone(ZoneOffset.UTC)
                                 .toLocalDate()
                             onDateSelected(newDate)
                         }
-                        showDatePicker = false
+                        showDatePicker.value = false
                     },
                     colors = ButtonDefaults.textButtonColors(contentColor = Primary)
                 ) {
@@ -267,7 +264,7 @@ fun DatePickerCard(
             },
             dismissButton = {
                 TextButton(
-                    onClick = { showDatePicker = false },
+                    onClick = { showDatePicker.value = false },
                     colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF7A6A73))
                 ) {
                     Text(

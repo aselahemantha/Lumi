@@ -16,30 +16,33 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 import java.time.format.TextStyle
-import java.time.temporal.ChronoUnit
 import java.util.Locale
 import kotlin.math.abs
 
 class InsightsViewModel(
-    private val userRepository: UserRepository,
-    private val cycleRepository: CycleRepository,
-    private val dailyLogRepository: DailyLogRepository
+    userRepository: UserRepository,
+    cycleRepository: CycleRepository,
+    dailyLogRepository: DailyLogRepository
 ) : ViewModel() {
 
     private val userId = RoomUserRepository.DEFAULT_LOCAL_USER_ID
     private val today = LocalDate.now()
 
     val state: StateFlow<InsightsState> = combine(
-        userRepository.getCurrentUser(),
-        cycleRepository.getAllCycles(userId),
-        cycleRepository.getAverageCycleLength(userId),
-        cycleRepository.getCycleDay(userId, today),
-        dailyLogRepository.getLogsInRange(userId, today.minusDays(60), today)
-    ) { user, cycles, avgCycleLength, cycleDay, logs ->
-        val currentPhase = deriveCurrentPhase(cycles, today, avgCycleLength)
+        combine(
+            userRepository.getCurrentUser(),
+            cycleRepository.getAllCycles(userId),
+            cycleRepository.getAverageCycleLength(userId)
+        ) { user, cycles, avgCycleLength -> Triple(user, cycles, avgCycleLength) },
+        combine(
+            cycleRepository.getCycleDay(userId, today),
+            cycleRepository.getCurrentPhase(userId, today),
+            dailyLogRepository.getLogsInRange(userId, today.minusDays(60), today)
+        ) { cycleDay, currentPhase, logs -> Triple(cycleDay, currentPhase, logs) }
+    ) { (user, cycles, avgCycleLength), (cycleDay, currentPhase, logs) ->
         val historyItems = buildCycleHistory(cycles, avgCycleLength)
         val symptomPoints = buildSymptomPoints(logs, avgCycleLength)
-        val insightText = buildDynamicInsight(currentPhase, avgCycleLength, logs)
+        val insightText = buildDynamicInsight(currentPhase, logs)
 
         InsightsState(
             isLoading = false,
@@ -57,25 +60,6 @@ class InsightsViewModel(
         initialValue = InsightsState()
     )
 
-    private fun deriveCurrentPhase(cycles: List<Cycle>, targetDate: LocalDate, avgCycleLength: Int): CyclePhase {
-        val currentCycle = cycles.firstOrNull { it.isCurrent } ?: cycles.maxByOrNull { it.startDate }
-        if (currentCycle == null) return CyclePhase.FOLLICULAR
-
-        val start = try { LocalDate.parse(currentCycle.startDate) } catch (e: Exception) { targetDate }
-        val day = maxOf(ChronoUnit.DAYS.between(start, targetDate).toInt() + 1, 1)
-        val periodLen = currentCycle.periodLength ?: 5
-        val cycleLen = currentCycle.cycleLength ?: avgCycleLength
-        val ovuDay = maxOf(cycleLen - 14, periodLen + 1)
-
-        return when {
-            day <= periodLen -> CyclePhase.MENSTRUATION
-            day in (ovuDay - 3)..(ovuDay + 1) -> CyclePhase.FERTILE_WINDOW
-            day < ovuDay - 3 -> CyclePhase.FOLLICULAR
-            day >= cycleLen - 3 -> CyclePhase.LATE_LUTEAL
-            else -> CyclePhase.LUTEAL
-        }
-    }
-
     private fun buildCycleHistory(cycles: List<Cycle>, avgCycleLength: Int): List<CycleHistoryItem> {
         if (cycles.isEmpty()) {
             return listOf(
@@ -88,7 +72,7 @@ class InsightsViewModel(
         }
 
         return cycles.sortedByDescending { it.startDate }.take(6).map { cycle ->
-            val date = try { LocalDate.parse(cycle.startDate) } catch (e: Exception) { today }
+            val date = try { LocalDate.parse(cycle.startDate) } catch (_: Exception) { today }
             val monthStr = date.month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
             val length = cycle.cycleLength ?: avgCycleLength
             val isRegular = abs(length - avgCycleLength) <= 2
@@ -129,7 +113,6 @@ class InsightsViewModel(
 
     private fun buildDynamicInsight(
         phase: CyclePhase,
-        avgCycleLength: Int,
         logs: List<DailyLog>
     ): String {
         val allSymptoms = logs.flatMap { it.symptoms }.map { it.symptomDisplayName }
@@ -151,6 +134,9 @@ class InsightsViewModel(
             phase == CyclePhase.LUTEAL -> {
                 "Progesterone is the dominant hormone. You may notice subtle shifts in appetite and energy—swapping high-intensity cardio for calming yoga helps stabilize cortisol."
             }
+            phase == CyclePhase.PERIOD_PREDICTED -> {
+                "Your period is predicted to start soon. Make sure to log your first flow when it begins so Lumi can accurately start and track your new cycle."
+            }
             else -> {
                 "Hormones are tapering before your next cycle. Increasing magnesium and restful sleep today can help minimize PMS symptoms and fatigue."
             }
@@ -163,5 +149,6 @@ class InsightsViewModel(
         CyclePhase.FERTILE_WINDOW -> "Fertile Window"
         CyclePhase.LUTEAL -> "Luteal"
         CyclePhase.LATE_LUTEAL -> "Late Luteal"
+        CyclePhase.PERIOD_PREDICTED -> "Pre-Period"
     }
 }

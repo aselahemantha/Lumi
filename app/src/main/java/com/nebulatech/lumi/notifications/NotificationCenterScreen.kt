@@ -19,12 +19,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.CheckCircleOutline
 import androidx.compose.material.icons.outlined.NotificationsNone
+import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,47 +59,28 @@ fun NotificationCenterScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        bottomBar = {
-            LumiBottomNavigationBar(
-                selectedTab = HomeTab.PROFILE,
-                onTabSelected = onTabSelected
-            )
-        },
-        containerColor = Color(0xFFFBF9F7)
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .statusBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 12.dp)
-        ) {
-            // Header Row: Left Title + Optional Clear All Button
+        topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp),
+                    .statusBarsPadding()
+                    .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = onNavigateBack,
-                        modifier = Modifier.padding(end = 4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color(0xFF26181F)
-                        )
-                    }
-                    Text(
-                        text = "Notification Center",
-                        fontFamily = LiterataFontFamily,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Primary
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFFDF0F4))
+                        .clickable { onNavigateBack() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Primary,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
 
@@ -116,18 +98,41 @@ fun NotificationCenterScreen(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = "System alerts, reminders, and phase insights delivered to you.",
-                fontFamily = ManropeFontFamily,
-                fontSize = 14.sp,
-                lineHeight = 21.sp,
-                color = Color(0xFF5E4E57)
+        },
+        bottomBar = {
+            LumiBottomNavigationBar(
+                selectedTab = HomeTab.PROFILE,
+                onTabSelected = onTabSelected
             )
+        },
+        containerColor = Color(0xFFFBF9F7)
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+        ) {
+            // Header Title & Subtitle matching Insights & Calendar design
+            Column(modifier = Modifier.padding(top = 4.dp)) {
+                Text(
+                    text = "Notification Center",
+                    fontFamily = LiterataFontFamily,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Primary
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "System alerts, reminders, and phase insights delivered to you.",
+                    fontFamily = ManropeFontFamily,
+                    fontSize = 15.sp,
+                    color = Color(0xFF5E4E57)
+                )
+            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Notifications List or Empty State
             if (state.notifications.isEmpty()) {
@@ -178,6 +183,28 @@ fun NotificationCenterScreen(
                             color = Color(0xFF7A6A73),
                             textAlign = TextAlign.Center
                         )
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        val context = LocalContext.current
+                        OutlinedButton(
+                            onClick = { viewModel.sendTestNotification(context) },
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.NotificationsActive,
+                                contentDescription = null,
+                                tint = Primary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.size(8.dp))
+                            Text(
+                                text = "Send Test Notification",
+                                fontFamily = ManropeFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                color = Primary
+                            )
+                        }
                     }
                 }
             } else {

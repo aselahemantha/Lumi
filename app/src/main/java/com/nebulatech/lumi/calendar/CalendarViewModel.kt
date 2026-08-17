@@ -78,7 +78,7 @@ class CalendarViewModel(
     private fun calculateCycleDay(cycles: List<Cycle>, targetDate: LocalDate): Int {
         val currentCycle = cycles.firstOrNull { it.isCurrent }
         return if (currentCycle != null) {
-            val start = try { LocalDate.parse(currentCycle.startDate) } catch (e: Exception) { targetDate }
+            val start = try { LocalDate.parse(currentCycle.startDate) } catch (_: Exception) { targetDate }
             maxOf(ChronoUnit.DAYS.between(start, targetDate).toInt() + 1, 1)
         } else {
             1
@@ -152,19 +152,33 @@ class CalendarViewModel(
 
         // 2. Cycle-based period and fertility calculation
         for (cycle in cycles) {
-            val cycleStart = try { LocalDate.parse(cycle.startDate) } catch (e: Exception) { null } ?: continue
+            val cycleStart = try { LocalDate.parse(cycle.startDate) } catch (_: Exception) { null } ?: continue
             val periodLen = cycle.periodLength ?: 5
             val cLength = cycle.cycleLength ?: avgCycleLength
 
-            // Period days
+            // Period days within the cycle
             if (!date.isBefore(cycleStart) && date.isBefore(cycleStart.plusDays(periodLen.toLong()))) {
-                val isFirstOrLast = date.isEqual(cycleStart) || date.isEqual(cycleStart.plusDays(periodLen.toLong() - 1))
-                return if (isFirstOrLast) CalendarDayType.PERIOD_LIGHT else CalendarDayType.PERIOD_HEAVY
+                return if (cycle.isCurrent && !date.isBefore(today)) {
+                    // Future period day on current cycle — unconfirmed prediction
+                    CalendarDayType.PERIOD_PREDICTED
+                } else {
+                    val isFirstOrLast = date.isEqual(cycleStart) || date.isEqual(cycleStart.plusDays(periodLen.toLong() - 1))
+                    if (isFirstOrLast) CalendarDayType.PERIOD_LIGHT else CalendarDayType.PERIOD_HEAVY
+                }
+            }
+
+            // Predicted next period window for the current cycle (when past cycle length)
+            if (cycle.isCurrent) {
+                val predictedNextStart = cycleStart.plusDays(cLength.toLong())
+                val predictedPeriodEnd = predictedNextStart.plusDays(periodLen.toLong())
+                if (!date.isBefore(predictedNextStart) && date.isBefore(predictedPeriodEnd)) {
+                    return CalendarDayType.PERIOD_PREDICTED
+                }
             }
 
             // Ovulation & Fertile window
             val ovuDate = if (cycle.ovulationDate != null) {
-                try { LocalDate.parse(cycle.ovulationDate) } catch (e: Exception) { null }
+                try { LocalDate.parse(cycle.ovulationDate) } catch (_: Exception) { null }
             } else {
                 cycleStart.plusDays(maxOf(cLength - 14, periodLen + 1).toLong())
             }
@@ -191,5 +205,6 @@ class CalendarViewModel(
         CyclePhase.FERTILE_WINDOW -> "Luteinizing hormone is peaking. Conception probability is highest."
         CyclePhase.LUTEAL -> "Progesterone is high. Prioritize restorative movement and balanced nutrition."
         CyclePhase.LATE_LUTEAL -> "Hormones are declining. Hydration and magnesium can help ease PMS symptoms."
+        CyclePhase.PERIOD_PREDICTED -> "Your period is predicted to start soon. Log your flow to confirm the start of your new cycle."
     }
 }

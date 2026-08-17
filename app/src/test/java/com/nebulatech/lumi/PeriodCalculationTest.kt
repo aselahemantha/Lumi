@@ -9,11 +9,9 @@ import com.nebulatech.lumi.data.local.entity.UserProfileEntity
 import com.nebulatech.lumi.data.model.CyclePhase
 import com.nebulatech.lumi.data.model.FlowIntensityType
 import com.nebulatech.lumi.data.model.PastCycleInput
-import com.nebulatech.lumi.data.repository.CycleRepository
 import com.nebulatech.lumi.data.repository.RoomCycleRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -132,11 +130,11 @@ class PeriodCalculationTest {
 
         // 1. Verify average cycle length across the 3 historical cycles
         val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
-        assertEquals(30, avgCycleLength)
+        assertEquals(expectedAvgCycleLength, avgCycleLength)
 
         // 2. Verify average period flow length across the 3 historical cycles
         val avgPeriodLength = cycleRepository.getAveragePeriodLength(testUserId).first()
-        assertEquals(5, avgPeriodLength)
+        assertEquals(expectedAvgPeriodLength, avgPeriodLength)
 
         // 3. Verify that 3 past cycles + 1 current cycle were created
         val allCycles = cycleRepository.getAllCycles(testUserId).first()
@@ -247,7 +245,9 @@ class PeriodCalculationTest {
         assertEquals(CyclePhase.LUTEAL, RoomCycleRepository.calculatePhase(16, cycleLength, periodLength))
         assertEquals(CyclePhase.LUTEAL, RoomCycleRepository.calculatePhase(21, cycleLength, periodLength))
         assertEquals(CyclePhase.LATE_LUTEAL, RoomCycleRepository.calculatePhase(22, cycleLength, periodLength))
-        assertEquals(CyclePhase.LATE_LUTEAL, RoomCycleRepository.calculatePhase(28, cycleLength, periodLength))
+        assertEquals(CyclePhase.LATE_LUTEAL, RoomCycleRepository.calculatePhase(27, cycleLength, periodLength))
+        assertEquals(CyclePhase.PERIOD_PREDICTED, RoomCycleRepository.calculatePhase(28, cycleLength, periodLength))
+        assertEquals(CyclePhase.PERIOD_PREDICTED, RoomCycleRepository.calculatePhase(29, cycleLength, periodLength))
     }
 
     // ── Fakes ─────────────────────────────────────────────────────────────────

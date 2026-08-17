@@ -162,6 +162,7 @@ private fun CyclePhase.toDisplayName(): String = when (this) {
     CyclePhase.FERTILE_WINDOW -> "Fertile Window"
     CyclePhase.LUTEAL -> "Luteal Phase"
     CyclePhase.LATE_LUTEAL -> "Late Luteal Phase"
+    CyclePhase.PERIOD_PREDICTED -> "Period Expected"
 }
 
 @Preview(showBackground = true)

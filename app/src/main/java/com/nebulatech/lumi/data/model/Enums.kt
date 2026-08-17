@@ -5,7 +5,8 @@ enum class CyclePhase {
     FOLLICULAR,
     FERTILE_WINDOW,
     LUTEAL,
-    LATE_LUTEAL
+    LATE_LUTEAL,
+    PERIOD_PREDICTED  // Period expected based on cycle length but not yet confirmed by logged flow
 }
 
 enum class PrimaryGoal {
@@ -63,6 +64,7 @@ enum class SymptomCategoryType {
     OTHER
 }
 
+@Suppress("unused")
 enum class ReminderType {
     PERIOD_START,
     FERTILE_WINDOW,
@@ -72,6 +74,7 @@ enum class ReminderType {
     PERIOD_END
 }
 
+@Suppress("unused")
 enum class SyncStatus {
     PENDING,
     IN_PROGRESS,
@@ -79,6 +82,7 @@ enum class SyncStatus {
     FAILED
 }
 
+@Suppress("unused")
 enum class SyncOperation {
     INSERT,
     UPDATE,

@@ -3,6 +3,7 @@ package com.nebulatech.lumi.logging
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nebulatech.lumi.data.model.BbtSource
+import com.nebulatech.lumi.data.model.CyclePhase
 import com.nebulatech.lumi.data.model.FlowIntensityType
 import com.nebulatech.lumi.data.model.LhIntensityType
 import com.nebulatech.lumi.data.model.MoodType
@@ -49,9 +50,28 @@ class LoggingViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isSaving = true) }
             try {
-                val currentCycle = cycleRepository.getCurrentCycle(userId).first()
-                val cycleDay = cycleRepository.getCycleDay(userId, today).first()
                 val phase = cycleRepository.getCurrentPhase(userId, today).first()
+                val cycleDay = cycleRepository.getCycleDay(userId, today).first()
+                val avgCycleLength = cycleRepository.getAverageCycleLength(userId).first()
+
+                // If period is predicted/overdue/late luteal and user logs flow, auto-start a new cycle.
+                // This confirms Day 1 MENSTRUATION instead of logging against the old stale cycle.
+                val shouldStartNewCycle = action.flow != null && (
+                    phase == CyclePhase.PERIOD_PREDICTED ||
+                    phase == CyclePhase.LATE_LUTEAL ||
+                    cycleDay >= avgCycleLength
+                )
+                val currentCycleId: String?
+                if (shouldStartNewCycle) {
+                    val newCycleResult = cycleRepository.startNewCycle(userId, today)
+                    currentCycleId = (newCycleResult as? Result.Success)?.data?.id
+                } else {
+                    currentCycleId = cycleRepository.getCurrentCycle(userId).first()?.id
+                }
+
+                // Re-read after potentially starting new cycle (cycleDay will now be 1)
+                val updatedCycleDay = cycleRepository.getCycleDay(userId, today).first()
+                val updatedPhase = cycleRepository.getCurrentPhase(userId, today).first()
 
                 val result = dailyLogRepository.saveFlowLog(
                     userId = userId,
@@ -59,9 +79,9 @@ class LoggingViewModel(
                     flowIntensity = action.flow?.toDomainType(),
                     mood = action.mood?.toDomainType(),
                     symptoms = action.symptoms,
-                    cycleId = currentCycle?.id,
-                    cycleDay = cycleDay,
-                    cyclePhase = phase
+                    cycleId = currentCycleId,
+                    cycleDay = updatedCycleDay,
+                    cyclePhase = updatedPhase
                 )
                 when (result) {
                     is Result.Success -> _events.send(LoggingEvent.FlowSaved)

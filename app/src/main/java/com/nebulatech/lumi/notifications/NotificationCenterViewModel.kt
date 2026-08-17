@@ -36,9 +36,20 @@ class NotificationCenterViewModel(
         }
     }
 
+    @Suppress("unused")
     fun deleteNotification(id: String) {
         viewModelScope.launch {
             notificationRepository.deleteNotification(id)
         }
+    }
+
+    fun sendTestNotification(context: android.content.Context) {
+        LumiNotificationScheduler.triggerNotificationNow(
+            context = context,
+            title = "Lumi Cycle Alert",
+            body = "Your daily insights and cycle prediction are updated. Tap to view.",
+            channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
+            notificationId = 3001
+        )
     }
 }

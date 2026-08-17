@@ -33,11 +33,12 @@ import java.time.YearMonth
 
 enum class CalendarDayType {
     NORMAL,
-    PERIOD_LIGHT,     // Light purple background
-    PERIOD_HEAVY,     // Solid plum background
-    FERTILE_OUTLINE,  // Pink outline
-    FERTILE_FILLED,   // Soft pink filled
-    OVULATION         // Pink circle + purple border ring + top right dot
+    PERIOD_LIGHT,       // Light purple background (confirmed light flow)
+    PERIOD_HEAVY,       // Solid plum background (confirmed heavy flow)
+    PERIOD_PREDICTED,   // Dashed outline — period expected but not yet confirmed
+    FERTILE_OUTLINE,    // Pink outline
+    FERTILE_FILLED,     // Soft pink filled
+    OVULATION           // Pink circle + purple border ring + top right dot
 }
 
 data class CalendarGridCell(
@@ -49,10 +50,10 @@ data class CalendarGridCell(
 
 @Composable
 fun MonthlyCalendarCard(
+    modifier: Modifier = Modifier,
     yearMonth: YearMonth = YearMonth.of(2023, 10),
     cells: List<CalendarGridCell> = generateCalendarCells(yearMonth),
-    onDayClick: (CalendarGridCell) -> Unit = {},
-    modifier: Modifier = Modifier
+    onDayClick: (CalendarGridCell) -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -114,6 +115,7 @@ private fun CalendarCellItem(
     val textColor = when {
         !cell.isCurrentMonth -> Color(0xFFD4C8CD)
         cell.type == CalendarDayType.PERIOD_HEAVY -> Color.White
+        cell.type == CalendarDayType.PERIOD_PREDICTED -> Color(0xFF8B5E6E)
         cell.type == CalendarDayType.FERTILE_FILLED -> Color(0xFF532E3E)
         cell.type == CalendarDayType.OVULATION -> Primary
         else -> Color(0xFF26181F)
@@ -157,6 +159,27 @@ private fun CalendarCellItem(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFF4A2B39)
+                    )
+                }
+            }
+            CalendarDayType.PERIOD_PREDICTED -> {
+                // Dashed/faint outline circle — period predicted but unconfirmed
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .border(
+                            width = 1.5.dp,
+                            color = Primary.copy(alpha = 0.45f),
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "${cell.dayNumber}",
+                        fontFamily = ManropeFontFamily,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = textColor
                     )
                 }
             }

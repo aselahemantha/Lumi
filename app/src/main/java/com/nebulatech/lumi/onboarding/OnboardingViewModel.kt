@@ -3,7 +3,6 @@ package com.nebulatech.lumi.onboarding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nebulatech.lumi.core.domain.Result
-import com.nebulatech.lumi.data.model.Cycle
 import com.nebulatech.lumi.data.model.HealthConditionType
 import com.nebulatech.lumi.data.model.PastCycleInput
 import com.nebulatech.lumi.data.model.PrimaryGoal
@@ -11,13 +10,14 @@ import com.nebulatech.lumi.data.model.UserProfile
 import com.nebulatech.lumi.data.model.WeightUnit
 import com.nebulatech.lumi.data.repository.CycleRepository
 import com.nebulatech.lumi.data.repository.UserRepository
+import com.nebulatech.lumi.data.repository.NotificationRepository
+import com.nebulatech.lumi.notifications.LumiNotificationItem
+import com.nebulatech.lumi.notifications.NotificationCategory
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -25,7 +25,8 @@ import java.util.UUID
 
 class OnboardingViewModel(
     private val userRepository: UserRepository,
-    private val cycleRepository: CycleRepository
+    private val cycleRepository: CycleRepository,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(OnboardingState())
@@ -49,7 +50,20 @@ class OnboardingViewModel(
                 _state.update { it.copy(cycleLength = action.length) }
             }
             is OnboardingAction.UpdateCustomPastCycles -> {
-                _state.update { it.copy(customPastCycles = action.cycles) }
+                val cycles = action.cycles
+                if (!cycles.isNullOrEmpty()) {
+                    val avgLength = kotlin.math.round(cycles.map { it.cycleLength }.average()).toInt().coerceIn(20, 45)
+                    val avgDuration = kotlin.math.round(cycles.map { it.periodDuration }.average()).toInt().coerceIn(2, 10)
+                    _state.update {
+                        it.copy(
+                            customPastCycles = cycles,
+                            cycleLength = avgLength,
+                            periodDuration = avgDuration
+                        )
+                    }
+                } else {
+                    _state.update { it.copy(customPastCycles = null) }
+                }
             }
             is OnboardingAction.UpdateAge -> {
                 _state.update { it.copy(age = action.age) }
@@ -139,12 +153,12 @@ class OnboardingViewModel(
 
             val manualCycles = s.customPastCycles
             val avgCycleLength = if (!manualCycles.isNullOrEmpty()) {
-                manualCycles.map { it.cycleLength }.average().toInt()
+                kotlin.math.round(manualCycles.map { it.cycleLength }.average()).toInt().coerceIn(20, 45)
             } else {
                 s.cycleLength
             }
             val avgPeriodDuration = if (!manualCycles.isNullOrEmpty()) {
-                manualCycles.map { it.periodDuration }.average().toInt()
+                kotlin.math.round(manualCycles.map { it.periodDuration }.average()).toInt().coerceIn(2, 10)
             } else {
                 s.periodDuration
             }
@@ -193,6 +207,18 @@ class OnboardingViewModel(
                     numberOfPastCycles = 3
                 )
             }
+
+            // 4. Seed initial welcome notification
+            notificationRepository.addNotification(
+                userId = user.id,
+                item = LumiNotificationItem(
+                    id = UUID.randomUUID().toString(),
+                    category = NotificationCategory.PHASE_INSIGHT,
+                    title = "Welcome to Lumi",
+                    body = "Your ${avgCycleLength}-day cycle has been configured. We'll send you reminders and phase forecasts right on time.",
+                    timeText = "Just now"
+                )
+            )
 
             _state.update { it.copy(isSaving = false) }
             _events.send(OnboardingEvent.NavigateNext(goal))

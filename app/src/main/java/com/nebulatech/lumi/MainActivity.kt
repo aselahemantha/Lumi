@@ -1,8 +1,11 @@
 package com.nebulatech.lumi
 
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +23,6 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,7 +75,17 @@ class MainActivity : FragmentActivity() {
                     mutableStateOf(!BiometricAuthManager.isBiometricEnabled(this))
                 }
 
+                val permissionLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.RequestPermission()
+                ) { _ ->
+                    // Notification permission granted/denied
+                }
+
                 LaunchedEffect(Unit) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    }
+
                     if (BiometricAuthManager.isBiometricEnabled(this@MainActivity) && !isUnlocked) {
                         BiometricAuthManager.showBiometricPrompt(
                             activity = this@MainActivity,
@@ -176,24 +188,23 @@ class MainActivity : FragmentActivity() {
                 val startDestination: Any =
                     if (isExistingUser == true) HomeRoute else OnboardingRoute
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = startDestination
-                    ) {
-                        composable<OnboardingRoute> {
-                            OnboardingRoot(
-                                onNavigateBack = { finish() },
-                                onNavigateNext = { _ ->
-                                    navController.navigate(HomeRoute) {
-                                        popUpTo<OnboardingRoute> { inclusive = true }
-                                    }
+                NavHost(
+                    navController = navController,
+                    startDestination = startDestination,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    composable<OnboardingRoute> {
+                        OnboardingRoot(
+                            onNavigateBack = { finish() },
+                            onNavigateNext = { _ ->
+                                navController.navigate(HomeRoute) {
+                                    popUpTo<OnboardingRoute> { inclusive = true }
                                 }
-                            )
-                        }
-                        composable<HomeRoute> {
-                            HomeScreenContainer()
-                        }
+                            }
+                        )
+                    }
+                    composable<HomeRoute> {
+                        HomeScreenContainer()
                     }
                 }
             }
