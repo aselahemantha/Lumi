@@ -67,6 +67,7 @@ import com.nebulatech.lumi.ui.theme.Primary
 
 @Composable
 fun AppSettingsCard(
+    modifier: Modifier = Modifier,
     notificationsEnabled: Boolean = true,
     notifDailyLog: Boolean = true,
     notifMorningBbt: Boolean = true,
@@ -76,7 +77,6 @@ fun AppSettingsCard(
     onNotificationsToggle: (Boolean) -> Unit = {},
     onGranularToggle: (type: String, enabled: Boolean) -> Unit = { _, _ -> },
     onPrivacyClick: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     var showIntegrationsDialog by remember { mutableStateOf(false) }
