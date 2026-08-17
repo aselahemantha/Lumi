@@ -215,27 +215,30 @@ fun AppSettingsCard(
 
                     HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
 
-                    // Sub-item 3: Period Predictions & 2-Day Alerts
+                    // Sub-item 3: Period Predictions & Cycle Alerts
                     NotificationSubToggleRow(
-                        title = "Period Predictions & 2-Day Alerts",
+                        title = "Period Predictions & Alerts",
+                        timeBadge = "7:00 AM",
                         isChecked = notifPeriodAlerts,
                         onCheckedChange = { onGranularToggle("PERIOD_START", it) }
                     )
 
                     HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
 
-                    // Sub-item 4: Fertile Window & Ovulation Alerts
+                    // Sub-item 4: Fertile Window & Peak Ovulation
                     NotificationSubToggleRow(
-                        title = "Fertile Window & Ovulation Alerts",
+                        title = "Fertile Window & Peak Ovulation",
+                        timeBadge = "11:00 AM",
                         isChecked = notifFertilityAlerts,
                         onCheckedChange = { onGranularToggle("FERTILE_WINDOW", it) }
                     )
 
                     HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
 
-                    // Sub-item 5: Phase Shift Insights
+                    // Sub-item 5: Cycle Phase & Morning Readiness
                     NotificationSubToggleRow(
-                        title = "Phase Shift & Wellness Insights",
+                        title = "Cycle Phase & Morning Readiness",
+                        timeBadge = "7:00 AM",
                         isChecked = notifPhaseInsights,
                         onCheckedChange = { onGranularToggle("PHASE_INSIGHT", it) }
                     )
