@@ -478,30 +478,32 @@ private fun NotificationSubToggleRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 12.dp),
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = title,
                 fontFamily = ManropeFontFamily,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
+                fontSize = 13.5.sp,
+                fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF26181F)
             )
 
             if (timeBadge != null) {
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .background(Color(0xFFF0E5EB))
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                        .background(Color(0xFFF3EAF0))
+                        .padding(horizontal = 7.dp, vertical = 2.dp)
                 ) {
                     Text(
                         text = timeBadge,
                         fontFamily = ManropeFontFamily,
-                        fontSize = 10.sp,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = Primary
                     )
