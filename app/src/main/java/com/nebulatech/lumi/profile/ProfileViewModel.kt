@@ -58,8 +58,8 @@ class ProfileViewModel(
             notifDailyLog = settingsMap["DAILY_LOG"] ?: false,
             notifMorningBbt = settingsMap["BBT_REMINDER"] ?: false,
             notifPeriodAlerts = settingsMap["PERIOD_START"] ?: masterEnabled,
-            notifFertilityAlerts = settingsMap["FERTILE_WINDOW"] ?: false,
-            notifPhaseInsights = settingsMap["PHASE_INSIGHT"] ?: masterEnabled
+            notifFertilityAlerts = settingsMap["FERTILE_WINDOW"] ?: masterEnabled,
+            notifPhaseInsights = settingsMap["PHASE_INSIGHT"] ?: false
         )
     }.stateIn(
         scope = viewModelScope,

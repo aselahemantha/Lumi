@@ -143,8 +143,8 @@ class RoomNotificationRepository(
                 Triple("DAILY_LOG", false, Pair(20, 30)),
                 Triple("BBT_REMINDER", false, Pair(7, 0)),
                 Triple("PERIOD_START", isEnabled, Pair(7, 0)),
-                Triple("FERTILE_WINDOW", false, Pair(11, 0)),
-                Triple("PHASE_INSIGHT", isEnabled, Pair(7, 0))
+                Triple("FERTILE_WINDOW", isEnabled, Pair(11, 0)),
+                Triple("PHASE_INSIGHT", false, Pair(7, 0))
             )
             val entities = defaultSettings.map { (type, enabled, time) ->
                 NotificationSettingEntity(

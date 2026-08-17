@@ -137,7 +137,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
         today: LocalDate
     ) {
         val periodAlertsOn = settings["PERIOD_START"] ?: true
-        val phaseInsightsOn = settings["PHASE_INSIGHT"] ?: true
+        val phaseInsightsOn = settings["PHASE_INSIGHT"] ?: false
         val bbtReminderOn = settings["BBT_REMINDER"] ?: false
 
         if (currentCycle != null) {
@@ -260,7 +260,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
         currentCycle: com.nebulatech.lumi.data.model.Cycle?,
         today: LocalDate
     ) {
-        val fertilityAlertsOn = settings["FERTILE_WINDOW"] ?: false
+        val fertilityAlertsOn = settings["FERTILE_WINDOW"] ?: true
         if (!fertilityAlertsOn || currentCycle == null) return
 
         val cycleStart = try { LocalDate.parse(currentCycle.startDate) } catch (_: Exception) { today }

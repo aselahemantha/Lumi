@@ -76,10 +76,10 @@ fun AppSettingsCard(
     notifPhaseInsights: Boolean = true,
     onNotificationsToggle: (Boolean) -> Unit = {},
     onGranularToggle: (type: String, enabled: Boolean) -> Unit = { _, _ -> },
-    onPrivacyClick: () -> Unit = {},
+    onPrivacyClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    var showIntegrationsDialog by remember { mutableStateOf(false) }
+    val showIntegrationsDialog = remember { mutableStateOf(false) }
 
     var isNotificationsExpanded by remember { mutableStateOf(false) }
     var isBiometricLockOn by remember {
@@ -405,15 +405,15 @@ fun AppSettingsCard(
                 title = "App Integrations",
                 subtitle = "Apple Health, Health Connect & Oura Ring",
                 badgeText = "Available Soon",
-                onClick = { showIntegrationsDialog = true }
+                onClick = { showIntegrationsDialog.value = true }
             )
         }
     }
 
     // "Available Soon" Dialog
-    if (showIntegrationsDialog) {
+    if (showIntegrationsDialog.value) {
         AlertDialog(
-            onDismissRequest = { showIntegrationsDialog = false },
+            onDismissRequest = { showIntegrationsDialog.value = false },
             icon = {
                 Box(
                     modifier = Modifier
@@ -449,7 +449,7 @@ fun AppSettingsCard(
             },
             confirmButton = {
                 Button(
-                    onClick = { showIntegrationsDialog = false },
+                    onClick = { showIntegrationsDialog.value = false },
                     colors = ButtonDefaults.buttonColors(containerColor = Primary),
                     shape = RoundedCornerShape(20.dp)
                 ) {
@@ -512,7 +512,6 @@ private fun NotificationSubToggleRow(
         Switch(
             checked = isChecked,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier.size(scale = 0.8f, defaultSize = 36.dp),
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
                 checkedTrackColor = Primary,
@@ -521,11 +520,6 @@ private fun NotificationSubToggleRow(
             )
         )
     }
-}
-
-@Composable
-private fun Modifier.size(scale: Float, defaultSize: androidx.compose.ui.unit.Dp): Modifier {
-    return this.height(defaultSize)
 }
 
 @Composable

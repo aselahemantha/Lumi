@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId = "com.nebulatech.lumi"
         minSdk = 24
-        targetSdk = 37
+        targetSdk = 36
         versionCode = 6
         versionName = "1.2"
 
