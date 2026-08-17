@@ -46,6 +46,7 @@ class HomeViewModel(
         val progressRatio = (cycleDay.toFloat() / avgCycleLength.toFloat()).coerceIn(0f, 1f)
         val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength, avgPeriodLength)
         val (insightTitle, insightText) = buildInsight(phase)
+        val next7Days = buildNext7Days(today, cycle, avgCycleLength, avgPeriodLength)
 
         HomeState(
             isLoading = false,
@@ -60,7 +61,8 @@ class HomeViewModel(
             currentPhase = phase,
             insightTitle = insightTitle,
             insightText = insightText,
-            isPeriodPredicted = phase == CyclePhase.PERIOD_PREDICTED
+            isPeriodPredicted = phase == CyclePhase.PERIOD_PREDICTED,
+            next7Days = next7Days
         )
     }.stateIn(
         scope = viewModelScope,
@@ -128,8 +130,40 @@ class HomeViewModel(
                 "Pre-Menstrual Insight" to "Progesterone is tapering down before your period. Staying well-hydrated and increasing magnesium intake can help prevent PMS headaches."
             }
             CyclePhase.PERIOD_PREDICTED -> {
-                "Period Expected" to "Your period is predicted to start today or very soon. Tap the button below to log your flow and confirm the start of your new cycle."
+                "Period Expected" to "Your period is predicted to start soon. When your bleeding begins, log your flow below to start your new cycle."
             }
+        }
+    }
+
+    private fun buildNext7Days(
+        today: LocalDate,
+        cycle: com.nebulatech.lumi.data.model.Cycle?,
+        avgCycleLength: Int,
+        avgPeriodLength: Int
+    ): List<com.nebulatech.lumi.home.components.DayItem> {
+        val cycleStart = cycle?.startDate?.let {
+            try { LocalDate.parse(it) } catch (_: Exception) { null }
+        }
+        val cLength = cycle?.cycleLength ?: avgCycleLength
+        val pLength = cycle?.periodLength ?: avgPeriodLength
+        val predictedNextStart = cycleStart?.plusDays(cLength.toLong())
+
+        return (0..6).map { offset ->
+            val target = today.plusDays(offset.toLong())
+            val dayName = target.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
+            val isToday = (offset == 0)
+
+            val isPredictedPeriod = if (predictedNextStart != null) {
+                val predictedPeriodEnd = predictedNextStart.plusDays(pLength.toLong())
+                !target.isBefore(predictedNextStart) && target.isBefore(predictedPeriodEnd)
+            } else false
+
+            com.nebulatech.lumi.home.components.DayItem(
+                dayName = dayName,
+                dateNumber = target.dayOfMonth,
+                isToday = isToday,
+                hasPeriodDot = isPredictedPeriod
+            )
         }
     }
 }

@@ -72,6 +72,7 @@ fun HomeScreenContainer(
                                     insightTitle = state.insightTitle,
                                     insightText = state.insightText,
                                     isPeriodPredicted = state.isPeriodPredicted,
+                                    next7Days = state.next7Days,
                                     loggingViewModel = loggingVm,
                                     onNotificationClick = { showNotificationCenter.value = true },
                                     onTabSelected = { selectedBottomTab.value = it }

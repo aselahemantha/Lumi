@@ -54,11 +54,15 @@ class LoggingViewModel(
                 val cycleDay = cycleRepository.getCycleDay(userId, today).first()
                 val avgCycleLength = cycleRepository.getAverageCycleLength(userId).first()
 
-                // If period is predicted/overdue and user logs flow, auto-start a new cycle.
+                // If period is predicted/overdue/late luteal and user logs flow, auto-start a new cycle.
                 // This confirms Day 1 MENSTRUATION instead of logging against the old stale cycle.
+                val shouldStartNewCycle = action.flow != null && (
+                    phase == CyclePhase.PERIOD_PREDICTED ||
+                    phase == CyclePhase.LATE_LUTEAL ||
+                    cycleDay >= avgCycleLength
+                )
                 val currentCycleId: String?
-                if (phase == CyclePhase.PERIOD_PREDICTED ||
-                    (phase == CyclePhase.LATE_LUTEAL && cycleDay >= avgCycleLength)) {
+                if (shouldStartNewCycle) {
                     val newCycleResult = cycleRepository.startNewCycle(userId, today)
                     currentCycleId = (newCycleResult as? Result.Success)?.data?.id
                 } else {

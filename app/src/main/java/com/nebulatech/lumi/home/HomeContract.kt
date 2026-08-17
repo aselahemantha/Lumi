@@ -2,6 +2,8 @@ package com.nebulatech.lumi.home
 
 import com.nebulatech.lumi.data.model.CyclePhase
 
+import com.nebulatech.lumi.home.components.DayItem
+
 enum class HomeLayoutType {
     CYCLE_RING,
     FERTILITY_DASHBOARD,
@@ -21,7 +23,8 @@ data class HomeState(
     val currentPhase: CyclePhase = CyclePhase.FOLLICULAR,
     val insightTitle: String = "Lumi Insight",
     val insightText: String = "",
-    val isPeriodPredicted: Boolean = false
+    val isPeriodPredicted: Boolean = false,
+    val next7Days: List<DayItem> = emptyList()
 )
 
 sealed interface HomeAction {

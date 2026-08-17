@@ -64,6 +64,7 @@ fun CycleRingHomeScreen(
     insightTitle: String = "Lumi Insight",
     insightText: String = "",
     isPeriodPredicted: Boolean = false,
+    next7Days: List<com.nebulatech.lumi.home.components.DayItem> = emptyList(),
     loggingViewModel: LoggingViewModel? = null,
     onLogFlowClick: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
@@ -145,7 +146,7 @@ fun CycleRingHomeScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (isPeriodPredicted) "My Period Started" else "Log Flow",
+                        text = if (isPeriodPredicted) "Confirm Period Start" else "Log Flow",
                         fontFamily = ManropeFontFamily,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -154,7 +155,11 @@ fun CycleRingHomeScreen(
             }
 
             // 4. Next 7 Days Calendar Strip
-            Next7DaysCalendarStrip()
+            if (next7Days.isNotEmpty()) {
+                Next7DaysCalendarStrip(days = next7Days)
+            } else {
+                Next7DaysCalendarStrip()
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
         }
