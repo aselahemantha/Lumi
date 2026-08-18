@@ -67,6 +67,7 @@ import com.nebulatech.lumi.ui.theme.Primary
 
 @Composable
 fun AppSettingsCard(
+    modifier: Modifier = Modifier,
     notificationsEnabled: Boolean = true,
     notifDailyLog: Boolean = true,
     notifMorningBbt: Boolean = true,
@@ -75,11 +76,10 @@ fun AppSettingsCard(
     notifPhaseInsights: Boolean = true,
     onNotificationsToggle: (Boolean) -> Unit = {},
     onGranularToggle: (type: String, enabled: Boolean) -> Unit = { _, _ -> },
-    onPrivacyClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onPrivacyClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    var showIntegrationsDialog by remember { mutableStateOf(false) }
+    val showIntegrationsDialog = remember { mutableStateOf(false) }
 
     var isNotificationsExpanded by remember { mutableStateOf(false) }
     var isBiometricLockOn by remember {
@@ -215,27 +215,30 @@ fun AppSettingsCard(
 
                     HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
 
-                    // Sub-item 3: Period Predictions & 2-Day Alerts
+                    // Sub-item 3: Period Predictions & Cycle Alerts
                     NotificationSubToggleRow(
-                        title = "Period Predictions & 2-Day Alerts",
+                        title = "Period Predictions & Alerts",
+                        timeBadge = "7:00 AM",
                         isChecked = notifPeriodAlerts,
                         onCheckedChange = { onGranularToggle("PERIOD_START", it) }
                     )
 
                     HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
 
-                    // Sub-item 4: Fertile Window & Ovulation Alerts
+                    // Sub-item 4: Fertile Window & Peak Ovulation
                     NotificationSubToggleRow(
-                        title = "Fertile Window & Ovulation Alerts",
+                        title = "Fertile Window & Peak Ovulation",
+                        timeBadge = "11:00 AM",
                         isChecked = notifFertilityAlerts,
                         onCheckedChange = { onGranularToggle("FERTILE_WINDOW", it) }
                     )
 
                     HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
 
-                    // Sub-item 5: Phase Shift Insights
+                    // Sub-item 5: Cycle Phase & Morning Readiness
                     NotificationSubToggleRow(
-                        title = "Phase Shift & Wellness Insights",
+                        title = "Cycle Phase & Morning Readiness",
+                        timeBadge = "7:00 AM",
                         isChecked = notifPhaseInsights,
                         onCheckedChange = { onGranularToggle("PHASE_INSIGHT", it) }
                     )
@@ -402,15 +405,15 @@ fun AppSettingsCard(
                 title = "App Integrations",
                 subtitle = "Apple Health, Health Connect & Oura Ring",
                 badgeText = "Available Soon",
-                onClick = { showIntegrationsDialog = true }
+                onClick = { showIntegrationsDialog.value = true }
             )
         }
     }
 
     // "Available Soon" Dialog
-    if (showIntegrationsDialog) {
+    if (showIntegrationsDialog.value) {
         AlertDialog(
-            onDismissRequest = { showIntegrationsDialog = false },
+            onDismissRequest = { showIntegrationsDialog.value = false },
             icon = {
                 Box(
                     modifier = Modifier
@@ -446,7 +449,7 @@ fun AppSettingsCard(
             },
             confirmButton = {
                 Button(
-                    onClick = { showIntegrationsDialog = false },
+                    onClick = { showIntegrationsDialog.value = false },
                     colors = ButtonDefaults.buttonColors(containerColor = Primary),
                     shape = RoundedCornerShape(20.dp)
                 ) {
@@ -475,30 +478,32 @@ private fun NotificationSubToggleRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 12.dp),
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = title,
                 fontFamily = ManropeFontFamily,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
+                fontSize = 13.5.sp,
+                fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF26181F)
             )
 
             if (timeBadge != null) {
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .background(Color(0xFFF0E5EB))
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                        .background(Color(0xFFF3EAF0))
+                        .padding(horizontal = 7.dp, vertical = 2.dp)
                 ) {
                     Text(
                         text = timeBadge,
                         fontFamily = ManropeFontFamily,
-                        fontSize = 10.sp,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = Primary
                     )
@@ -509,7 +514,6 @@ private fun NotificationSubToggleRow(
         Switch(
             checked = isChecked,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier.size(scale = 0.8f, defaultSize = 36.dp),
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
                 checkedTrackColor = Primary,
@@ -518,11 +522,6 @@ private fun NotificationSubToggleRow(
             )
         )
     }
-}
-
-@Composable
-private fun Modifier.size(scale: Float, defaultSize: androidx.compose.ui.unit.Dp): Modifier {
-    return this.height(defaultSize)
 }
 
 @Composable

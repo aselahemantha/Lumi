@@ -55,11 +55,11 @@ class ProfileViewModel(
             weightUnit = profile?.weightUnit ?: com.nebulatech.lumi.data.model.WeightUnit.KG,
             healthConditions = profile?.healthConditions ?: emptyList(),
             notificationsEnabled = masterEnabled,
-            notifDailyLog = settingsMap["DAILY_LOG"] ?: masterEnabled,
-            notifMorningBbt = settingsMap["BBT_REMINDER"] ?: masterEnabled,
+            notifDailyLog = settingsMap["DAILY_LOG"] ?: false,
+            notifMorningBbt = settingsMap["BBT_REMINDER"] ?: false,
             notifPeriodAlerts = settingsMap["PERIOD_START"] ?: masterEnabled,
             notifFertilityAlerts = settingsMap["FERTILE_WINDOW"] ?: masterEnabled,
-            notifPhaseInsights = settingsMap["PHASE_INSIGHT"] ?: masterEnabled
+            notifPhaseInsights = settingsMap["PHASE_INSIGHT"] ?: false
         )
     }.stateIn(
         scope = viewModelScope,

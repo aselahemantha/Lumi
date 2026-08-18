@@ -139,22 +139,22 @@ class RoomNotificationRepository(
     override suspend fun toggleAllSettings(userId: String, isEnabled: Boolean): EmptyResult<DataError.Local> {
         return try {
             val now = Instant.now().toString()
-            val defaultTypes = listOf(
-                "DAILY_LOG" to Pair(20, 30),
-                "BBT_REMINDER" to Pair(7, 0),
-                "PERIOD_START" to Pair(9, 0),
-                "FERTILE_WINDOW" to Pair(9, 0),
-                "PHASE_INSIGHT" to Pair(10, 0)
+            val defaultSettings = listOf(
+                Triple("DAILY_LOG", false, Pair(20, 30)),
+                Triple("BBT_REMINDER", false, Pair(7, 0)),
+                Triple("PERIOD_START", isEnabled, Pair(7, 0)),
+                Triple("FERTILE_WINDOW", isEnabled, Pair(11, 0)),
+                Triple("PHASE_INSIGHT", false, Pair(7, 0))
             )
-            val entities = defaultTypes.map { (type, time) ->
+            val entities = defaultSettings.map { (type, enabled, time) ->
                 NotificationSettingEntity(
                     id = UUID.randomUUID().toString(),
                     userId = userId,
                     reminderType = type,
-                    isEnabled = isEnabled,
+                    isEnabled = enabled,
                     reminderHour = time.first,
                     reminderMinute = time.second,
-                    daysBefore = 2,
+                    daysBefore = if (type == "PERIOD_START") 2 else null,
                     updatedAt = now
                 )
             }

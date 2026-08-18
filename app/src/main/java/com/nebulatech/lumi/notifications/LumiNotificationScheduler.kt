@@ -9,50 +9,24 @@ import java.util.Calendar
 
 object LumiNotificationScheduler {
 
-    private const val ID_DAILY_REFLECTION = 2001
-    private const val ID_MORNING_BBT = 2002
-    private const val ID_PERIOD_ALERT = 2003
-    private const val ID_FERTILITY_ALERT = 2004
-    private const val ID_PHASE_INSIGHT = 2005
+    private const val ID_MORNING_CHECK = 2001
+    private const val ID_FERTILITY_ALERT = 2002
+    private const val ID_DAILY_REFLECTION = 2003
 
     fun scheduleAllReminders(context: Context) {
-        // 1. Daily Reflection (8:30 PM)
-        scheduleDailyAlarm(
-            context = context,
-            hour = 20,
-            minute = 30,
-            requestCode = ID_DAILY_REFLECTION,
-            action = LumiNotificationReceiver.ACTION_DAILY_REFLECTION,
-            title = "Daily Reflection",
-            body = "How are you feeling today? Take 10 seconds to log today's symptoms and mood.",
-            channelId = LumiNotificationChannels.CHANNEL_DAILY_REMINDERS
-        )
-
-        // 2. Morning BBT Reading (7:00 AM)
+        // 1. Morning Cycle, Period Prediction & Phase Insight Check (7:00 AM)
         scheduleDailyAlarm(
             context = context,
             hour = 7,
             minute = 0,
-            requestCode = ID_MORNING_BBT,
-            action = LumiNotificationReceiver.ACTION_MORNING_BBT,
-            title = "Good Morning",
-            body = "Remember to take your waking temperature before getting up.",
-            channelId = LumiNotificationChannels.CHANNEL_DAILY_REMINDERS
-        )
-
-        // 3. Period Prediction Check (9:00 AM)
-        scheduleDailyAlarm(
-            context = context,
-            hour = 9,
-            minute = 0,
-            requestCode = ID_PERIOD_ALERT,
-            action = LumiNotificationReceiver.ACTION_PERIOD_ALERT,
-            title = "Period Prediction",
-            body = "Your period is predicted in ~2 days. Stay hydrated and prioritize restorative rest.",
+            requestCode = ID_MORNING_CHECK,
+            action = LumiNotificationReceiver.ACTION_MORNING_CHECK,
+            title = "Period & Morning Cycle Check",
+            body = "Your daily cycle predictions are ready.",
             channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS
         )
 
-        // 4. Fertile & Ovulation Alert (11:00 AM)
+        // 2. Fertile & Peak Ovulation Alert (11:00 AM)
         scheduleDailyAlarm(
             context = context,
             hour = 11,
@@ -60,20 +34,20 @@ object LumiNotificationScheduler {
             requestCode = ID_FERTILITY_ALERT,
             action = LumiNotificationReceiver.ACTION_FERTILITY_ALERT,
             title = "Peak Vitality",
-            body = "Peak fertility window today! Today is an optimal time for an LH ovulation test.",
+            body = "Peak fertility window today!",
             channelId = LumiNotificationChannels.CHANNEL_FERTILITY_ALERTS
         )
 
-        // 5. Phase Insight (10:00 AM)
+        // 3. Evening Reflection Check (8:30 PM)
         scheduleDailyAlarm(
             context = context,
-            hour = 10,
-            minute = 0,
-            requestCode = ID_PHASE_INSIGHT,
-            action = LumiNotificationReceiver.ACTION_PHASE_INSIGHT,
-            title = "Cycle Phase Insight",
-            body = "You've entered a new phase. Check Lumi for today's hormone and energy forecast.",
-            channelId = LumiNotificationChannels.CHANNEL_PHASE_INSIGHTS
+            hour = 20,
+            minute = 30,
+            requestCode = ID_DAILY_REFLECTION,
+            action = LumiNotificationReceiver.ACTION_DAILY_REFLECTION,
+            title = "Daily Reflection",
+            body = "How are you feeling today? Log today's symptoms and mood.",
+            channelId = LumiNotificationChannels.CHANNEL_DAILY_REMINDERS
         )
     }
 
