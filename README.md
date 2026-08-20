@@ -22,6 +22,7 @@
 ## 📖 Table of Contents
 
 - [Overview](#-overview)
+- [UI Showcase](#-ui-showcase)
 - [Key Features](#-key-features)
 - [Cycle & Phase Calculation Engine](#-cycle--phase-calculation-engine)
 - [Adaptive Home Screen Layouts](#-adaptive-home-screen-layouts)
@@ -31,6 +32,10 @@
 - [CI/CD & Release Pipeline](#-cicd--release-pipeline)
 - [Getting Started](#-getting-started)
 - [Running Automated Tests](#-running-automated-tests)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [Support & Contact](#-support--contact)
+- [Acknowledgements](#-acknowledgements)
 
 ---
 
@@ -39,6 +44,16 @@
 **Lumi** is designed around a simple yet critical philosophy: **Reproductive health data belongs exclusively to the user.** 
 
 Unlike conventional cloud-centric cycle trackers, Lumi implements an **offline-first, zero-knowledge architecture**. All cycle logs, basal body temperatures (BBT), LH test strips, symptoms, and moods are encrypted and stored locally on the device with hardware-backed biometric authentication.
+
+---
+
+## 📱 UI Showcase
+
+<p align="center">
+  <img src="app/src/main/res/drawable/onboarding_hero.png" width="400" alt="Lumi Onboarding Hero" />
+</p>
+
+Lumi's interface is carefully designed to be calming, intuitive, and accessible. The onboarding experience guides users gently through setting up their initial health profile without overwhelming them with data entry.
 
 ---
 
@@ -212,6 +227,51 @@ Lumi includes a comprehensive test suite verifying the mathematical accuracy of 
 # Run specific period calculation verification test
 ./gradlew testDebugUnitTest --tests "com.nebulatech.lumi.PeriodCalculationTest"
 ```
+
+---
+
+## 🗺️ Roadmap
+
+- **Wear OS Companion App**: Quick logging and phase viewing directly from your wrist.
+- **PDF Export**: Generate monthly health reports to share with healthcare providers.
+- **Dark Mode Optimizations**: Refined true-black themes for OLED displays.
+- **Extended Wearable Integrations**: Sync with more Bluetooth basal thermometers and health bands.
+- **Advanced Pregnancy Mode**: Transition seamlessly to pregnancy tracking without losing cycle history.
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Whether you want to fix a bug, improve documentation, or propose a new feature, your help is appreciated.
+
+1. **Fork the Repository**: Click the 'Fork' button at the top right of this page.
+2. **Clone your Fork**: `git clone https://github.com/YOUR_USERNAME/Lumi.git`
+3. **Create a Branch**: `git checkout -b feature/your-feature-name`
+4. **Make your Changes**: Write code, add tests, and update documentation as needed.
+5. **Commit**: `git commit -m "Add some feature"` (Please use descriptive commit messages).
+6. **Push to your Branch**: `git push origin feature/your-feature-name`
+7. **Submit a Pull Request**: Go to the original repository and click 'New Pull Request'.
+
+Please make sure to run all tests (`./gradlew testDebugUnitTest`) before submitting a PR.
+
+---
+
+## 📬 Support & Contact
+
+If you have any questions, encounter issues, or have feature requests, please check the [Issues](https://github.com/aselahemantha/Lumi/issues) page first. If your issue isn't listed, feel free to open a new one.
+
+For direct contact, you can reach out via email or through our community channels.
+
+---
+
+## 🙌 Acknowledgements
+
+A special thanks to the amazing open-source community and the creators of the libraries that power Lumi:
+- **[Kotlin](https://kotlinlang.org/)**
+- **[Jetpack Compose](https://developer.android.com/jetpack/compose)**
+- **[Koin](https://insert-koin.io/)**
+- **[Room](https://developer.android.com/training/data-storage/room)**
+- **[Coroutines & Flow](https://kotlinlang.org/docs/coroutines-overview.html)**
 
 ---
 
