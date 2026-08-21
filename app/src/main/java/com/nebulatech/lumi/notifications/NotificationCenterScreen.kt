@@ -40,6 +40,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
+import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
@@ -56,6 +59,9 @@ fun NotificationCenterScreen(
 ) {
     val viewModel: NotificationCenterViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val tracker = LocalAnalyticsTracker.current
+
+    TrackScreenView(AnalyticsConstants.Screens.NOTIFICATION_CENTER)
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -93,7 +99,13 @@ fun NotificationCenterScreen(
                         color = Primary,
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
-                            .clickable { viewModel.clearAll() }
+                            .clickable {
+                                tracker.trackButtonClick(
+                                    buttonName = AnalyticsConstants.Buttons.CLEAR_ALL_NOTIFICATIONS,
+                                    screenName = AnalyticsConstants.Screens.NOTIFICATION_CENTER
+                                )
+                                viewModel.clearAll()
+                            }
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }

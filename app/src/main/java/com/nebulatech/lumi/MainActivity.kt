@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.AnalyticsTracker
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
+import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.home.HomeRoute
 import com.nebulatech.lumi.home.HomeScreenContainer
 import com.nebulatech.lumi.onboarding.OnboardingRoot
@@ -50,10 +55,14 @@ import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
 import androidx.activity.SystemBarStyle
 
 class MainActivity : FragmentActivity() {
+
+    private val analyticsTracker: AnalyticsTracker by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
@@ -68,143 +77,174 @@ class MainActivity : FragmentActivity() {
         )
         setContent {
             LumiTheme {
-                val appVm: AppViewModel = koinViewModel()
-                val isExistingUser by appVm.isExistingUser.collectAsStateWithLifecycle()
+                CompositionLocalProvider(LocalAnalyticsTracker provides analyticsTracker) {
+                    val appVm: AppViewModel = koinViewModel()
+                    val isExistingUser by appVm.isExistingUser.collectAsStateWithLifecycle()
 
-                var isUnlocked by remember {
-                    mutableStateOf(!BiometricAuthManager.isBiometricEnabled(this))
-                }
-
-                val permissionLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.RequestPermission()
-                ) { _ ->
-                    // Notification permission granted/denied
-                }
-
-                LaunchedEffect(Unit) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    var isUnlocked by remember {
+                        mutableStateOf(!BiometricAuthManager.isBiometricEnabled(this))
                     }
 
-                    if (BiometricAuthManager.isBiometricEnabled(this@MainActivity) && !isUnlocked) {
-                        BiometricAuthManager.showBiometricPrompt(
-                            activity = this@MainActivity,
-                            title = "Unlock Lumi",
-                            subtitle = "Verify your biometric identity to access cycle records",
-                            onSuccess = { isUnlocked = true }
-                        )
+                    val permissionLauncher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.RequestPermission()
+                    ) { _ ->
+                        // Notification permission granted/denied
                     }
-                }
 
-                // Hold back NavHost until Room answers (usually < 50ms)
-                if (isExistingUser == null) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color(0xFFFBF9F7))
-                    )
-                    return@LumiTheme
-                }
+                    LaunchedEffect(Unit) {
+                        analyticsTracker.logBreadcrumb("MainActivity created")
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                        }
 
-                if (!isUnlocked) {
-                    // Biometric Lock Screen Overlay
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color(0xFFFBF9F7))
-                            .padding(24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(72.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFFF7E6EE)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Lock,
-                                    contentDescription = null,
-                                    tint = Primary,
-                                    modifier = Modifier.size(36.dp)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(20.dp))
-
-                            Text(
-                                text = "Lumi is Locked",
-                                fontFamily = LiterataFontFamily,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Primary
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Text(
-                                text = "Biometric authentication is required to access your cycle records.",
-                                fontFamily = ManropeFontFamily,
-                                fontSize = 14.sp,
-                                color = Color(0xFF6E5E67)
-                            )
-
-                            Spacer(modifier = Modifier.height(28.dp))
-
-                            Button(
-                                onClick = {
-                                    BiometricAuthManager.showBiometricPrompt(
-                                        activity = this@MainActivity,
-                                        title = "Unlock Lumi",
-                                        subtitle = "Verify your biometric identity to access cycle records",
-                                        onSuccess = { isUnlocked = true }
+                        if (BiometricAuthManager.isBiometricEnabled(this@MainActivity) && !isUnlocked) {
+                            BiometricAuthManager.showBiometricPrompt(
+                                activity = this@MainActivity,
+                                title = "Unlock Lumi",
+                                subtitle = "Verify your biometric identity to access cycle records",
+                                onSuccess = {
+                                    analyticsTracker.trackEvent(
+                                        AnalyticsConstants.Events.BIOMETRIC_AUTH,
+                                        mapOf(AnalyticsConstants.Params.RESULT to "success_auto_prompt")
                                     )
-                                },
-                                shape = RoundedCornerShape(16.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Primary)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Fingerprint,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.size(8.dp))
-                                Text(
-                                    text = "Unlock with Biometrics",
-                                    fontFamily = ManropeFontFamily,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+                                    isUnlocked = true
+                                }
+                            )
                         }
                     }
-                    return@LumiTheme
-                }
 
-                val navController = rememberNavController()
-                val startDestination: Any =
-                    if (isExistingUser == true) HomeRoute else OnboardingRoute
+                    // Hold back NavHost until Room answers (usually < 50ms)
+                    if (isExistingUser == null) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color(0xFFFBF9F7))
+                        )
+                        return@CompositionLocalProvider
+                    }
 
-                NavHost(
-                    navController = navController,
-                    startDestination = startDestination,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    composable<OnboardingRoute> {
-                        OnboardingRoot(
-                            onNavigateBack = { finish() },
-                            onNavigateNext = { _ ->
-                                navController.navigate(HomeRoute) {
-                                    popUpTo<OnboardingRoute> { inclusive = true }
+                    if (!isUnlocked) {
+                        TrackScreenView(AnalyticsConstants.Screens.BIOMETRIC_LOCK)
+                        // Biometric Lock Screen Overlay
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color(0xFFFBF9F7))
+                                .padding(24.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(72.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFF7E6EE)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Lock,
+                                        contentDescription = null,
+                                        tint = Primary,
+                                        modifier = Modifier.size(36.dp)
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.height(20.dp))
+
+                                Text(
+                                    text = "Lumi is Locked",
+                                    fontFamily = LiterataFontFamily,
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Primary
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Text(
+                                    text = "Biometric authentication is required to access your cycle records.",
+                                    fontFamily = ManropeFontFamily,
+                                    fontSize = 14.sp,
+                                    color = Color(0xFF6E5E67)
+                                )
+
+                                Spacer(modifier = Modifier.height(28.dp))
+
+                                Button(
+                                    onClick = {
+                                        analyticsTracker.trackButtonClick(
+                                            buttonName = AnalyticsConstants.Buttons.BIOMETRIC_UNLOCK,
+                                            screenName = AnalyticsConstants.Screens.BIOMETRIC_LOCK
+                                        )
+                                        BiometricAuthManager.showBiometricPrompt(
+                                            activity = this@MainActivity,
+                                            title = "Unlock Lumi",
+                                            subtitle = "Verify your biometric identity to access cycle records",
+                                            onSuccess = {
+                                                analyticsTracker.trackEvent(
+                                                    AnalyticsConstants.Events.BIOMETRIC_AUTH,
+                                                    mapOf(AnalyticsConstants.Params.RESULT to "success_manual_click")
+                                                )
+                                                isUnlocked = true
+                                            }
+                                        )
+                                    },
+                                    shape = RoundedCornerShape(16.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Primary)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Fingerprint,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.size(8.dp))
+                                    Text(
+                                        text = "Unlock with Biometrics",
+                                        fontFamily = ManropeFontFamily,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
-                        )
+                        }
+                        return@CompositionLocalProvider
                     }
-                    composable<HomeRoute> {
-                        HomeScreenContainer()
+
+                    val navController = rememberNavController()
+                    val startDestination: Any =
+                        if (isExistingUser == true) HomeRoute else OnboardingRoute
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = startDestination,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        composable<OnboardingRoute> {
+                            TrackScreenView(AnalyticsConstants.Screens.ONBOARDING)
+                            OnboardingRoot(
+                                onNavigateBack = {
+                                    analyticsTracker.trackButtonClick(
+                                        buttonName = AnalyticsConstants.Buttons.ONBOARDING_BACK,
+                                        screenName = AnalyticsConstants.Screens.ONBOARDING
+                                    )
+                                    finish()
+                                },
+                                onNavigateNext = { _ ->
+                                    analyticsTracker.trackButtonClick(
+                                        buttonName = AnalyticsConstants.Buttons.ONBOARDING_COMPLETE,
+                                        screenName = AnalyticsConstants.Screens.ONBOARDING
+                                    )
+                                    navController.navigate(HomeRoute) {
+                                        popUpTo<OnboardingRoute> { inclusive = true }
+                                    }
+                                }
+                            )
+                        }
+                        composable<HomeRoute> {
+                            HomeScreenContainer()
+                        }
                     }
                 }
             }

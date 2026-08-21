@@ -50,6 +50,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
+import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -75,6 +78,9 @@ fun LogFlowBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier
 ) {
+    val tracker = LocalAnalyticsTracker.current
+    TrackScreenView(AnalyticsConstants.Screens.DAILY_LOG)
+
     var selectedFlow by remember { mutableStateOf<FlowIntensity?>(FlowIntensity.MEDIUM) }
     var selectedSymptoms by remember { mutableStateOf(setOf("Bloating")) }
     var selectedMood by remember { mutableStateOf<MoodItem?>(MoodItem.SENSITIVE) }
@@ -115,7 +121,15 @@ fun LogFlowBottomSheet(
                     color = Color(0xFF26181F)
                 )
 
-                IconButton(onClick = onDismissRequest) {
+                IconButton(
+                    onClick = {
+                        tracker.trackButtonClick(
+                            buttonName = AnalyticsConstants.Buttons.CANCEL_DAILY_LOG,
+                            screenName = AnalyticsConstants.Screens.DAILY_LOG
+                        )
+                        onDismissRequest()
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = "Close",
@@ -333,6 +347,23 @@ fun LogFlowBottomSheet(
             // Save Log Button
             Button(
                 onClick = {
+                    tracker.trackButtonClick(
+                        buttonName = AnalyticsConstants.Buttons.SAVE_DAILY_LOG,
+                        screenName = AnalyticsConstants.Screens.DAILY_LOG,
+                        extraParams = mapOf(
+                            "flow" to (selectedFlow?.name ?: "none"),
+                            "mood" to (selectedMood?.name ?: "none"),
+                            "symptoms_count" to selectedSymptoms.size
+                        )
+                    )
+                    tracker.trackEvent(
+                        AnalyticsConstants.Events.LOG_SAVED,
+                        mapOf(
+                            "flow" to (selectedFlow?.name ?: "none"),
+                            "mood" to (selectedMood?.name ?: "none"),
+                            "symptoms_count" to selectedSymptoms.size
+                        )
+                    )
                     onSaveLog(selectedFlow, selectedSymptoms, selectedMood)
                     onDismissRequest()
                 },

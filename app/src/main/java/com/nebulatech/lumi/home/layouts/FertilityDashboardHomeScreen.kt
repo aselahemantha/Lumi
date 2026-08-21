@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.home.components.BasalBodyTempChartCard
 import com.nebulatech.lumi.home.components.FertilityHeaderCard
 import com.nebulatech.lumi.home.components.HomeTab
@@ -56,6 +58,7 @@ fun FertilityDashboardHomeScreen(
     var showBBTSheet by remember { mutableStateOf(false) }
     var showLHSheet by remember { mutableStateOf(false) }
     var showFlowSheet by remember { mutableStateOf(false) }
+    val tracker = LocalAnalyticsTracker.current
 
     LaunchedEffect(loggingViewModel) {
         loggingViewModel?.events?.collect { event ->
@@ -99,10 +102,12 @@ fun FertilityDashboardHomeScreen(
                 title = "High Fertility Today",
                 description = "Ovulation expected tomorrow. This is your peak window.",
                 onLogBBTClick = {
+                    tracker.trackButtonClick("btn_log_bbt", AnalyticsConstants.Screens.HOME_FERTILITY_DASHBOARD)
                     showBBTSheet = true
                     onLogBBTClick()
                 },
                 onLogLHClick = {
+                    tracker.trackButtonClick("btn_log_lh", AnalyticsConstants.Screens.HOME_FERTILITY_DASHBOARD)
                     showLHSheet = true
                     onLogLHClick()
                 }
@@ -117,6 +122,7 @@ fun FertilityDashboardHomeScreen(
 
             TodaysLogsCard(
                 onAddMoreLogsClick = {
+                    tracker.trackButtonClick(AnalyticsConstants.Buttons.QUICK_LOG_TODAY, AnalyticsConstants.Screens.HOME_FERTILITY_DASHBOARD)
                     showFlowSheet = true
                     onAddMoreLogsClick()
                 }
@@ -124,7 +130,10 @@ fun FertilityDashboardHomeScreen(
 
             LibraryFeaturedCard(
                 title = "Understanding LH Surges",
-                onReadArticleClick = onReadArticleClick
+                onReadArticleClick = {
+                    tracker.trackButtonClick("btn_read_article_lh", AnalyticsConstants.Screens.HOME_FERTILITY_DASHBOARD)
+                    onReadArticleClick()
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))

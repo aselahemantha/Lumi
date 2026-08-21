@@ -2,6 +2,7 @@ package com.nebulatech.lumi
 
 import android.app.Application
 import com.nebulatech.lumi.calendar.CalendarViewModel
+import com.nebulatech.lumi.di.analyticsModule
 import com.nebulatech.lumi.di.databaseModule
 import com.nebulatech.lumi.home.HomeViewModel
 import com.nebulatech.lumi.insights.InsightsViewModel
@@ -34,7 +35,8 @@ class LumiApp : Application() {
             androidContext(this@LumiApp)
             modules(
                 appModule,
-                databaseModule
+                databaseModule,
+                analyticsModule
             )
         }
 

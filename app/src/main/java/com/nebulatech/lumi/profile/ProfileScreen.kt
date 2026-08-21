@@ -47,6 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
+import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.core.ObserveAsEvents
 import com.nebulatech.lumi.data.model.PrimaryGoal
 import com.nebulatech.lumi.home.components.HomeTab
@@ -107,6 +110,9 @@ fun ProfileScreen(
     val context = LocalContext.current
     val profileVm: ProfileViewModel = koinViewModel()
     val state by profileVm.state.collectAsStateWithLifecycle()
+    val tracker = LocalAnalyticsTracker.current
+
+    TrackScreenView(AnalyticsConstants.Screens.PROFILE)
 
     var showEditSheet by remember { mutableStateOf(false) }
     var showPrivacySheet by remember { mutableStateOf(false) }
@@ -160,7 +166,10 @@ fun ProfileScreen(
                     cycleLengthDays = state.cycleLength,
                     periodDurationDays = state.periodDuration,
                     primaryGoal = state.primaryGoal.toDisplayName(),
-                    onEditClick = { showEditSheet = true }
+                    onEditClick = {
+                        tracker.trackButtonClick("btn_edit_health_profile", AnalyticsConstants.Screens.PROFILE)
+                        showEditSheet = true
+                    }
                 )
 
                 // 3. App Settings Card (with expanding reminder manager & privacy sheet)
@@ -172,20 +181,45 @@ fun ProfileScreen(
                     notifFertilityAlerts = state.notifFertilityAlerts,
                     notifPhaseInsights = state.notifPhaseInsights,
                     onNotificationsToggle = { enabled ->
+                        tracker.trackButtonClick(
+                            buttonName = AnalyticsConstants.Buttons.TOGGLE_NOTIFICATIONS,
+                            screenName = AnalyticsConstants.Screens.PROFILE,
+                            extraParams = mapOf("enabled" to enabled)
+                        )
                         profileVm.onAction(ProfileAction.UpdateNotifications(enabled))
                     },
                     onGranularToggle = { type, enabled ->
+                        tracker.trackButtonClick(
+                            buttonName = "btn_toggle_granular_notif_${type.lowercase()}",
+                            screenName = AnalyticsConstants.Screens.PROFILE,
+                            extraParams = mapOf("type" to type, "enabled" to enabled)
+                        )
                         profileVm.onAction(ProfileAction.ToggleNotificationSetting(type, enabled))
                     },
-                    onPrivacyClick = { showPrivacySheet = true }
+                    onPrivacyClick = {
+                        tracker.trackButtonClick("btn_privacy_settings", AnalyticsConstants.Screens.PROFILE)
+                        showPrivacySheet = true
+                    }
                 )
 
                 // 4. Support & Log Out Card
                 SupportAndLogoutCard(
-                    onHelpClick = { showHelpSheet = true },
-                    onTermsClick = { showTermsSheet = true },
-                    onContactDevClick = { showContactDevSheet = true },
-                    onLogoutClick = { showLogoutDialog = true }
+                    onHelpClick = {
+                        tracker.trackButtonClick("btn_help_center", AnalyticsConstants.Screens.PROFILE)
+                        showHelpSheet = true
+                    },
+                    onTermsClick = {
+                        tracker.trackButtonClick("btn_terms_of_service", AnalyticsConstants.Screens.PROFILE)
+                        showTermsSheet = true
+                    },
+                    onContactDevClick = {
+                        tracker.trackButtonClick("btn_contact_dev", AnalyticsConstants.Screens.PROFILE)
+                        showContactDevSheet = true
+                    },
+                    onLogoutClick = {
+                        tracker.trackButtonClick(AnalyticsConstants.Buttons.LOGOUT, AnalyticsConstants.Screens.PROFILE)
+                        showLogoutDialog = true
+                    }
                 )
 
                 // 5. Developer Support Lottie & Precision Tag Footer

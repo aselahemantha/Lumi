@@ -31,6 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
+import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.calendar.components.CalendarLegend
 import com.nebulatech.lumi.calendar.components.CycleStatusBannerCard
 import com.nebulatech.lumi.calendar.components.MonthlyCalendarCard
@@ -51,6 +54,9 @@ fun CalendarScreen(
 ) {
     val calendarVm: CalendarViewModel = koinViewModel()
     val state by calendarVm.state.collectAsStateWithLifecycle()
+    val tracker = LocalAnalyticsTracker.current
+
+    TrackScreenView(AnalyticsConstants.Screens.CALENDAR)
 
     val formattedMonthYear = remember(state.selectedYearMonth) {
         state.selectedYearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH))
@@ -99,6 +105,10 @@ fun CalendarScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
                         onClick = {
+                            tracker.trackButtonClick(
+                                buttonName = AnalyticsConstants.Buttons.CALENDAR_MONTH_PREV,
+                                screenName = AnalyticsConstants.Screens.CALENDAR
+                            )
                             calendarVm.onAction(CalendarAction.ChangeMonth(state.selectedYearMonth.minusMonths(1)))
                         }
                     ) {
@@ -112,6 +122,10 @@ fun CalendarScreen(
                     Spacer(modifier = Modifier.width(4.dp))
                     IconButton(
                         onClick = {
+                            tracker.trackButtonClick(
+                                buttonName = AnalyticsConstants.Buttons.CALENDAR_MONTH_NEXT,
+                                screenName = AnalyticsConstants.Screens.CALENDAR
+                            )
                             calendarVm.onAction(CalendarAction.ChangeMonth(state.selectedYearMonth.plusMonths(1)))
                         }
                     ) {
@@ -128,7 +142,18 @@ fun CalendarScreen(
             // 1. Monthly Calendar Grid Card (Dynamically populated from Room)
             MonthlyCalendarCard(
                 yearMonth = state.selectedYearMonth,
-                cells = state.gridCells
+                cells = state.gridCells,
+                onDayClick = { cell ->
+                    tracker.trackButtonClick(
+                        buttonName = AnalyticsConstants.Buttons.CALENDAR_DAY_CLICK,
+                        screenName = AnalyticsConstants.Screens.CALENDAR,
+                        extraParams = mapOf(
+                            "day" to cell.dayNumber,
+                            "type" to cell.type.name,
+                            "isCurrentMonth" to cell.isCurrentMonth
+                        )
+                    )
+                }
             )
 
             // 2. Calendar Legend
@@ -147,7 +172,13 @@ fun CalendarScreen(
             // 4. Cycle Status Banner Card (View All navigates to Insights)
             CycleStatusBannerCard(
                 text = "Your average cycle length is steady at ${state.cycleLength} days.",
-                onViewAllClick = { onTabSelected(HomeTab.INSIGHTS) }
+                onViewAllClick = {
+                    tracker.trackButtonClick(
+                        buttonName = "btn_calendar_view_insights",
+                        screenName = AnalyticsConstants.Screens.CALENDAR
+                    )
+                    onTabSelected(HomeTab.INSIGHTS)
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))

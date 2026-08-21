@@ -20,6 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
+import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.insights.components.CycleAtAGlanceSection
@@ -39,6 +42,9 @@ fun InsightsScreen(
 ) {
     val viewModel: InsightsViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val tracker = LocalAnalyticsTracker.current
+
+    TrackScreenView(AnalyticsConstants.Screens.INSIGHTS)
 
     Scaffold(
         modifier = modifier.fillMaxSize(),

@@ -50,6 +50,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
+import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -71,6 +74,9 @@ fun LogLHTestBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier
 ) {
+    val tracker = LocalAnalyticsTracker.current
+    TrackScreenView("log_lh_test_sheet")
+
     var selectedIntensity by remember { mutableStateOf(LHIntensity.HIGH) }
     var testBrand by remember { mutableStateOf("") }
 
@@ -112,7 +118,10 @@ fun LogLHTestBottomSheet(
                 )
 
                 IconButton(
-                    onClick = onDismissRequest,
+                    onClick = {
+                        tracker.trackButtonClick(AnalyticsConstants.Buttons.CANCEL_DAILY_LOG, "log_lh_test_sheet")
+                        onDismissRequest()
+                    },
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(Color(0xFFF5F2F4))
@@ -303,6 +312,21 @@ fun LogLHTestBottomSheet(
 
                 Button(
                     onClick = {
+                        tracker.trackButtonClick(
+                            buttonName = "btn_save_lh_result",
+                            screenName = "log_lh_test_sheet",
+                            extraParams = mapOf(
+                                "intensity" to selectedIntensity.name,
+                                "has_brand" to testBrand.isNotBlank()
+                            )
+                        )
+                        tracker.trackEvent(
+                            "lh_test_logged",
+                            mapOf(
+                                "intensity" to selectedIntensity.name,
+                                "has_brand" to testBrand.isNotBlank()
+                            )
+                        )
                         onSaveResult(selectedIntensity, testBrand, null)
                         onDismissRequest()
                     },
