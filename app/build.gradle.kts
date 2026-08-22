@@ -15,8 +15,8 @@ android {
         applicationId = "com.nebulatech.lumi"
         minSdk = 24
         targetSdk = 37
-        versionCode = 7
-        versionName = "1.3"
+        versionCode = 9
+        versionName = "1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
