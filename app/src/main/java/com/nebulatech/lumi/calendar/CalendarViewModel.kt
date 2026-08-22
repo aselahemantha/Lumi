@@ -48,17 +48,42 @@ class CalendarViewModel(
             val cycleDay = calculateCycleDay(cycles, today)
             val logsMap = logs.associateBy { it.logDate }
             val cells = buildCalendarGrid(ym, cycles, logsMap, avgCycleLength)
-            val daysUntilNext = maxOf(avgCycleLength - cycleDay, 1)
+
+            val daysDiff = avgCycleLength - cycleDay
+            val isOverdue = currentPhase == CyclePhase.PERIOD_PREDICTED && cycleDay > avgCycleLength
+            val overdueDays = if (isOverdue) cycleDay - avgCycleLength else 0
+
+            val statusBadge = when {
+                currentPhase == CyclePhase.MENSTRUATION -> "Period in progress • Day $cycleDay"
+                isOverdue -> "Period overdue by $overdueDays ${if (overdueDays == 1) "day" else "days"}"
+                daysDiff == 0 || currentPhase == CyclePhase.PERIOD_PREDICTED -> "Period expected today"
+                daysDiff == 1 -> "Next period in 1 day"
+                daysDiff > 1 -> "Next period in $daysDiff days"
+                else -> "Period overdue by ${-daysDiff} ${if (-daysDiff == 1) "day" else "days"}"
+            }
+
+            val displayName = when (currentPhase) {
+                CyclePhase.MENSTRUATION -> "Menstrual Phase"
+                CyclePhase.FOLLICULAR -> "Follicular Phase"
+                CyclePhase.FERTILE_WINDOW -> "Fertile Window"
+                CyclePhase.LUTEAL -> "Luteal Phase"
+                CyclePhase.LATE_LUTEAL -> "Late Luteal Phase"
+                CyclePhase.PERIOD_PREDICTED -> if (isOverdue) "Period Overdue" else "Period Expected"
+            }
 
             CalendarState(
                 isLoading = false,
                 selectedYearMonth = ym,
                 gridCells = cells,
                 currentPhase = currentPhase,
+                phaseDisplayName = displayName,
                 cycleDay = cycleDay,
-                daysUntilNextPeriod = daysUntilNext,
+                daysUntilNextPeriod = daysDiff,
+                periodStatusBadgeText = statusBadge,
+                isPeriodOverdue = isOverdue,
+                overdueDays = overdueDays,
                 cycleLength = avgCycleLength,
-                phaseDescription = buildPhaseDescription(currentPhase),
+                phaseDescription = buildPhaseDescription(currentPhase, isOverdue, overdueDays),
                 userName = user?.name ?: ""
             )
         }
@@ -199,12 +224,22 @@ class CalendarViewModel(
         return CalendarDayType.NORMAL
     }
 
-    private fun buildPhaseDescription(phase: CyclePhase): String = when (phase) {
+    private fun buildPhaseDescription(
+        phase: CyclePhase,
+        isOverdue: Boolean,
+        overdueDays: Int
+    ): String = when (phase) {
         CyclePhase.MENSTRUATION -> "Estrogen and progesterone are low. Rest and nourish your body."
         CyclePhase.FOLLICULAR -> "Estrogen levels are rising. You might feel an increase in energy and focus today."
         CyclePhase.FERTILE_WINDOW -> "Luteinizing hormone is peaking. Conception probability is highest."
         CyclePhase.LUTEAL -> "Progesterone is high. Prioritize restorative movement and balanced nutrition."
         CyclePhase.LATE_LUTEAL -> "Hormones are declining. Hydration and magnesium can help ease PMS symptoms."
-        CyclePhase.PERIOD_PREDICTED -> "Your period is predicted to start soon. Log your flow to confirm the start of your new cycle."
+        CyclePhase.PERIOD_PREDICTED -> {
+            if (isOverdue) {
+                "Your period is $overdueDays ${if (overdueDays == 1) "day" else "days"} past expected. Log your flow as soon as it begins to start your next cycle."
+            } else {
+                "Your period is predicted to start today. Log your flow to confirm the start of your new cycle."
+            }
+        }
     }
 }

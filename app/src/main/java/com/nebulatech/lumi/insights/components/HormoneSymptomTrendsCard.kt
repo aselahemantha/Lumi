@@ -45,22 +45,35 @@ fun HormonePhaseStatusCard(
     cycleLength: Int = 28,
     loggedSymptoms: List<SymptomTrendPoint> = emptyList()
 ) {
-    val phaseName = when (currentPhase) {
-        CyclePhase.MENSTRUATION -> "Menstrual Phase"
-        CyclePhase.FOLLICULAR -> "Follicular Phase"
-        CyclePhase.FERTILE_WINDOW -> "Fertile Window"
-        CyclePhase.LUTEAL -> "Luteal Phase"
-        CyclePhase.LATE_LUTEAL -> "Late Luteal Phase"
-        CyclePhase.PERIOD_PREDICTED -> "Period Expected"
+    val isOverdue = (currentPhase == CyclePhase.PERIOD_PREDICTED || currentPhase == CyclePhase.LATE_LUTEAL) && currentCycleDay > cycleLength
+    val overdueDays = if (isOverdue) currentCycleDay - cycleLength else 0
+
+    val phaseName = when {
+        isOverdue -> "Period Overdue"
+        currentPhase == CyclePhase.MENSTRUATION -> "Menstrual Phase"
+        currentPhase == CyclePhase.FOLLICULAR -> "Follicular Phase"
+        currentPhase == CyclePhase.FERTILE_WINDOW -> "Fertile Window"
+        currentPhase == CyclePhase.LUTEAL -> "Luteal Phase"
+        currentPhase == CyclePhase.LATE_LUTEAL -> "Late Luteal Phase"
+        currentPhase == CyclePhase.PERIOD_PREDICTED -> "Period Expected"
+        else -> "Period Expected"
     }
 
-    val dominantHormone = when (currentPhase) {
-        CyclePhase.MENSTRUATION -> "Baseline Levels"
-        CyclePhase.FOLLICULAR -> "Estrogen Rising"
-        CyclePhase.FERTILE_WINDOW -> "LH Surge"
-        CyclePhase.LUTEAL -> "Progesterone Dominant"
-        CyclePhase.LATE_LUTEAL -> "Hormone Taper"
-        CyclePhase.PERIOD_PREDICTED -> "Hormone Taper"
+    val subtitleText = if (isOverdue) {
+        "Day $currentCycleDay ($overdueDays ${if (overdueDays == 1) "day" else "days"} past expected)"
+    } else {
+        "Day $currentCycleDay of $cycleLength"
+    }
+
+    val dominantHormone = when {
+        isOverdue -> "Luteal Variation"
+        currentPhase == CyclePhase.MENSTRUATION -> "Baseline Levels"
+        currentPhase == CyclePhase.FOLLICULAR -> "Estrogen Rising"
+        currentPhase == CyclePhase.FERTILE_WINDOW -> "LH Surge"
+        currentPhase == CyclePhase.LUTEAL -> "Progesterone Dominant"
+        currentPhase == CyclePhase.LATE_LUTEAL -> "Hormone Taper"
+        currentPhase == CyclePhase.PERIOD_PREDICTED -> "Hormone Taper"
+        else -> "Hormone Taper"
     }
 
     val estrogenLevel = when (currentPhase) {
@@ -112,13 +125,13 @@ fun HormonePhaseStatusCard(
                         modifier = Modifier
                             .size(42.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFFDF0F4)),
+                            .background(if (isOverdue) Color(0xFFFBECEE) else Color(0xFFFDF0F4)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Spa,
                             contentDescription = null,
-                            tint = Primary,
+                            tint = if (isOverdue) Color(0xFFB3261E) else Primary,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -135,10 +148,11 @@ fun HormonePhaseStatusCard(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Day $currentCycleDay of $cycleLength",
+                            text = subtitleText,
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
-                            color = Color(0xFF7A6A73)
+                            color = if (isOverdue) Color(0xFFB3261E) else Color(0xFF7A6A73),
+                            fontWeight = if (isOverdue) FontWeight.Medium else FontWeight.Normal
                         )
                     }
                 }
@@ -146,7 +160,7 @@ fun HormonePhaseStatusCard(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFF4E9EE))
+                        .background(if (isOverdue) Color(0xFFFCE8EC) else Color(0xFFF4E9EE))
                         .padding(horizontal = 10.dp, vertical = 6.dp)
                 ) {
                     Text(
@@ -154,7 +168,7 @@ fun HormonePhaseStatusCard(
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Primary
+                        color = if (isOverdue) Color(0xFFB3261E) else Primary
                     )
                 }
             }

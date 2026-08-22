@@ -174,12 +174,13 @@ fun CycleRingHomeScreen(
         if (showLogSheet) {
             LogFlowBottomSheet(
                 onDismissRequest = { showLogSheet = false },
-                onSaveLog = { flow, symptoms, mood ->
+                onSaveLog = { date, flow, symptoms, mood ->
                     loggingViewModel?.onAction(
                         LoggingAction.SaveFlowLog(
                             flow = flow,
                             mood = mood,
-                            symptoms = symptoms
+                            symptoms = symptoms,
+                            logDate = date
                         )
                     ) ?: run { showLogSheet = false }
                 }

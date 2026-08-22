@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -120,6 +121,7 @@ fun ProfileScreen(
     var showTermsSheet by remember { mutableStateOf(false) }
     var showContactDevSheet by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var showPremiumComingSoonDialog by remember { mutableStateOf(false) }
 
     ObserveAsEvents(profileVm.events) { event ->
         when (event) {
@@ -158,7 +160,14 @@ fun ProfileScreen(
                 HeroUserCard(
                     userName = state.userName.ifBlank { "Lumi User" },
                     trackingDuration = state.trackingDuration.ifBlank { "Tracking with Lumi" },
-                    memberStatus = if (state.isPremium) "Premium Member" else "Free Member"
+                    memberStatus = if (state.isPremium) "Premium Member" else "Free Member",
+                    onMembershipClick = {
+                        tracker.trackButtonClick(
+                            buttonName = "btn_membership_badge",
+                            screenName = AnalyticsConstants.Screens.PROFILE
+                        )
+                        showPremiumComingSoonDialog = true
+                    }
                 )
 
                 // 2. Health Profile Card (Editable)
@@ -382,6 +391,143 @@ fun ProfileScreen(
                                     fontWeight = FontWeight.Bold
                                 )
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Premium Membership Coming Soon Dialog
+        if (showPremiumComingSoonDialog) {
+            Dialog(onDismissRequest = { showPremiumComingSoonDialog = false }) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Top Sparkle Icon Badge
+                        Box(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFFDF0F4)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.AutoAwesome,
+                                contentDescription = null,
+                                tint = Primary,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Title
+                        Text(
+                            text = "Lumi Premium",
+                            fontFamily = LiterataFontFamily,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF261820),
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        // "Coming Soon" pill
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Primary.copy(alpha = 0.12f))
+                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "COMING SOON",
+                                fontFamily = ManropeFontFamily,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Primary
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        // Subtitle
+                        Text(
+                            text = "Premium membership is coming soon with more advanced AI features to elevate your cycle insights.",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 13.5.sp,
+                            lineHeight = 20.sp,
+                            color = Color(0xFF5E4E57),
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        // Feature Highlights
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Color(0xFFFAF6F8))
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            val premiumFeatures = listOf(
+                                "Advanced AI cycle & fertility forecasting",
+                                "Personalized hormone & nutrition insights",
+                                "Deep symptom trend & pattern analysis",
+                                "Exportable cycle health summary for doctors"
+                            )
+                            premiumFeatures.forEach { feature ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.AutoAwesome,
+                                        contentDescription = null,
+                                        tint = Primary,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Text(
+                                        text = feature,
+                                        fontFamily = ManropeFontFamily,
+                                        fontSize = 12.5.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = Color(0xFF3B2D35)
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(22.dp))
+
+                        Button(
+                            onClick = { showPremiumComingSoonDialog = false },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Primary)
+                        ) {
+                            Text(
+                                text = "Got It",
+                                fontFamily = ManropeFontFamily,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
                         }
                     }
                 }

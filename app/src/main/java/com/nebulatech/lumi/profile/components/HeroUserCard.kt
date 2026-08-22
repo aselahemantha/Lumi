@@ -1,6 +1,7 @@
 package com.nebulatech.lumi.profile.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ fun HeroUserCard(
     userName: String = "Sarah Mitchell",
     trackingDuration: String = "Tracking for 14 months",
     memberStatus: String = "Free Member",
+    onMembershipClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -79,6 +81,7 @@ fun HeroUserCard(
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))
                             .background(Primary.copy(alpha = 0.85f))
+                            .clickable { onMembershipClick() }
                             .padding(horizontal = 10.dp, vertical = 5.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {

@@ -50,8 +50,9 @@ class LoggingViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isSaving = true) }
             try {
-                val phase = cycleRepository.getCurrentPhase(userId, today).first()
-                val cycleDay = cycleRepository.getCycleDay(userId, today).first()
+                val targetDate = action.logDate
+                val phase = cycleRepository.getCurrentPhase(userId, targetDate).first()
+                val cycleDay = cycleRepository.getCycleDay(userId, targetDate).first()
                 val avgCycleLength = cycleRepository.getAverageCycleLength(userId).first()
 
                 // If period is predicted/overdue/late luteal and user logs flow, auto-start a new cycle.
@@ -63,19 +64,19 @@ class LoggingViewModel(
                 )
                 val currentCycleId: String?
                 if (shouldStartNewCycle) {
-                    val newCycleResult = cycleRepository.startNewCycle(userId, today)
+                    val newCycleResult = cycleRepository.startNewCycle(userId, targetDate)
                     currentCycleId = (newCycleResult as? Result.Success)?.data?.id
                 } else {
                     currentCycleId = cycleRepository.getCurrentCycle(userId).first()?.id
                 }
 
                 // Re-read after potentially starting new cycle (cycleDay will now be 1)
-                val updatedCycleDay = cycleRepository.getCycleDay(userId, today).first()
-                val updatedPhase = cycleRepository.getCurrentPhase(userId, today).first()
+                val updatedCycleDay = cycleRepository.getCycleDay(userId, targetDate).first()
+                val updatedPhase = cycleRepository.getCurrentPhase(userId, targetDate).first()
 
                 val result = dailyLogRepository.saveFlowLog(
                     userId = userId,
-                    date = today,
+                    date = targetDate,
                     flowIntensity = action.flow?.toDomainType(),
                     mood = action.mood?.toDomainType(),
                     symptoms = action.symptoms,

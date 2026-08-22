@@ -42,7 +42,7 @@ class InsightsViewModel(
     ) { (user, cycles, avgCycleLength), (cycleDay, currentPhase, logs) ->
         val historyItems = buildCycleHistory(cycles, avgCycleLength)
         val symptomPoints = buildSymptomPoints(logs, avgCycleLength)
-        val insightText = buildDynamicInsight(currentPhase, logs)
+        val insightText = buildDynamicInsight(currentPhase, cycleDay, avgCycleLength, logs)
 
         InsightsState(
             isLoading = false,
@@ -113,8 +113,17 @@ class InsightsViewModel(
 
     private fun buildDynamicInsight(
         phase: CyclePhase,
+        cycleDay: Int,
+        avgCycleLength: Int,
         logs: List<DailyLog>
     ): String {
+        val isOverdue = (phase == CyclePhase.PERIOD_PREDICTED || phase == CyclePhase.LATE_LUTEAL) && cycleDay > avgCycleLength
+        val overdueDays = if (isOverdue) cycleDay - avgCycleLength else 0
+
+        if (isOverdue) {
+            return "Your period is $overdueDays ${if (overdueDays == 1) "day" else "days"} past your typical $avgCycleLength-day cycle. Variations are completely normal and can be influenced by stress, sleep, or travel. Log your flow as soon as it begins to reset your cycle tracking."
+        }
+
         val allSymptoms = logs.flatMap { it.symptoms }.map { it.symptomDisplayName }
         val topSymptom = allSymptoms.groupBy { it }.maxByOrNull { it.value.size }?.key
 

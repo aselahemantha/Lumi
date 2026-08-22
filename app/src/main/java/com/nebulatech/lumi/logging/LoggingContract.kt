@@ -3,6 +3,8 @@ package com.nebulatech.lumi.logging
 // LoggingContract uses the bottom sheet's local enums to keep the ViewModel
 // as the single conversion boundary between UI types and domain types.
 
+import java.time.LocalDate
+
 data class LoggingState(
     val isSaving: Boolean = false,
     val lastSaveError: String? = null
@@ -13,7 +15,8 @@ sealed interface LoggingAction {
     data class SaveFlowLog(
         val flow: FlowIntensity?,
         val mood: MoodItem?,
-        val symptoms: Set<String>
+        val symptoms: Set<String>,
+        val logDate: LocalDate = LocalDate.now()
     ) : LoggingAction
 
     /** Triggered by LogBBTBottomSheet.onSaveReading */

@@ -171,12 +171,13 @@ fun FertilityDashboardHomeScreen(
         if (showFlowSheet) {
             LogFlowBottomSheet(
                 onDismissRequest = { showFlowSheet = false },
-                onSaveLog = { flow, symptoms, mood ->
+                onSaveLog = { date, flow, symptoms, mood ->
                     loggingViewModel?.onAction(
                         LoggingAction.SaveFlowLog(
                             flow = flow,
                             mood = mood,
-                            symptoms = symptoms
+                            symptoms = symptoms,
+                            logDate = date
                         )
                     ) ?: run { showFlowSheet = false }
                 }

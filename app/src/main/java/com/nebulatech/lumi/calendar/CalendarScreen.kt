@@ -163,10 +163,12 @@ fun CalendarScreen(
 
             // 3. Phase Detail Info Card
             PhaseDetailCard(
-                phaseName = state.currentPhase.toDisplayName(),
+                phaseName = state.phaseDisplayName,
                 dayNumber = state.cycleDay,
                 description = state.phaseDescription,
-                daysUntilNextPeriod = state.daysUntilNextPeriod
+                daysUntilNextPeriod = state.daysUntilNextPeriod,
+                statusBadgeText = state.periodStatusBadgeText,
+                isOverdue = state.isPeriodOverdue
             )
 
             // 4. Cycle Status Banner Card (View All navigates to Insights)
