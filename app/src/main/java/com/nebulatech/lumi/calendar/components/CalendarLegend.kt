@@ -108,8 +108,23 @@ fun PhaseDetailCard(
     dayNumber: Int = 8,
     description: String = "Estrogen levels are rising. You might feel an increase in energy and focus today.",
     daysUntilNextPeriod: Int = 21,
+    statusBadgeText: String? = null,
+    isOverdue: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val badge = statusBadgeText ?: when {
+        isOverdue -> "Period overdue"
+        daysUntilNextPeriod > 1 -> "Next period in $daysUntilNextPeriod days"
+        daysUntilNextPeriod == 1 -> "Next period in 1 day"
+        daysUntilNextPeriod == 0 -> "Period expected today"
+        else -> "Period overdue by ${-daysUntilNextPeriod} days"
+    }
+
+    val badgeBg = if (isOverdue) Color(0xFFFCECEE) else Color(0xFFF4EDF0)
+    val badgeTextColor = if (isOverdue) Color(0xFFB3261E) else Color(0xFF52424A)
+    val iconBg = if (isOverdue) Color(0xFFFDE8EB) else Color(0xFFFDF0F4)
+    val iconTint = if (isOverdue) Color(0xFFB3261E) else Primary
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -126,13 +141,13 @@ fun PhaseDetailCard(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFDF0F4)),
+                    .background(iconBg),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Spa,
                     contentDescription = null,
-                    tint = Primary,
+                    tint = iconTint,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -159,15 +174,15 @@ fun PhaseDetailCard(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFF4EDF0))
+                        .background(badgeBg)
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = "Next period in $daysUntilNextPeriod days",
+                        text = badge,
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF52424A)
+                        fontWeight = FontWeight.Bold,
+                        color = badgeTextColor
                     )
                 }
             }

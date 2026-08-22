@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -13,8 +15,8 @@ android {
         applicationId = "com.nebulatech.lumi"
         minSdk = 24
         targetSdk = 37
-        versionCode = 7
-        versionName = "1.3"
+        versionCode = 9
+        versionName = "1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -80,6 +82,11 @@ dependencies {
 
     // Biometric Security
     implementation(libs.androidx.biometric)
+
+    // Firebase BoM, Analytics & Crashlytics
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     // Lottie Animation
     implementation(libs.lottie.compose)

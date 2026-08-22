@@ -9,8 +9,12 @@ data class CalendarState(
     val selectedYearMonth: YearMonth = YearMonth.now(),
     val gridCells: List<CalendarGridCell> = emptyList(),
     val currentPhase: CyclePhase = CyclePhase.FOLLICULAR,
+    val phaseDisplayName: String = "Follicular Phase",
     val cycleDay: Int = 1,
     val daysUntilNextPeriod: Int = 21,
+    val periodStatusBadgeText: String = "Next period in 21 days",
+    val isPeriodOverdue: Boolean = false,
+    val overdueDays: Int = 0,
     val cycleLength: Int = 28,
     val phaseDescription: String = "",
     val userName: String = ""

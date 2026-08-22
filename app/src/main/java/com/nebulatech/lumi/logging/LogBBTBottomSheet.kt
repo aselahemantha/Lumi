@@ -46,6 +46,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
+import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -58,6 +61,9 @@ fun LogBBTBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier
 ) {
+    val tracker = LocalAnalyticsTracker.current
+    TrackScreenView("log_bbt_sheet")
+
     var tempValue by remember { mutableStateOf("97.8") }
     var disturbedSleep by remember { mutableStateOf(false) }
     var feverIllness by remember { mutableStateOf(false) }
@@ -99,7 +105,12 @@ fun LogBBTBottomSheet(
                     color = Primary
                 )
 
-                IconButton(onClick = onDismissRequest) {
+                IconButton(
+                    onClick = {
+                        tracker.trackButtonClick(AnalyticsConstants.Buttons.CANCEL_DAILY_LOG, "log_bbt_sheet")
+                        onDismissRequest()
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = "Close",
@@ -271,6 +282,23 @@ fun LogBBTBottomSheet(
             // Save Reading Button
             Button(
                 onClick = {
+                    tracker.trackButtonClick(
+                        buttonName = "btn_save_bbt_reading",
+                        screenName = "log_bbt_sheet",
+                        extraParams = mapOf(
+                            "temp" to tempValue,
+                            "disturbed_sleep" to disturbedSleep,
+                            "fever_illness" to feverIllness
+                        )
+                    )
+                    tracker.trackEvent(
+                        "bbt_reading_logged",
+                        mapOf(
+                            "temp" to tempValue,
+                            "disturbed_sleep" to disturbedSleep,
+                            "fever_illness" to feverIllness
+                        )
+                    )
                     onSaveReading(tempValue, disturbedSleep, feverIllness)
                     onDismissRequest()
                 },

@@ -16,6 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
+import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.core.ObserveAsEvents
 import com.nebulatech.lumi.onboarding.components.OnboardingBottomBar
 import com.nebulatech.lumi.onboarding.components.OnboardingProgressBar
@@ -53,16 +56,33 @@ fun OnboardingScreen(
     state: OnboardingState,
     onAction: (OnboardingAction) -> Unit
 ) {
+    val tracker = LocalAnalyticsTracker.current
+    val stepScreenName = "onboarding_${state.currentStep.name.lowercase()}"
+    TrackScreenView(stepScreenName)
+
     Scaffold(
         topBar = {
             OnboardingTopBar(
-                onBackClick = { onAction(OnboardingAction.ClickBack) }
+                onBackClick = {
+                    tracker.trackButtonClick(AnalyticsConstants.Buttons.ONBOARDING_BACK, stepScreenName)
+                    onAction(OnboardingAction.ClickBack)
+                }
             )
         },
         bottomBar = {
             OnboardingBottomBar(
-                onBackClick = { onAction(OnboardingAction.ClickBack) },
-                onContinueClick = { onAction(OnboardingAction.ClickContinue) },
+                onBackClick = {
+                    tracker.trackButtonClick(AnalyticsConstants.Buttons.ONBOARDING_BACK, stepScreenName)
+                    onAction(OnboardingAction.ClickBack)
+                },
+                onContinueClick = {
+                    tracker.trackButtonClick(
+                        buttonName = AnalyticsConstants.Buttons.ONBOARDING_NEXT,
+                        screenName = stepScreenName,
+                        extraParams = mapOf("step" to state.currentStep.name)
+                    )
+                    onAction(OnboardingAction.ClickContinue)
+                },
                 isContinueEnabled = when (state.currentStep) {
                     OnboardingStep.WELCOME -> state.name.isNotBlank()
                     OnboardingStep.SELECT_GOAL -> state.selectedGoal != null

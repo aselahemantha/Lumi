@@ -35,6 +35,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.HomeTopBar
 import com.nebulatech.lumi.home.components.LateLutealHeaderCard
@@ -67,6 +69,7 @@ fun LateLutealHomeScreen(
     onTabSelected: (HomeTab) -> Unit = {}
 ) {
     var showLogSheet by remember { mutableStateOf(false) }
+    val tracker = LocalAnalyticsTracker.current
 
     LaunchedEffect(loggingViewModel) {
         loggingViewModel?.events?.collect { event ->
@@ -112,7 +115,10 @@ fun LateLutealHomeScreen(
 
             // Direct Flow / Period Start Button if period arrives early
             OutlinedButton(
-                onClick = { showLogSheet = true },
+                onClick = {
+                    tracker.trackButtonClick("btn_period_started_early_flow", AnalyticsConstants.Screens.HOME_LATE_LUTEAL)
+                    showLogSheet = true
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -141,8 +147,14 @@ fun LateLutealHomeScreen(
             }
 
             LogSymptomsSection(
-                onSaveClick = { showLogSheet = true },
-                onViewAllClick = onViewAllSymptoms
+                onSaveClick = {
+                    tracker.trackButtonClick(AnalyticsConstants.Buttons.QUICK_LOG_TODAY, AnalyticsConstants.Screens.HOME_LATE_LUTEAL)
+                    showLogSheet = true
+                },
+                onViewAllClick = {
+                    tracker.trackButtonClick("btn_view_all_symptoms", AnalyticsConstants.Screens.HOME_LATE_LUTEAL)
+                    onViewAllSymptoms()
+                }
             )
 
             LumiInsightPinkCard(
@@ -160,12 +172,13 @@ fun LateLutealHomeScreen(
         if (showLogSheet) {
             LogFlowBottomSheet(
                 onDismissRequest = { showLogSheet = false },
-                onSaveLog = { flow, symptoms, mood ->
+                onSaveLog = { date, flow, symptoms, mood ->
                     loggingViewModel?.onAction(
                         LoggingAction.SaveFlowLog(
                             flow = flow,
                             mood = mood,
-                            symptoms = symptoms
+                            symptoms = symptoms,
+                            logDate = date
                         )
                     ) ?: run { showLogSheet = false }
                 }

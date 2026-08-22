@@ -34,6 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.analytics.AnalyticsConstants
+import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.home.components.CycleRingWidget
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.HomeTopBar
@@ -71,6 +73,7 @@ fun CycleRingHomeScreen(
     onTabSelected: (HomeTab) -> Unit = {}
 ) {
     var showLogSheet by remember { mutableStateOf(false) }
+    val tracker = LocalAnalyticsTracker.current
 
     // Dismiss sheet when save succeeds
     LaunchedEffect(loggingViewModel) {
@@ -127,6 +130,10 @@ fun CycleRingHomeScreen(
             // 3. Primary Log Flow / Confirm Period Button
             Button(
                 onClick = {
+                    tracker.trackButtonClick(
+                        buttonName = AnalyticsConstants.Buttons.LOG_PERIOD_FLOW,
+                        screenName = AnalyticsConstants.Screens.HOME_CYCLE_RING
+                    )
                     showLogSheet = true
                     onLogFlowClick()
                 },
@@ -167,12 +174,13 @@ fun CycleRingHomeScreen(
         if (showLogSheet) {
             LogFlowBottomSheet(
                 onDismissRequest = { showLogSheet = false },
-                onSaveLog = { flow, symptoms, mood ->
+                onSaveLog = { date, flow, symptoms, mood ->
                     loggingViewModel?.onAction(
                         LoggingAction.SaveFlowLog(
                             flow = flow,
                             mood = mood,
-                            symptoms = symptoms
+                            symptoms = symptoms,
+                            logDate = date
                         )
                     ) ?: run { showLogSheet = false }
                 }

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "588356158276",
+    "project_id": "nebula-technologies-lk",
+    "storage_bucket": "nebula-technologies-lk.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588356158276:android:9c1786603c4452bab88d11",
+        "android_client_info": {
+          "package_name": "com.nebulatech.halo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB43U72QLkKITh-HSQqcIOaJLj_0SVjNes"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588356158276:android:12df9af7df5ec780b88d11",
+        "android_client_info": {
+          "package_name": "com.nebulatech.lumi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB43U72QLkKITh-HSQqcIOaJLj_0SVjNes"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
