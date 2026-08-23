@@ -50,11 +50,12 @@ class CalendarViewModel(
             val cells = buildCalendarGrid(ym, cycles, logsMap, avgCycleLength)
 
             val daysDiff = avgCycleLength - cycleDay
-            val isOverdue = currentPhase == CyclePhase.PERIOD_PREDICTED && cycleDay > avgCycleLength
+            val isOverdue = (currentPhase == CyclePhase.PERIOD_PREDICTED || currentPhase == CyclePhase.PERIOD_MISSED) && cycleDay > avgCycleLength
             val overdueDays = if (isOverdue) cycleDay - avgCycleLength else 0
 
             val statusBadge = when {
                 currentPhase == CyclePhase.MENSTRUATION -> "Period in progress • Day $cycleDay"
+                currentPhase == CyclePhase.PERIOD_MISSED -> "Period missed • $overdueDays ${if (overdueDays == 1) "day" else "days"} late"
                 isOverdue -> "Period overdue by $overdueDays ${if (overdueDays == 1) "day" else "days"}"
                 daysDiff == 0 || currentPhase == CyclePhase.PERIOD_PREDICTED -> "Period expected today"
                 daysDiff == 1 -> "Next period in 1 day"
@@ -69,6 +70,7 @@ class CalendarViewModel(
                 CyclePhase.LUTEAL -> "Luteal Phase"
                 CyclePhase.LATE_LUTEAL -> "Late Luteal Phase"
                 CyclePhase.PERIOD_PREDICTED -> if (isOverdue) "Period Overdue" else "Period Expected"
+                CyclePhase.PERIOD_MISSED -> "Period Missed"
             }
 
             CalendarState(
@@ -196,7 +198,10 @@ class CalendarViewModel(
             if (cycle.isCurrent) {
                 val predictedNextStart = cycleStart.plusDays(cLength.toLong())
                 val predictedPeriodEnd = predictedNextStart.plusDays(periodLen.toLong())
-                if (!date.isBefore(predictedNextStart) && date.isBefore(predictedPeriodEnd)) {
+                val missedThresholdDate = predictedNextStart.plusDays(10)
+                if (!date.isBefore(missedThresholdDate)) {
+                    return CalendarDayType.PERIOD_MISSED
+                } else if (!date.isBefore(predictedNextStart) && date.isBefore(predictedPeriodEnd)) {
                     return CalendarDayType.PERIOD_PREDICTED
                 }
             }
@@ -241,5 +246,6 @@ class CalendarViewModel(
                 "Your period is predicted to start today. Log your flow to confirm the start of your new cycle."
             }
         }
+        CyclePhase.PERIOD_MISSED -> "Your period is $overdueDays ${if (overdueDays == 1) "day" else "days"} late. This can happen from stress, travel, illness, or pregnancy. Log your flow if bleeding starts, or mark this cycle as missed."
     }
 }

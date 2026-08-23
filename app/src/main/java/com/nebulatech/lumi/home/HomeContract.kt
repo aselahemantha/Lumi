@@ -24,12 +24,15 @@ data class HomeState(
     val insightTitle: String = "Lumi Insight",
     val insightText: String = "",
     val isPeriodPredicted: Boolean = false,
+    val isPeriodMissed: Boolean = false,
+    val overdueDays: Int = 0,
     val next7Days: List<DayItem> = emptyList()
 )
 
 sealed interface HomeAction {
     data object StartNewPeriod : HomeAction
     data object ConfirmPeriodStart : HomeAction
+    data object MarkPeriodAsMissed : HomeAction
 }
 
 sealed interface HomeEvent {

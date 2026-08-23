@@ -32,6 +32,7 @@ data class CycleEntity(
     val ovulationDate: String? = null,
     val isCurrent: Boolean = true,
     val isRegular: Boolean? = null,
+    val isMissed: Boolean = false,
     val notes: String? = null,
     val createdAt: String,
     val updatedAt: String,

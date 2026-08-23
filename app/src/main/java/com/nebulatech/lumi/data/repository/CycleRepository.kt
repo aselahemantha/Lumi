@@ -39,6 +39,7 @@ interface CycleRepository {
         currentPeriodDuration: Int
     ): EmptyResult<DataError.Local>
     suspend fun updateCycle(cycle: Cycle): EmptyResult<DataError.Local>
+    suspend fun markCurrentCycleAsMissed(userId: String): EmptyResult<DataError.Local>
     fun getCycleDay(userId: String, targetDate: LocalDate = LocalDate.now()): Flow<Int>
     fun getAverageCycleLength(userId: String): Flow<Int>
     fun getAveragePeriodLength(userId: String): Flow<Int>
@@ -86,12 +87,15 @@ class RoomCycleRepository(
                     else -> 5
                 }
 
+                val isMissedCycle = currentCycle.isMissed || cycleLength >= (userProfile?.cycleLength ?: 28) + 10
+
                 cycleDao.closeCycle(
                     cycleId = currentCycle.id,
                     endDate = prevEndDate,
                     cycleLength = maxOf(cycleLength, 1),
                     periodLength = periodLengthToSave,
-                    isRegular = true,
+                    isRegular = !isMissedCycle,
+                    isMissed = isMissedCycle,
                     updatedAt = now
                 )
             } else {
@@ -258,6 +262,22 @@ class RoomCycleRepository(
         }
     }
 
+    override suspend fun markCurrentCycleAsMissed(userId: String): EmptyResult<DataError.Local> {
+        return try {
+            val currentCycle = cycleDao.getCurrentCycle(userId)
+            if (currentCycle != null) {
+                val now = Instant.now().toString()
+                cycleDao.markCycleAsMissed(currentCycle.id, now)
+                Result.Success(Unit)
+            } else {
+                Result.Error(DataError.Local.NOT_FOUND)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+    }
+
     override fun getCycleDay(userId: String, targetDate: LocalDate): Flow<Int> {
         return getCurrentCycle(userId).map { cycle ->
             if (cycle != null) {
@@ -275,7 +295,7 @@ class RoomCycleRepository(
             getLastNCycles(userId, 6),
             userProfileDao.getProfileFlow(userId)
         ) { recentCycles, profile ->
-            val completedCycles = recentCycles.filter { !it.isCurrent && it.cycleLength != null && it.cycleLength > 0 }
+            val completedCycles = recentCycles.filter { !it.isCurrent && !it.isMissed && it.cycleLength != null && it.cycleLength in 20..45 }
             if (completedCycles.isNotEmpty()) {
                 completedCycles.mapNotNull { it.cycleLength }.average().toInt()
             } else {
@@ -289,7 +309,7 @@ class RoomCycleRepository(
             getLastNCycles(userId, 6),
             userProfileDao.getProfileFlow(userId)
         ) { recentCycles, profile ->
-            val completedPeriods = recentCycles.filter { !it.isCurrent && it.periodLength != null && it.periodLength > 0 }
+            val completedPeriods = recentCycles.filter { !it.isCurrent && !it.isMissed && it.periodLength != null && it.periodLength > 0 }
             if (completedPeriods.isNotEmpty()) {
                 completedPeriods.mapNotNull { it.periodLength }.average().toInt()
             } else {
@@ -309,13 +329,20 @@ class RoomCycleRepository(
     }
 
     companion object {
-        fun calculatePhase(cycleDay: Int, cycleLength: Int, periodLength: Int): CyclePhase {
+        fun calculatePhase(
+            cycleDay: Int,
+            cycleLength: Int,
+            periodLength: Int,
+            missedThresholdDays: Int = 10
+        ): CyclePhase {
             val ovulationDay = cycleLength - 14
             val fertileStart = maxOf(ovulationDay - 3, periodLength + 1)
             val fertileEnd = ovulationDay + 1
             val lateLutealStart = maxOf(cycleLength - 6, fertileEnd + 1)
+            val missedStart = cycleLength + missedThresholdDays
 
             return when {
+                cycleDay >= missedStart -> CyclePhase.PERIOD_MISSED
                 cycleDay >= cycleLength -> CyclePhase.PERIOD_PREDICTED  // At or past expected cycle end — period due but not yet confirmed
                 cycleDay in 1..periodLength -> CyclePhase.MENSTRUATION
                 cycleDay in (periodLength + 1) until fertileStart -> CyclePhase.FOLLICULAR

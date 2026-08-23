@@ -44,8 +44,9 @@ class HomeViewModel(
         }
 
         val progressRatio = (cycleDay.toFloat() / avgCycleLength.toFloat()).coerceIn(0f, 1f)
-        val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength, avgPeriodLength)
-        val (insightTitle, insightText) = buildInsight(phase)
+        val overdueDays = if (cycleDay > avgCycleLength) cycleDay - avgCycleLength else 0
+        val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength, avgPeriodLength, overdueDays)
+        val (insightTitle, insightText) = buildInsight(phase, overdueDays)
         val next7Days = buildNext7Days(today, cycle, avgCycleLength, avgPeriodLength)
 
         HomeState(
@@ -62,6 +63,8 @@ class HomeViewModel(
             insightTitle = insightTitle,
             insightText = insightText,
             isPeriodPredicted = phase == CyclePhase.PERIOD_PREDICTED,
+            isPeriodMissed = phase == CyclePhase.PERIOD_MISSED,
+            overdueDays = overdueDays,
             next7Days = next7Days
         )
     }.stateIn(
@@ -77,6 +80,11 @@ class HomeViewModel(
                     cycleRepository.startNewCycle(userId, today)
                 }
             }
+            HomeAction.MarkPeriodAsMissed -> {
+                viewModelScope.launch {
+                    cycleRepository.markCurrentCycleAsMissed(userId)
+                }
+            }
             // ConfirmPeriodStart is handled at the UI level via LoggingViewModel;
             // the flow sheet is shown and on save, LoggingViewModel auto-starts the new cycle.
             HomeAction.ConfirmPeriodStart -> Unit
@@ -90,9 +98,16 @@ class HomeViewModel(
         CyclePhase.LUTEAL -> HomeLayoutType.CYCLE_RING
         CyclePhase.LATE_LUTEAL -> HomeLayoutType.SYMPTOM_GRID
         CyclePhase.PERIOD_PREDICTED -> HomeLayoutType.CYCLE_RING
+        CyclePhase.PERIOD_MISSED -> HomeLayoutType.CYCLE_RING
     }
 
-    private fun buildSubLabel(phase: CyclePhase, cycleDay: Int, cycleLength: Int, periodLength: Int): String {
+    private fun buildSubLabel(
+        phase: CyclePhase,
+        cycleDay: Int,
+        cycleLength: Int,
+        periodLength: Int,
+        overdueDays: Int
+    ): String {
         return when (phase) {
             CyclePhase.MENSTRUATION -> "Day $cycleDay of your period"
             CyclePhase.FOLLICULAR -> {
@@ -107,11 +122,13 @@ class HomeViewModel(
                 "Period in ~$daysUntil days"
             }
             CyclePhase.PERIOD_PREDICTED -> "Period expected · Log flow to confirm"
+            CyclePhase.PERIOD_MISSED -> "Period is $overdueDays ${if (overdueDays == 1) "day" else "days"} late · Tap to update"
         }
     }
 
     private fun buildInsight(
-        phase: CyclePhase
+        phase: CyclePhase,
+        overdueDays: Int
     ): Pair<String, String> {
         return when (phase) {
             CyclePhase.MENSTRUATION -> {
@@ -131,6 +148,9 @@ class HomeViewModel(
             }
             CyclePhase.PERIOD_PREDICTED -> {
                 "Period Expected" to "Your period is predicted to start soon. When your bleeding begins, log your flow below to start your new cycle."
+            }
+            CyclePhase.PERIOD_MISSED -> {
+                "Missed Period Guidance" to "Your period is $overdueDays ${if (overdueDays == 1) "day" else "days"} past expected. Missed or delayed cycles can happen from stress, travel, hormonal shifts, or pregnancy. Tap below to log flow or mark this cycle as missed."
             }
         }
     }

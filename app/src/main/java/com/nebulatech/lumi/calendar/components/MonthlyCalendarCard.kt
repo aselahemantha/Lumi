@@ -36,6 +36,7 @@ enum class CalendarDayType {
     PERIOD_LIGHT,       // Light purple background (confirmed light flow)
     PERIOD_HEAVY,       // Solid plum background (confirmed heavy flow)
     PERIOD_PREDICTED,   // Dashed outline — period expected but not yet confirmed
+    PERIOD_MISSED,      // Faint outline — 10+ days overdue / missed period
     FERTILE_OUTLINE,    // Pink outline
     FERTILE_FILLED,     // Soft pink filled
     OVULATION           // Pink circle + purple border ring + top right dot
@@ -115,7 +116,7 @@ private fun CalendarCellItem(
     val textColor = when {
         !cell.isCurrentMonth -> Color(0xFFD4C8CD)
         cell.type == CalendarDayType.PERIOD_HEAVY -> Color.White
-        cell.type == CalendarDayType.PERIOD_PREDICTED -> Color(0xFF8B5E6E)
+        cell.type == CalendarDayType.PERIOD_PREDICTED || cell.type == CalendarDayType.PERIOD_MISSED -> Color(0xFF8B5E6E)
         cell.type == CalendarDayType.FERTILE_FILLED -> Color(0xFF532E3E)
         cell.type == CalendarDayType.OVULATION -> Primary
         else -> Color(0xFF26181F)
@@ -179,6 +180,27 @@ private fun CalendarCellItem(
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
+                        color = textColor
+                    )
+                }
+            }
+            CalendarDayType.PERIOD_MISSED -> {
+                // Missed period day outline
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .border(
+                            width = 1.dp,
+                            color = Color(0xFFC7B1BA),
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "${cell.dayNumber}",
+                        fontFamily = ManropeFontFamily,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
                         color = textColor
                     )
                 }

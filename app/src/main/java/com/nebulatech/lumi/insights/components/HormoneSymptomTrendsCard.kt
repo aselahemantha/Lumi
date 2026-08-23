@@ -45,10 +45,11 @@ fun HormonePhaseStatusCard(
     cycleLength: Int = 28,
     loggedSymptoms: List<SymptomTrendPoint> = emptyList()
 ) {
-    val isOverdue = (currentPhase == CyclePhase.PERIOD_PREDICTED || currentPhase == CyclePhase.LATE_LUTEAL) && currentCycleDay > cycleLength
+    val isOverdue = (currentPhase == CyclePhase.PERIOD_PREDICTED || currentPhase == CyclePhase.PERIOD_MISSED || currentPhase == CyclePhase.LATE_LUTEAL) && currentCycleDay > cycleLength
     val overdueDays = if (isOverdue) currentCycleDay - cycleLength else 0
 
     val phaseName = when {
+        currentPhase == CyclePhase.PERIOD_MISSED -> "Period Missed"
         isOverdue -> "Period Overdue"
         currentPhase == CyclePhase.MENSTRUATION -> "Menstrual Phase"
         currentPhase == CyclePhase.FOLLICULAR -> "Follicular Phase"
@@ -66,6 +67,7 @@ fun HormonePhaseStatusCard(
     }
 
     val dominantHormone = when {
+        currentPhase == CyclePhase.PERIOD_MISSED -> "Hormonal Transition"
         isOverdue -> "Luteal Variation"
         currentPhase == CyclePhase.MENSTRUATION -> "Baseline Levels"
         currentPhase == CyclePhase.FOLLICULAR -> "Estrogen Rising"
@@ -82,7 +84,7 @@ fun HormonePhaseStatusCard(
         CyclePhase.FERTILE_WINDOW -> "Peak ↑↑"
         CyclePhase.LUTEAL -> "Moderate"
         CyclePhase.LATE_LUTEAL -> "Declining ↓"
-        CyclePhase.PERIOD_PREDICTED -> "Low ↓"
+        CyclePhase.PERIOD_PREDICTED, CyclePhase.PERIOD_MISSED -> "Low ↓"
     }
 
     val progesteroneLevel = when (currentPhase) {
@@ -91,7 +93,7 @@ fun HormonePhaseStatusCard(
         CyclePhase.FERTILE_WINDOW -> "Rising ↑"
         CyclePhase.LUTEAL -> "Peak ↑↑"
         CyclePhase.LATE_LUTEAL -> "Declining ↓"
-        CyclePhase.PERIOD_PREDICTED -> "Low ↓"
+        CyclePhase.PERIOD_PREDICTED, CyclePhase.PERIOD_MISSED -> "Low ↓"
     }
 
     val energyFocus = when (currentPhase) {
@@ -100,7 +102,7 @@ fun HormonePhaseStatusCard(
         CyclePhase.FERTILE_WINDOW -> "High Vitality"
         CyclePhase.LUTEAL -> "Grounded"
         CyclePhase.LATE_LUTEAL -> "Reflective"
-        CyclePhase.PERIOD_PREDICTED -> "Transitioning"
+        CyclePhase.PERIOD_PREDICTED, CyclePhase.PERIOD_MISSED -> "Transitioning"
     }
 
     Card(

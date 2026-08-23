@@ -248,6 +248,44 @@ class PeriodCalculationTest {
         assertEquals(CyclePhase.LATE_LUTEAL, RoomCycleRepository.calculatePhase(27, cycleLength, periodLength))
         assertEquals(CyclePhase.PERIOD_PREDICTED, RoomCycleRepository.calculatePhase(28, cycleLength, periodLength))
         assertEquals(CyclePhase.PERIOD_PREDICTED, RoomCycleRepository.calculatePhase(29, cycleLength, periodLength))
+        assertEquals(CyclePhase.PERIOD_PREDICTED, RoomCycleRepository.calculatePhase(37, cycleLength, periodLength))
+        assertEquals(CyclePhase.PERIOD_MISSED, RoomCycleRepository.calculatePhase(38, cycleLength, periodLength)) // 28 + 10 = 38
+        assertEquals(CyclePhase.PERIOD_MISSED, RoomCycleRepository.calculatePhase(45, cycleLength, periodLength))
+    }
+
+    // ── SCENARIO 4: Missed Period Marking & Average Cycle Protection ───────────
+    @Test
+    fun `scenario 4 - marking current cycle as missed sets isMissed and excludes from average calculation`() = runBlocking {
+        val cycle1Start = LocalDate.of(2026, 8, 1)
+
+        // Seed 1 past baseline cycle (28 days)
+        cycleRepository.seedHistoricalCycles(
+            userId = testUserId,
+            currentCycleStartDate = cycle1Start,
+            cycleLength = 28,
+            periodDuration = 5,
+            numberOfPastCycles = 1
+        )
+
+        val currentCycle = cycleRepository.getCurrentCycle(testUserId).first()
+        assertNotNull(currentCycle)
+        assertEquals(false, currentCycle!!.isMissed)
+
+        // Mark cycle as missed
+        val markResult = cycleRepository.markCurrentCycleAsMissed(testUserId)
+        assertTrue(markResult is com.nebulatech.lumi.core.domain.Result.Success)
+
+        val updatedCycle = cycleRepository.getCurrentCycle(testUserId).first()
+        assertNotNull(updatedCycle)
+        assertEquals(true, updatedCycle!!.isMissed)
+
+        // 50 days later, user logs flow and starts a new cycle
+        val cycle2Start = LocalDate.of(2026, 9, 20)
+        cycleRepository.startNewCycle(testUserId, cycle2Start)
+
+        // Averages should ignore the 50-day missed cycle and remain at baseline (28 days)
+        val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
+        assertEquals(28, avgCycleLength)
     }
 
     // ── Fakes ─────────────────────────────────────────────────────────────────
@@ -334,6 +372,7 @@ class PeriodCalculationTest {
             cycleLength: Int,
             periodLength: Int?,
             isRegular: Boolean?,
+            isMissed: Boolean,
             updatedAt: String
         ): Int {
             val current = cycles.value.toMutableList()
@@ -345,6 +384,22 @@ class PeriodCalculationTest {
                     periodLength = periodLength,
                     isCurrent = false,
                     isRegular = isRegular,
+                    isMissed = isMissed,
+                    updatedAt = updatedAt
+                )
+                cycles.value = current
+                return 1
+            }
+            return 0
+        }
+
+        override suspend fun markCycleAsMissed(cycleId: String, updatedAt: String): Int {
+            val current = cycles.value.toMutableList()
+            val index = current.indexOfFirst { it.id == cycleId }
+            if (index >= 0) {
+                current[index] = current[index].copy(
+                    isMissed = true,
+                    isRegular = false,
                     updatedAt = updatedAt
                 )
                 cycles.value = current

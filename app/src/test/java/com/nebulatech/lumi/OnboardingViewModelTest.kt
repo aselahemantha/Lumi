@@ -174,6 +174,7 @@ class OnboardingViewModelTest {
         override suspend fun startNewCycle(userId: String, startDate: LocalDate): Result<Cycle, DataError.Local> =
             Result.Error(DataError.Local.UNKNOWN)
         override suspend fun updateCycle(cycle: Cycle): EmptyResult<DataError.Local> = Result.Success(Unit)
+        override suspend fun markCurrentCycleAsMissed(userId: String): EmptyResult<DataError.Local> = Result.Success(Unit)
         override fun getCycleDay(userId: String, targetDate: LocalDate): Flow<Int> = flowOf(1)
         override fun getAverageCycleLength(userId: String): Flow<Int> = flowOf(28)
         override fun getAveragePeriodLength(userId: String): Flow<Int> = flowOf(5)

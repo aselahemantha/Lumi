@@ -6,7 +6,8 @@ enum class CyclePhase {
     FERTILE_WINDOW,
     LUTEAL,
     LATE_LUTEAL,
-    PERIOD_PREDICTED  // Period expected based on cycle length but not yet confirmed by logged flow
+    PERIOD_PREDICTED, // Period expected based on cycle length but not yet confirmed by logged flow
+    PERIOD_MISSED     // 10+ days past expected start without confirmation
 }
 
 enum class PrimaryGoal {

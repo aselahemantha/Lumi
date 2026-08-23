@@ -132,8 +132,12 @@ fun HomeScreenContainer(
                                         insightTitle = state.insightTitle,
                                         insightText = state.insightText,
                                         isPeriodPredicted = state.isPeriodPredicted,
+                                        isPeriodMissed = state.isPeriodMissed,
                                         next7Days = state.next7Days,
                                         loggingViewModel = loggingVm,
+                                        onMarkPeriodMissed = {
+                                            homeVm.onAction(HomeAction.MarkPeriodAsMissed)
+                                        },
                                         onNotificationClick = onNotificationClickWithAnalytics,
                                         onTabSelected = onTabSelectedWithAnalytics
                                     )

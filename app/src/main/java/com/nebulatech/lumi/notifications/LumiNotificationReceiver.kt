@@ -196,6 +196,19 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                         )
                         sentPeriodAlert = true
                     }
+                    daysUntil <= -10 && phase == CyclePhase.PERIOD_MISSED -> {
+                        dispatchNotification(
+                            context = context,
+                            notifRepo = notifRepo,
+                            userId = userId,
+                            title = "Did you miss your period?",
+                            body = "Your period is over 10 days late. Tap to log past bleeding or mark this cycle as missed.",
+                            channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
+                            notificationId = 1006,
+                            category = NotificationCategory.PERIOD_PREDICTION
+                        )
+                        sentPeriodAlert = true
+                    }
                     daysUntil < 0 && phase == CyclePhase.PERIOD_PREDICTED -> {
                         dispatchNotification(
                             context = context,
@@ -221,6 +234,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                     CyclePhase.LUTEAL -> "Progesterone is the dominant hormone right now. Focus on calming movement and restorative routines."
                     CyclePhase.LATE_LUTEAL -> "Progesterone is tapering down. Staying hydrated and taking magnesium can help pre-period ease."
                     CyclePhase.PERIOD_PREDICTED -> "Your period is predicted soon. Remember to log your flow when bleeding starts."
+                    CyclePhase.PERIOD_MISSED -> "Your period seems delayed or missed. Tap to update your cycle or learn more about cycle variations."
                 }
 
                 dispatchNotification(
