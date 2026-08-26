@@ -42,7 +42,7 @@ import com.nebulatech.lumi.data.local.entity.UserProfileEntity
         SyncQueueEntity::class,
         AppNotificationEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class LumiDatabase : RoomDatabase() {

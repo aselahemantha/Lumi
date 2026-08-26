@@ -59,6 +59,7 @@ class LoggingViewModel(
                 // This confirms Day 1 MENSTRUATION instead of logging against the old stale cycle.
                 val shouldStartNewCycle = action.flow != null && (
                     phase == CyclePhase.PERIOD_PREDICTED ||
+                    phase == CyclePhase.PERIOD_MISSED ||
                     phase == CyclePhase.LATE_LUTEAL ||
                     cycleDay >= avgCycleLength
                 )

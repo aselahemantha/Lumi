@@ -196,6 +196,7 @@ private fun CyclePhase.toDisplayName(): String = when (this) {
     CyclePhase.LUTEAL -> "Luteal Phase"
     CyclePhase.LATE_LUTEAL -> "Late Luteal Phase"
     CyclePhase.PERIOD_PREDICTED -> "Period Expected"
+    CyclePhase.PERIOD_MISSED -> "Period Missed"
 }
 
 @Preview(showBackground = true)

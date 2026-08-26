@@ -66,13 +66,16 @@ fun CycleRingHomeScreen(
     insightTitle: String = "Lumi Insight",
     insightText: String = "",
     isPeriodPredicted: Boolean = false,
+    isPeriodMissed: Boolean = false,
     next7Days: List<com.nebulatech.lumi.home.components.DayItem> = emptyList(),
     loggingViewModel: LoggingViewModel? = null,
     onLogFlowClick: () -> Unit = {},
+    onMarkPeriodMissed: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
     onTabSelected: (HomeTab) -> Unit = {}
 ) {
     var showLogSheet by remember { mutableStateOf(false) }
+    var showMissedConfirmDialog by remember { mutableStateOf(false) }
     val tracker = LocalAnalyticsTracker.current
 
     // Dismiss sheet when save succeeds
@@ -142,7 +145,7 @@ fun CycleRingHomeScreen(
                     .height(52.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isPeriodPredicted) Color(0xFF7B3F5E) else Primary
+                    containerColor = if (isPeriodPredicted || isPeriodMissed) Color(0xFF7B3F5E) else Primary
                 )
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -157,6 +160,28 @@ fun CycleRingHomeScreen(
                         fontFamily = ManropeFontFamily,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            // Optional: Secondary action to Mark Period as Missed
+            if (isPeriodMissed) {
+                androidx.compose.material3.OutlinedButton(
+                    onClick = { showMissedConfirmDialog = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color(0xFF7B3F5E)
+                    ),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFD6C2C9))
+                ) {
+                    Text(
+                        text = "Mark as Missed Period",
+                        fontFamily = ManropeFontFamily,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
@@ -183,6 +208,52 @@ fun CycleRingHomeScreen(
                             logDate = date
                         )
                     ) ?: run { showLogSheet = false }
+                }
+            )
+        }
+
+        if (showMissedConfirmDialog) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { showMissedConfirmDialog = false },
+                title = {
+                    Text(
+                        text = "Mark Period as Missed?",
+                        fontFamily = ManropeFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                },
+                text = {
+                    Text(
+                        text = "This will mark this cycle as missed and prevent it from distorting your average cycle length calculations. When your bleeding begins next, log your flow to start fresh.",
+                        fontFamily = ManropeFontFamily,
+                        fontSize = 14.sp
+                    )
+                },
+                confirmButton = {
+                    androidx.compose.material3.TextButton(
+                        onClick = {
+                            showMissedConfirmDialog = false
+                            onMarkPeriodMissed()
+                        }
+                    ) {
+                        Text(
+                            text = "Confirm",
+                            fontFamily = ManropeFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF7B3F5E)
+                        )
+                    }
+                },
+                dismissButton = {
+                    androidx.compose.material3.TextButton(
+                        onClick = { showMissedConfirmDialog = false }
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            fontFamily = ManropeFontFamily
+                        )
+                    }
                 }
             )
         }

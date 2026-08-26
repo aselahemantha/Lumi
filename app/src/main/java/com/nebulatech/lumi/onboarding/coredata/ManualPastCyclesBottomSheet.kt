@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -31,13 +32,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,7 +50,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.key
 import com.nebulatech.lumi.onboarding.ManualPastCycle
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
@@ -73,65 +74,30 @@ fun ManualPastCyclesBottomSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val dateFormatter = remember { DateTimeFormatter.ofPattern("MMM dd, yyyy") }
 
-    var cycle1Date by remember {
+    var cyclesList by remember {
         mutableStateOf(
-            initialPastCycles?.getOrNull(0)?.startDate
-                ?: firstDayOfLastPeriod.minusDays(defaultCycleLength.toLong())
+            if (!initialPastCycles.isNullOrEmpty()) {
+                initialPastCycles
+            } else {
+                val c1Start = firstDayOfLastPeriod.minusDays(defaultCycleLength.toLong())
+                val c2Start = c1Start.minusDays(defaultCycleLength.toLong())
+                val c3Start = c2Start.minusDays(defaultCycleLength.toLong())
+                listOf(
+                    ManualPastCycle(c1Start, defaultCycleLength, defaultPeriodDuration),
+                    ManualPastCycle(c2Start, defaultCycleLength, defaultPeriodDuration),
+                    ManualPastCycle(c3Start, defaultCycleLength, defaultPeriodDuration)
+                )
+            }
         )
-    }
-    var cycle1Length by remember {
-        mutableIntStateOf(
-            initialPastCycles?.getOrNull(0)?.cycleLength
-                ?: ChronoUnit.DAYS.between(
-                    initialPastCycles?.getOrNull(0)?.startDate ?: firstDayOfLastPeriod.minusDays(defaultCycleLength.toLong()),
-                    firstDayOfLastPeriod
-                ).toInt().coerceIn(20, 45)
-        )
-    }
-    var cycle1Duration by remember {
-        mutableIntStateOf(initialPastCycles?.getOrNull(0)?.periodDuration ?: defaultPeriodDuration)
     }
 
-    var cycle2Date by remember {
-        mutableStateOf(
-            initialPastCycles?.getOrNull(1)?.startDate
-                ?: firstDayOfLastPeriod.minusDays((defaultCycleLength * 2).toLong())
-        )
-    }
-    var cycle2Length by remember {
-        mutableIntStateOf(
-            initialPastCycles?.getOrNull(1)?.cycleLength
-                ?: ChronoUnit.DAYS.between(
-                    initialPastCycles?.getOrNull(1)?.startDate ?: firstDayOfLastPeriod.minusDays((defaultCycleLength * 2).toLong()),
-                    cycle1Date
-                ).toInt().coerceIn(20, 45)
-        )
-    }
-    var cycle2Duration by remember {
-        mutableIntStateOf(initialPastCycles?.getOrNull(1)?.periodDuration ?: defaultPeriodDuration)
-    }
+    val currentAvgCycleLength = if (cyclesList.isNotEmpty()) {
+        round(cyclesList.map { it.cycleLength }.average()).toInt().coerceIn(20, 45)
+    } else defaultCycleLength
 
-    var cycle3Date by remember {
-        mutableStateOf(
-            initialPastCycles?.getOrNull(2)?.startDate
-                ?: firstDayOfLastPeriod.minusDays((defaultCycleLength * 3).toLong())
-        )
-    }
-    var cycle3Length by remember {
-        mutableIntStateOf(
-            initialPastCycles?.getOrNull(2)?.cycleLength
-                ?: ChronoUnit.DAYS.between(
-                    initialPastCycles?.getOrNull(2)?.startDate ?: firstDayOfLastPeriod.minusDays((defaultCycleLength * 3).toLong()),
-                    cycle2Date
-                ).toInt().coerceIn(20, 45)
-        )
-    }
-    var cycle3Duration by remember {
-        mutableIntStateOf(initialPastCycles?.getOrNull(2)?.periodDuration ?: defaultPeriodDuration)
-    }
-
-    val currentAvgCycleLength = round(listOf(cycle1Length, cycle2Length, cycle3Length).average()).toInt().coerceIn(20, 45)
-    val currentAvgPeriodDuration = round(listOf(cycle1Duration, cycle2Duration, cycle3Duration).average()).toInt().coerceIn(2, 10)
+    val currentAvgPeriodDuration = if (cyclesList.isNotEmpty()) {
+        round(cyclesList.map { it.periodDuration }.average()).toInt().coerceIn(2, 10)
+    } else defaultPeriodDuration
 
     var activeDatePickerIndex by remember { mutableStateOf<Int?>(null) }
 
@@ -158,7 +124,7 @@ fun ManualPastCyclesBottomSheet(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Enter the start dates of your previous 3 cycles. Cycle lengths will automatically calculate based on the dates entered.",
+                text = "Enter the start dates of your previous cycles to calibrate your baseline. Tap '+' to add more past cycles for higher prediction accuracy.",
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 lineHeight = 19.sp,
@@ -167,56 +133,97 @@ fun ManualPastCyclesBottomSheet(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            // Cycle 1 Input Card
-            PastCycleInputCard(
-                title = "Cycle 1 (Previous Cycle)",
-                startDate = cycle1Date,
-                cycleLength = cycle1Length,
-                periodDuration = cycle1Duration,
-                dateFormatter = dateFormatter,
-                onDateClick = { activeDatePickerIndex = 1 },
-                onLengthChange = { newLen ->
-                    cycle1Length = newLen
-                    cycle1Date = firstDayOfLastPeriod.minusDays(newLen.toLong())
-                },
-                onDurationChange = { cycle1Duration = it }
-            )
+            // Dynamic Past Cycle Cards
+            cyclesList.forEachIndexed { index, cycle ->
+                val title = when (index) {
+                    0 -> "Cycle 1 (Previous Cycle)"
+                    1 -> "Cycle 2 (2 Cycles Ago)"
+                    2 -> "Cycle 3 (3 Cycles Ago)"
+                    else -> "Cycle ${index + 1} (${index + 1} Cycles Ago)"
+                }
 
-            Spacer(modifier = Modifier.height(12.dp))
+                PastCycleInputCard(
+                    title = title,
+                    startDate = cycle.startDate,
+                    cycleLength = cycle.cycleLength,
+                    periodDuration = cycle.periodDuration,
+                    dateFormatter = dateFormatter,
+                    onDateClick = { activeDatePickerIndex = index },
+                    onLengthChange = { newLen ->
+                        val updated = cyclesList.toMutableList()
+                        val precedingDate = if (index == 0) firstDayOfLastPeriod else updated[index - 1].startDate
+                        val newStartDate = precedingDate.minusDays(newLen.toLong())
+                        updated[index] = updated[index].copy(
+                            cycleLength = newLen,
+                            startDate = newStartDate
+                        )
+                        // Shift older cycles accordingly
+                        for (j in (index + 1) until updated.size) {
+                            updated[j] = updated[j].copy(
+                                startDate = updated[j - 1].startDate.minusDays(updated[j].cycleLength.toLong())
+                            )
+                        }
+                        cyclesList = updated
+                    },
+                    onDurationChange = { newDur ->
+                        val updated = cyclesList.toMutableList()
+                        updated[index] = updated[index].copy(periodDuration = newDur)
+                        cyclesList = updated
+                    },
+                    onRemoveClick = if (cyclesList.size > 1) {
+                        {
+                            val updated = cyclesList.toMutableList()
+                            updated.removeAt(index)
+                            cyclesList = updated
+                        }
+                    } else null
+                )
 
-            // Cycle 2 Input Card
-            PastCycleInputCard(
-                title = "Cycle 2 (2 Cycles Ago)",
-                startDate = cycle2Date,
-                cycleLength = cycle2Length,
-                periodDuration = cycle2Duration,
-                dateFormatter = dateFormatter,
-                onDateClick = { activeDatePickerIndex = 2 },
-                onLengthChange = { newLen ->
-                    cycle2Length = newLen
-                    cycle2Date = cycle1Date.minusDays(newLen.toLong())
-                },
-                onDurationChange = { cycle2Duration = it }
-            )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            // "+" Button to Add Another Past Cycle
+            if (cyclesList.size < 12) {
+                OutlinedButton(
+                    onClick = {
+                        val lastDate = cyclesList.lastOrNull()?.startDate ?: firstDayOfLastPeriod
+                        val newStartDate = lastDate.minusDays(defaultCycleLength.toLong())
+                        cyclesList = cyclesList + ManualPastCycle(
+                            startDate = newStartDate,
+                            cycleLength = defaultCycleLength,
+                            periodDuration = defaultPeriodDuration
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.5.dp, Primary.copy(alpha = 0.6f)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Primary)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = Primary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Add Another Past Cycle",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Primary
+                        )
+                    }
+                }
 
-            // Cycle 3 Input Card
-            PastCycleInputCard(
-                title = "Cycle 3 (3 Cycles Ago)",
-                startDate = cycle3Date,
-                cycleLength = cycle3Length,
-                periodDuration = cycle3Duration,
-                dateFormatter = dateFormatter,
-                onDateClick = { activeDatePickerIndex = 3 },
-                onLengthChange = { newLen ->
-                    cycle3Length = newLen
-                    cycle3Date = cycle2Date.minusDays(newLen.toLong())
-                },
-                onDurationChange = { cycle3Duration = it }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             // Calibration summary badge
             Row(
@@ -229,7 +236,7 @@ fun ManualPastCyclesBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Calculated Average",
+                    text = "Average (${cyclesList.size} ${if (cyclesList.size == 1) "cycle" else "cycles"})",
                     fontFamily = ManropeFontFamily,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -249,12 +256,7 @@ fun ManualPastCyclesBottomSheet(
             // Action Buttons
             Button(
                 onClick = {
-                    val list = listOf(
-                        ManualPastCycle(cycle1Date, cycle1Length, cycle1Duration),
-                        ManualPastCycle(cycle2Date, cycle2Length, cycle2Duration),
-                        ManualPastCycle(cycle3Date, cycle3Length, cycle3Duration)
-                    )
-                    onSave(list)
+                    onSave(cyclesList)
                     onDismissRequest()
                 },
                 modifier = Modifier
@@ -294,15 +296,12 @@ fun ManualPastCyclesBottomSheet(
 
         // Date Picker Modal for specific cycle
         if (activeDatePickerIndex != null) {
-            val targetDate = when (activeDatePickerIndex) {
-                1 -> cycle1Date
-                2 -> cycle2Date
-                else -> cycle3Date
-            }
+            val currentIndex = activeDatePickerIndex!!
+            val targetDate = cyclesList.getOrNull(currentIndex)?.startDate ?: firstDayOfLastPeriod
             val initialMillis = remember(targetDate) {
                 targetDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
             }
-            val datePickerState = key(activeDatePickerIndex) {
+            val datePickerState = key(currentIndex) {
                 rememberDatePickerState(initialSelectedDateMillis = initialMillis)
             }
 
@@ -332,49 +331,25 @@ fun ManualPastCyclesBottomSheet(
                                 val newDate = Instant.ofEpochMilli(millis)
                                     .atZone(ZoneOffset.UTC)
                                     .toLocalDate()
-                                when (activeDatePickerIndex) {
-                                    1 -> {
-                                        cycle1Date = newDate
-                                        val diff1 = ChronoUnit.DAYS.between(newDate, firstDayOfLastPeriod).toInt()
-                                        if (diff1 > 0) {
-                                            cycle1Length = diff1.coerceIn(20, 45)
-                                        }
-                                        if (cycle2Date.isBefore(newDate)) {
-                                            val diff2 = ChronoUnit.DAYS.between(cycle2Date, newDate).toInt()
-                                            if (diff2 > 0) {
-                                                cycle2Length = diff2.coerceIn(20, 45)
-                                            }
-                                        } else {
-                                            cycle2Date = newDate.minusDays(cycle2Length.toLong())
-                                            cycle3Date = cycle2Date.minusDays(cycle3Length.toLong())
-                                        }
-                                    }
-                                    2 -> {
-                                        cycle2Date = newDate
-                                        if (newDate.isBefore(cycle1Date)) {
-                                            val diff2 = ChronoUnit.DAYS.between(newDate, cycle1Date).toInt()
-                                            if (diff2 > 0) {
-                                                cycle2Length = diff2.coerceIn(20, 45)
-                                            }
-                                        }
-                                        if (cycle3Date.isBefore(newDate)) {
-                                            val diff3 = ChronoUnit.DAYS.between(cycle3Date, newDate).toInt()
-                                            if (diff3 > 0) {
-                                                cycle3Length = diff3.coerceIn(20, 45)
-                                            }
-                                        } else {
-                                            cycle3Date = newDate.minusDays(cycle3Length.toLong())
+                                val updated = cyclesList.toMutableList()
+                                if (currentIndex in updated.indices) {
+                                    val precedingDate = if (currentIndex == 0) firstDayOfLastPeriod else updated[currentIndex - 1].startDate
+                                    val diff = ChronoUnit.DAYS.between(newDate, precedingDate).toInt()
+                                    val newLen = if (diff > 0) diff.coerceIn(20, 45) else updated[currentIndex].cycleLength
+                                    updated[currentIndex] = updated[currentIndex].copy(
+                                        startDate = newDate,
+                                        cycleLength = newLen
+                                    )
+
+                                    // Shift older cycles if not before newDate
+                                    for (j in (currentIndex + 1) until updated.size) {
+                                        if (!updated[j].startDate.isBefore(updated[j - 1].startDate)) {
+                                            updated[j] = updated[j].copy(
+                                                startDate = updated[j - 1].startDate.minusDays(updated[j].cycleLength.toLong())
+                                            )
                                         }
                                     }
-                                    3 -> {
-                                        cycle3Date = newDate
-                                        if (newDate.isBefore(cycle2Date)) {
-                                            val diff3 = ChronoUnit.DAYS.between(newDate, cycle2Date).toInt()
-                                            if (diff3 > 0) {
-                                                cycle3Length = diff3.coerceIn(20, 45)
-                                            }
-                                        }
-                                    }
+                                    cyclesList = updated
                                 }
                             }
                             activeDatePickerIndex = null
@@ -410,7 +385,8 @@ private fun PastCycleInputCard(
     dateFormatter: DateTimeFormatter,
     onDateClick: () -> Unit,
     onLengthChange: (Int) -> Unit,
-    onDurationChange: (Int) -> Unit
+    onDurationChange: (Int) -> Unit,
+    onRemoveClick: (() -> Unit)? = null
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -423,13 +399,33 @@ private fun PastCycleInputCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text(
-                text = title,
-                fontFamily = LiterataFontFamily,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = Primary
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = title,
+                    fontFamily = LiterataFontFamily,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Primary
+                )
+
+                if (onRemoveClick != null) {
+                    IconButton(
+                        onClick = onRemoveClick,
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.DeleteOutline,
+                            contentDescription = "Remove cycle",
+                            tint = Color(0xFF9E8791),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
 

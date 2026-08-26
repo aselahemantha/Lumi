@@ -117,8 +117,12 @@ class InsightsViewModel(
         avgCycleLength: Int,
         logs: List<DailyLog>
     ): String {
-        val isOverdue = (phase == CyclePhase.PERIOD_PREDICTED || phase == CyclePhase.LATE_LUTEAL) && cycleDay > avgCycleLength
+        val isOverdue = (phase == CyclePhase.PERIOD_PREDICTED || phase == CyclePhase.PERIOD_MISSED || phase == CyclePhase.LATE_LUTEAL) && cycleDay > avgCycleLength
         val overdueDays = if (isOverdue) cycleDay - avgCycleLength else 0
+
+        if (phase == CyclePhase.PERIOD_MISSED) {
+            return "Your period is $overdueDays ${if (overdueDays == 1) "day" else "days"} past your expected cycle. It is common for cycles to be delayed or missed occasionally due to stress, illness, rapid routine changes, or pregnancy. You can mark this cycle as missed or log a flow when it begins. If you miss 3 cycles in a row, consider speaking with a healthcare provider."
+        }
 
         if (isOverdue) {
             return "Your period is $overdueDays ${if (overdueDays == 1) "day" else "days"} past your typical $avgCycleLength-day cycle. Variations are completely normal and can be influenced by stress, sleep, or travel. Log your flow as soon as it begins to reset your cycle tracking."
@@ -159,5 +163,6 @@ class InsightsViewModel(
         CyclePhase.LUTEAL -> "Luteal"
         CyclePhase.LATE_LUTEAL -> "Late Luteal"
         CyclePhase.PERIOD_PREDICTED -> "Pre-Period"
+        CyclePhase.PERIOD_MISSED -> "Missed Period"
     }
 }

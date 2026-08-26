@@ -43,8 +43,11 @@ interface CycleDao {
     @Query("UPDATE cycles SET isCurrent = 0, updatedAt = :updatedAt WHERE userId = :userId AND isCurrent = 1")
     suspend fun markAllNotCurrent(userId: String, updatedAt: String): Int
 
-    @Query("UPDATE cycles SET endDate = :endDate, cycleLength = :cycleLength, periodLength = :periodLength, isCurrent = 0, isRegular = :isRegular, updatedAt = :updatedAt WHERE id = :cycleId")
-    suspend fun closeCycle(cycleId: String, endDate: String, cycleLength: Int, periodLength: Int?, isRegular: Boolean?, updatedAt: String): Int
+    @Query("UPDATE cycles SET endDate = :endDate, cycleLength = :cycleLength, periodLength = :periodLength, isCurrent = 0, isRegular = :isRegular, isMissed = :isMissed, updatedAt = :updatedAt WHERE id = :cycleId")
+    suspend fun closeCycle(cycleId: String, endDate: String, cycleLength: Int, periodLength: Int?, isRegular: Boolean?, isMissed: Boolean = false, updatedAt: String): Int
+
+    @Query("UPDATE cycles SET isMissed = 1, isRegular = 0, updatedAt = :updatedAt WHERE id = :cycleId")
+    suspend fun markCycleAsMissed(cycleId: String, updatedAt: String): Int
 
     @Query("DELETE FROM cycles WHERE id = :cycleId")
     suspend fun deleteCycle(cycleId: String): Int

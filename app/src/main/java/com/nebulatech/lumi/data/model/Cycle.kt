@@ -13,6 +13,7 @@ data class Cycle(
     val ovulationDate: String? = null,
     val isCurrent: Boolean = true,
     val isRegular: Boolean? = null,
+    val isMissed: Boolean = false,
     val notes: String? = null,
     val createdAt: String = Instant.now().toString(),
     val updatedAt: String = Instant.now().toString(),

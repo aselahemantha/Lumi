@@ -77,9 +77,9 @@ fun CalibrationInfoBox(
 
                 Text(
                     text = if (hasManualData) {
-                        "Using your custom 3 past cycle records for baseline calibration and precision predictions."
+                        "Using your custom past cycle records for baseline calibration and precision predictions."
                     } else {
-                        "We automatically calculate 3 past cycle data using the information given by you to provide precision insights from day one."
+                        "We automatically calculate past cycle data using the information given by you to provide precision insights from day one."
                     },
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,

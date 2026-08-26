@@ -241,6 +241,7 @@ class LoggingViewModelTest {
         ): EmptyResult<DataError.Local> = Result.Success(Unit)
 
         override suspend fun updateCycle(cycle: Cycle): EmptyResult<DataError.Local> = Result.Success(Unit)
+        override suspend fun markCurrentCycleAsMissed(userId: String): EmptyResult<DataError.Local> = Result.Success(Unit)
         override fun getCycleDay(userId: String, targetDate: LocalDate): Flow<Int> = flowOf(cycleDay)
         override fun getAverageCycleLength(userId: String): Flow<Int> = flowOf(avgCycleLength)
         override fun getAveragePeriodLength(userId: String): Flow<Int> = flowOf(5)
