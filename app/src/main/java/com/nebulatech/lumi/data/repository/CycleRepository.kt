@@ -292,7 +292,7 @@ class RoomCycleRepository(
 
     override fun getAverageCycleLength(userId: String): Flow<Int> {
         return combine(
-            getLastNCycles(userId, 6),
+            getLastNCycles(userId, 12),
             userProfileDao.getProfileFlow(userId)
         ) { recentCycles, profile ->
             val completedCycles = recentCycles.filter { !it.isCurrent && !it.isMissed && it.cycleLength != null && it.cycleLength in 20..45 }
@@ -306,7 +306,7 @@ class RoomCycleRepository(
 
     override fun getAveragePeriodLength(userId: String): Flow<Int> {
         return combine(
-            getLastNCycles(userId, 6),
+            getLastNCycles(userId, 12),
             userProfileDao.getProfileFlow(userId)
         ) { recentCycles, profile ->
             val completedPeriods = recentCycles.filter { !it.isCurrent && !it.isMissed && it.periodLength != null && it.periodLength > 0 }

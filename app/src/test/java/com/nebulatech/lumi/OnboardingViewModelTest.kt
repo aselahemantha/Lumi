@@ -125,6 +125,37 @@ class OnboardingViewModelTest {
         assertEquals(6, fakeCycleRepository.seededCurrentPeriodDuration)
     }
 
+    @Test
+    fun `persistAndNavigate with 5 manual cycles seeds all 5 cycles and computes correct average`() = runTest {
+        val pastCycles = listOf(
+            ManualPastCycle(startDate = LocalDate.of(2026, 7, 5), cycleLength = 28, periodDuration = 5),
+            ManualPastCycle(startDate = LocalDate.of(2026, 6, 7), cycleLength = 28, periodDuration = 5),
+            ManualPastCycle(startDate = LocalDate.of(2026, 5, 10), cycleLength = 28, periodDuration = 4),
+            ManualPastCycle(startDate = LocalDate.of(2026, 4, 12), cycleLength = 28, periodDuration = 4),
+            ManualPastCycle(startDate = LocalDate.of(2026, 3, 15), cycleLength = 30, periodDuration = 4)
+        )
+
+        viewModel.onAction(OnboardingAction.SelectGoal(OnboardingGoal.TRACK_CYCLE))
+        viewModel.onAction(OnboardingAction.UpdateFirstDayOfLastPeriod(LocalDate.of(2026, 8, 2)))
+        viewModel.onAction(OnboardingAction.UpdateCustomPastCycles(pastCycles))
+
+        viewModel.onAction(OnboardingAction.ClickContinue) // WELCOME -> SELECT_GOAL
+        viewModel.onAction(OnboardingAction.ClickContinue) // SELECT_GOAL -> CORE_DATA
+        viewModel.onAction(OnboardingAction.ClickContinue) // CORE_DATA -> HEALTH_PROFILE
+        viewModel.onAction(OnboardingAction.ClickContinue) // HEALTH_PROFILE -> persistAndNavigate
+
+        advanceUntilIdle()
+
+        // (28+28+28+28+30)/5 = 28.4 -> 28
+        // (5+5+4+4+4)/5 = 4.4 -> 4
+        assertNotNull(fakeUserRepository.savedProfile)
+        assertEquals(28, fakeUserRepository.savedProfile?.cycleLength)
+        assertEquals(4, fakeUserRepository.savedProfile?.periodDuration)
+
+        assertEquals(5, fakeCycleRepository.seededManualPastCycles?.size)
+        assertEquals(4, fakeCycleRepository.seededCurrentPeriodDuration)
+    }
+
     // ── Test Fakes ────────────────────────────────────────────────────────────
 
     private class FakeUserRepository : UserRepository {

@@ -145,6 +145,39 @@ class PeriodCalculationTest {
         assertEquals(5, activeCycle.periodLength)
     }
 
+    @Test
+    fun `scenario 2b - previous 6 months manual data calculates average across all 6 cycles`() = runBlocking {
+        val startDate = LocalDate.of(2026, 8, 1)
+
+        val pastCycles = listOf(
+            PastCycleInput(startDate = LocalDate.of(2026, 7, 4), cycleLength = 28, periodDuration = 4),
+            PastCycleInput(startDate = LocalDate.of(2026, 6, 4), cycleLength = 30, periodDuration = 5),
+            PastCycleInput(startDate = LocalDate.of(2026, 5, 3), cycleLength = 32, periodDuration = 6),
+            PastCycleInput(startDate = LocalDate.of(2026, 4, 3), cycleLength = 30, periodDuration = 5),
+            PastCycleInput(startDate = LocalDate.of(2026, 3, 4), cycleLength = 30, periodDuration = 5),
+            PastCycleInput(startDate = LocalDate.of(2026, 2, 2), cycleLength = 30, periodDuration = 5)
+        )
+
+        // (28 + 30 + 32 + 30 + 30 + 30) / 6 = 180 / 6 = 30
+        // (4 + 5 + 6 + 5 + 5 + 5) / 6 = 30 / 6 = 5
+        val seedResult = cycleRepository.seedManualHistoricalCycles(
+            userId = testUserId,
+            currentCycleStartDate = startDate,
+            pastCycles = pastCycles,
+            currentPeriodDuration = 5
+        )
+        assertTrue(seedResult is com.nebulatech.lumi.core.domain.Result.Success)
+
+        val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
+        assertEquals(30, avgCycleLength)
+
+        val avgPeriodLength = cycleRepository.getAveragePeriodLength(testUserId).first()
+        assertEquals(5, avgPeriodLength)
+
+        val allCycles = cycleRepository.getAllCycles(testUserId).first()
+        assertEquals(7, allCycles.size)
+    }
+
     // ── SCENARIO 3: Dynamic Flow Logging and Subsequent Cycle Recalculation ────
     @Test
     fun `scenario 3 - logging flow in current cycle and starting next cycle recalculates averages`() = runBlocking {
