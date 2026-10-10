@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.nebulatech.lumi.analytics.AnalyticsConstants
 import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.home.components.BasalBodyTempChartCard
+import com.nebulatech.lumi.home.components.BbtChartPoint
 import com.nebulatech.lumi.home.components.FertilityHeaderCard
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.HomeTopBar
@@ -52,6 +53,8 @@ fun FertilityDashboardHomeScreen(
     insightText: String = "Your luteinizing hormone (LH) is surging. Likelihood of ovulation is peaking over the next 24–48 hours.",
     todaysLogs: List<LogEntryItem> = emptyList(),
     todayBbtTemperature: String? = null,
+    bbtPoints: List<BbtChartPoint> = emptyList(),
+    currentCycleDay: Int = 14,
     loggingViewModel: LoggingViewModel? = null,
     onLogBBTClick: () -> Unit = {},
     onLogLHClick: () -> Unit = {},
@@ -124,7 +127,14 @@ fun FertilityDashboardHomeScreen(
             )
 
             BasalBodyTempChartCard(
-                todayTemperature = todayBbtTemperature
+                points = bbtPoints,
+                currentCycleDay = currentCycleDay,
+                todayTemperature = todayBbtTemperature,
+                onLogBBTClick = {
+                    tracker.trackButtonClick("btn_log_bbt", AnalyticsConstants.Screens.HOME_FERTILITY_DASHBOARD)
+                    showBBTSheet = true
+                    onLogBBTClick()
+                }
             )
 
             TodaysLogsCard(

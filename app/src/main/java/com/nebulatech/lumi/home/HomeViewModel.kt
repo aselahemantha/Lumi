@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nebulatech.lumi.data.model.BbtReading
+import com.nebulatech.lumi.data.model.Cycle
 import com.nebulatech.lumi.data.model.CyclePhase
 import com.nebulatech.lumi.data.model.DailyLog
 import com.nebulatech.lumi.data.model.LhTest
@@ -18,6 +19,7 @@ import com.nebulatech.lumi.data.repository.DailyLogRepository
 import com.nebulatech.lumi.data.repository.LhTestRepository
 import com.nebulatech.lumi.data.repository.RoomUserRepository
 import com.nebulatech.lumi.data.repository.UserRepository
+import com.nebulatech.lumi.home.components.BbtChartPoint
 import com.nebulatech.lumi.home.components.LogEntryItem
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,6 +29,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+
+private data class TodayLogsData(
+    val dailyLog: DailyLog?,
+    val bbtReading: BbtReading?,
+    val lhTest: LhTest?,
+    val recentBbtReadings: List<BbtReading>
+)
 
 class HomeViewModel(
     userRepository: UserRepository,
@@ -56,9 +66,12 @@ class HomeViewModel(
         combine(
             dailyLogRepository.getLogForDate(userId, today),
             bbtRepository.getBbtForDate(userId, today),
-            lhTestRepository.getLhTestForDate(userId, today)
-        ) { dailyLog, bbtReading, lhTest -> Triple(dailyLog, bbtReading, lhTest) }
-    ) { (user, cycle, cycleDay), (avgCycleLength, avgPeriodLength, phase), (dailyLog, bbtReading, lhTest) ->
+            lhTestRepository.getLhTestForDate(userId, today),
+            bbtRepository.getBbtInRange(userId, today.minusDays(35), today)
+        ) { dailyLog, bbtReading, lhTest, recentBbtReadings ->
+            TodayLogsData(dailyLog, bbtReading, lhTest, recentBbtReadings)
+        }
+    ) { (user, cycle, cycleDay), (avgCycleLength, avgPeriodLength, phase), logsData ->
         if (user == null) {
             viewModelScope.launch { _events.send(HomeEvent.NavigateToOnboarding) }
             return@combine HomeState(isLoading = false)
@@ -67,10 +80,11 @@ class HomeViewModel(
         val progressRatio = (cycleDay.toFloat() / avgCycleLength.toFloat()).coerceIn(0f, 1f)
         val overdueDays = if (cycleDay > avgCycleLength) cycleDay - avgCycleLength else 0
         val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength, avgPeriodLength, overdueDays)
-        val (insightTitle, insightText) = buildInsight(phase, overdueDays, bbtReading, lhTest)
+        val (insightTitle, insightText) = buildInsight(phase, overdueDays, logsData.bbtReading, logsData.lhTest)
         val next7Days = buildNext7Days(today, cycle, avgCycleLength, avgPeriodLength)
-        val todaysLogs = buildTodaysLogs(dailyLog, bbtReading, lhTest)
-        val todayBbtTemp = bbtReading?.let { "${it.temperature}°${it.temperatureUnit}" }
+        val todaysLogs = buildTodaysLogs(logsData.dailyLog, logsData.bbtReading, logsData.lhTest)
+        val todayBbtTemp = logsData.bbtReading?.let { "${it.temperature}°${it.temperatureUnit}" }
+        val bbtChartPoints = buildBbtChartPoints(logsData.recentBbtReadings, cycle, today)
 
         HomeState(
             isLoading = false,
@@ -90,7 +104,8 @@ class HomeViewModel(
             overdueDays = overdueDays,
             next7Days = next7Days,
             todaysLogs = todaysLogs,
-            todayBbtTemperature = todayBbtTemp
+            todayBbtTemperature = todayBbtTemp,
+            bbtChartPoints = bbtChartPoints
         )
     }.stateIn(
         scope = viewModelScope,
@@ -280,5 +295,40 @@ class HomeViewModel(
                 hasPeriodDot = isPredictedPeriod
             )
         }
+    }
+
+    private fun buildBbtChartPoints(
+        readings: List<BbtReading>,
+        currentCycle: Cycle?,
+        today: LocalDate
+    ): List<BbtChartPoint> {
+        val cycleStart = currentCycle?.startDate?.let {
+            try { LocalDate.parse(it) } catch (_: Exception) { null }
+        }
+        return readings
+            .filter { reading ->
+                if (currentCycle?.id != null && reading.cycleId == currentCycle.id) true
+                else if (cycleStart != null) {
+                    val rDate = try { LocalDate.parse(reading.readingDate) } catch (_: Exception) { null }
+                    rDate != null && !rDate.isBefore(cycleStart)
+                } else true
+            }
+            .mapNotNull { reading ->
+                val rDate = try { LocalDate.parse(reading.readingDate) } catch (_: Exception) { null }
+                val cDay = reading.cycleDay ?: if (cycleStart != null && rDate != null) {
+                    ChronoUnit.DAYS.between(cycleStart, rDate).toInt() + 1
+                } else null
+
+                if (cDay != null && cDay > 0) {
+                    BbtChartPoint(
+                        cycleDay = cDay,
+                        temperature = reading.temperature.toFloat(),
+                        unit = reading.temperatureUnit,
+                        dateString = reading.readingDate,
+                        isToday = reading.readingDate == today.toString()
+                    )
+                } else null
+            }
+            .sortedBy { it.cycleDay }
     }
 }

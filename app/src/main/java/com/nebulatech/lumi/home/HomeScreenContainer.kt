@@ -149,6 +149,8 @@ fun HomeScreenContainer(
                                         insightText = state.insightText,
                                         todaysLogs = state.todaysLogs,
                                         todayBbtTemperature = state.todayBbtTemperature,
+                                        bbtPoints = state.bbtChartPoints,
+                                        currentCycleDay = state.cycleDay,
                                         loggingViewModel = loggingVm,
                                         onNotificationClick = onNotificationClickWithAnalytics,
                                         onTabSelected = onTabSelectedWithAnalytics

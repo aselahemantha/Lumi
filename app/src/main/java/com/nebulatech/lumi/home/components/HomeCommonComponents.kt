@@ -56,13 +56,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -800,11 +808,24 @@ fun FertilityHeaderCard(
 // ==========================================
 // 9. BASAL BODY TEMP CHART CARD (Layout 3)
 // ==========================================
+data class BbtChartPoint(
+    val cycleDay: Int,
+    val temperature: Float,
+    val unit: String = "F",
+    val dateString: String = "",
+    val isToday: Boolean = false
+)
+
 @Composable
 fun BasalBodyTempChartCard(
     modifier: Modifier = Modifier,
-    todayTemperature: String? = null
+    points: List<BbtChartPoint> = emptyList(),
+    currentCycleDay: Int = 14,
+    todayTemperature: String? = null,
+    onLogBBTClick: () -> Unit = {}
 ) {
+    val textMeasurer = rememberTextMeasurer()
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -816,18 +837,31 @@ fun BasalBodyTempChartCard(
                 .fillMaxWidth()
                 .padding(20.dp)
         ) {
+            // Header Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Basal Body Temp",
-                    fontFamily = LiterataFontFamily,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF26181F)
-                )
+                Column {
+                    Text(
+                        text = "Basal Body Temp",
+                        fontFamily = LiterataFontFamily,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF26181F)
+                    )
+                    Text(
+                        text = if (points.isNotEmpty()) {
+                            if (todayTemperature != null) "Today: $todayTemperature"
+                            else "Latest: ${points.last().temperature}°${points.last().unit}"
+                        } else "No readings recorded yet",
+                        fontFamily = ManropeFontFamily,
+                        fontSize = 12.sp,
+                        color = Color(0xFF82727B)
+                    )
+                }
+
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
@@ -835,7 +869,7 @@ fun BasalBodyTempChartCard(
                         .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "This Cycle",
+                        text = "Day $currentCycleDay",
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
@@ -844,113 +878,327 @@ fun BasalBodyTempChartCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             // Chart area representation using Canvas
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(160.dp)
+                    .height(170.dp)
             ) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
-                    val width = size.width
-                    val height = size.height
+                    val w = size.width
+                    val h = size.height
 
-                    // Grid lines & Y Axis labels
-                    val yLines = listOf(0.2f, 0.5f, 0.8f)
-                    yLines.forEach { ratio ->
-                        drawLine(
-                            color = Color(0xFFF0E8EC),
-                            start = Offset(0f, height * ratio),
-                            end = Offset(width, height * ratio),
-                            strokeWidth = 1.dp.toPx()
+                    val paddingLeft = 42.dp.toPx()
+                    val paddingRight = 16.dp.toPx()
+                    val paddingTop = 26.dp.toPx()
+                    val paddingBottom = 22.dp.toPx()
+
+                    val chartW = w - paddingLeft - paddingRight
+                    val chartH = h - paddingTop - paddingBottom
+
+                    if (points.isEmpty()) {
+                        // ── EMPTY STATE CANVAS ────────────────────────────────
+                        val yRatios = listOf(0.15f, 0.50f, 0.85f)
+                        val dashedEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                        val gridTemps = listOf("98.4°", "97.8°", "97.2°")
+
+                        yRatios.forEachIndexed { i, ratio ->
+                            val y = paddingTop + ratio * chartH
+                            drawLine(
+                                color = Color(0xFFF0E6EA),
+                                start = Offset(paddingLeft, y),
+                                end = Offset(w - paddingRight, y),
+                                strokeWidth = 1.dp.toPx(),
+                                pathEffect = dashedEffect
+                            )
+                            val textLayout = textMeasurer.measure(
+                                text = gridTemps[i],
+                                style = TextStyle(fontSize = 10.sp, color = Color(0xFFA898A1))
+                            )
+                            drawText(
+                                textLayoutResult = textLayout,
+                                topLeft = Offset(4.dp.toPx(), y - textLayout.size.height / 2f)
+                            )
+                        }
+
+                        // Subtle dashed guide wave illustrating biphasic shift
+                        val wavePath = Path().apply {
+                            moveTo(paddingLeft, paddingTop + chartH * 0.75f)
+                            cubicTo(
+                                paddingLeft + chartW * 0.35f, paddingTop + chartH * 0.72f,
+                                paddingLeft + chartW * 0.55f, paddingTop + chartH * 0.40f,
+                                w - paddingRight, paddingTop + chartH * 0.25f
+                            )
+                        }
+                        drawPath(
+                            path = wavePath,
+                            color = Primary.copy(alpha = 0.25f),
+                            style = Stroke(
+                                width = 2.dp.toPx(),
+                                pathEffect = dashedEffect,
+                                cap = StrokeCap.Round
+                            )
                         )
-                    }
+                    } else {
+                        // ── REAL DATA CANVAS ─────────────────────────────────
+                        val minTemp = points.minOf { it.temperature }
+                        val maxTemp = points.maxOf { it.temperature }
+                        val rawSpan = maxTemp - minTemp
+                        val span = maxOf(rawSpan, 0.8f)
+                        val yMin = minTemp - 0.2f
+                        val yMax = yMin + span + 0.4f
 
-                    // Line Chart Path
-                    val path = Path().apply {
-                        moveTo(width * 0.1f, height * 0.72f)
-                        quadraticTo(
-                            width * 0.25f, height * 0.7f,
-                            width * 0.35f, height * 0.68f
-                        )
-                        quadraticTo(
-                            width * 0.5f, height * 0.65f,
-                            width * 0.65f, height * 0.67f
-                        )
-                        cubicTo(
-                            width * 0.72f, height * 0.40f,
-                            width * 0.76f, height * 0.15f,
-                            width * 0.80f, height * 0.20f
-                        )
-                        quadraticTo(
-                            width * 0.88f, height * 0.30f,
-                            width * 0.95f, height * 0.28f
-                        )
-                    }
+                        val minDay = minOf(points.minOf { it.cycleDay }, maxOf(1, currentCycleDay - 3))
+                        val maxDay = maxOf(points.maxOf { it.cycleDay }, maxOf(minDay + 5, currentCycleDay + 3))
+                        val daySpan = maxOf(maxDay - minDay, 1)
 
-                    drawPath(
-                        path = path,
-                        color = Primary,
-                        style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
-                    )
+                        fun getX(cd: Int): Float = paddingLeft + ((cd - minDay).toFloat() / daySpan.toFloat()) * chartW
+                        fun getY(temp: Float): Float = paddingTop + (1f - ((temp - yMin) / (yMax - yMin))) * chartH
 
-                    // Draw dots along points
-                    val points = listOf(
-                        Offset(width * 0.12f, height * 0.72f),
-                        Offset(width * 0.28f, height * 0.70f),
-                        Offset(width * 0.42f, height * 0.67f),
-                        Offset(width * 0.54f, height * 0.65f),
-                        Offset(width * 0.66f, height * 0.67f)
-                    )
+                        // Draw 3 horizontal grid lines with actual temperature labels
+                        val ySteps = listOf(0.15f, 0.5f, 0.85f)
+                        val gridEffect = PathEffect.dashPathEffect(floatArrayOf(6f, 6f), 0f)
+                        ySteps.forEach { ratio ->
+                            val y = paddingTop + ratio * chartH
+                            val tempVal = yMax - ratio * (yMax - yMin)
+                            drawLine(
+                                color = Color(0xFFF3EBEE),
+                                start = Offset(paddingLeft, y),
+                                end = Offset(w - paddingRight, y),
+                                strokeWidth = 1.dp.toPx(),
+                                pathEffect = gridEffect
+                            )
+                            val label = "%.1f°".format(tempVal)
+                            val textLayout = textMeasurer.measure(
+                                text = label,
+                                style = TextStyle(fontSize = 10.sp, color = Color(0xFFA898A1))
+                            )
+                            drawText(
+                                textLayoutResult = textLayout,
+                                topLeft = Offset(4.dp.toPx(), y - textLayout.size.height / 2f)
+                            )
+                        }
 
-                    points.forEach { pt ->
-                        drawCircle(color = Color.White, radius = 5.dp.toPx(), center = pt)
-                        drawCircle(color = Primary, radius = 5.dp.toPx(), center = pt, style = Stroke(width = 2.dp.toPx()))
-                    }
+                        val pointOffsets = points.map { Offset(getX(it.cycleDay), getY(it.temperature)) }
 
-                    // Highlighted peak point if reading exists
-                    if (todayTemperature != null) {
-                        val peakPt = Offset(width * 0.78f, height * 0.24f)
-                        drawCircle(color = Primary, radius = 6.dp.toPx(), center = peakPt)
+                        if (points.size >= 2) {
+                            // Smooth line path
+                            val linePath = Path().apply {
+                                moveTo(pointOffsets[0].x, pointOffsets[0].y)
+                                for (i in 0 until pointOffsets.size - 1) {
+                                    val p0 = pointOffsets[i]
+                                    val p1 = pointOffsets[i + 1]
+                                    val midX = (p0.x + p1.x) / 2f
+                                    cubicTo(midX, p0.y, midX, p1.y, p1.x, p1.y)
+                                }
+                            }
+
+                            // Gradient area under curve
+                            val fillPath = Path().apply {
+                                addPath(linePath)
+                                lineTo(pointOffsets.last().x, paddingTop + chartH)
+                                lineTo(pointOffsets.first().x, paddingTop + chartH)
+                                close()
+                            }
+                            drawPath(
+                                path = fillPath,
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(Primary.copy(alpha = 0.20f), Color.Transparent),
+                                    startY = paddingTop,
+                                    endY = paddingTop + chartH
+                                )
+                            )
+
+                            // Draw stroke
+                            drawPath(
+                                path = linePath,
+                                color = Primary,
+                                style = Stroke(
+                                    width = 3.dp.toPx(),
+                                    cap = StrokeCap.Round,
+                                    join = StrokeJoin.Round
+                                )
+                            )
+                        } else if (points.size == 1) {
+                            // Single reading reference line
+                            val p = pointOffsets[0]
+                            drawLine(
+                                color = Primary.copy(alpha = 0.35f),
+                                start = Offset(paddingLeft, p.y),
+                                end = Offset(w - paddingRight, p.y),
+                                strokeWidth = 1.5.dp.toPx(),
+                                pathEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 6f), 0f)
+                            )
+                        }
+
+                        // Draw points
+                        pointOffsets.forEachIndexed { idx, pt ->
+                            val isHighlight = points[idx].isToday || (todayTemperature == null && idx == points.size - 1)
+                            if (isHighlight) {
+                                // Highlighted pulse
+                                drawCircle(
+                                    color = Primary.copy(alpha = 0.20f),
+                                    radius = 11.dp.toPx(),
+                                    center = pt
+                                )
+                                drawCircle(
+                                    color = Primary,
+                                    radius = 6.dp.toPx(),
+                                    center = pt
+                                )
+                                drawCircle(
+                                    color = Color.White,
+                                    radius = 2.5.dp.toPx(),
+                                    center = pt
+                                )
+
+                                // Callout bubble directly positioned above this point
+                                val badgeText = "${points[idx].temperature}°"
+                                val textLayout = textMeasurer.measure(
+                                    text = badgeText,
+                                    style = TextStyle(
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF26181F)
+                                    )
+                                )
+                                val bubbleW = textLayout.size.width + 16.dp.toPx()
+                                val bubbleH = textLayout.size.height + 8.dp.toPx()
+                                val bubbleX = (pt.x - bubbleW / 2f).coerceIn(
+                                    paddingLeft,
+                                    w - paddingRight - bubbleW
+                                )
+                                val bubbleY = (pt.y - bubbleH - 8.dp.toPx()).coerceAtLeast(2.dp.toPx())
+
+                                drawRoundRect(
+                                    color = Color.White,
+                                    topLeft = Offset(bubbleX, bubbleY),
+                                    size = Size(bubbleW, bubbleH),
+                                    cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
+                                )
+                                drawRoundRect(
+                                    color = Color(0xFFE2D6DC),
+                                    topLeft = Offset(bubbleX, bubbleY),
+                                    size = Size(bubbleW, bubbleH),
+                                    cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx()),
+                                    style = Stroke(width = 1.dp.toPx())
+                                )
+                                drawText(
+                                    textLayoutResult = textLayout,
+                                    topLeft = Offset(bubbleX + 8.dp.toPx(), bubbleY + 4.dp.toPx())
+                                )
+                            } else {
+                                drawCircle(
+                                    color = Color.White,
+                                    radius = 5.dp.toPx(),
+                                    center = pt
+                                )
+                                drawCircle(
+                                    color = Primary,
+                                    radius = 5.dp.toPx(),
+                                    center = pt,
+                                    style = Stroke(width = 2.dp.toPx())
+                                )
+                            }
+                        }
                     }
                 }
 
-                // Callout for today's temperature tag if recorded
-                if (todayTemperature != null) {
-                    Box(
+                // If empty, show centered informative overlay
+                if (points.isEmpty()) {
+                    Column(
                         modifier = Modifier
-                            .padding(start = 190.dp, top = 8.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color.White)
-                            .border(1.dp, Color(0xFFE2D6DC), RoundedCornerShape(8.dp))
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                            .align(Alignment.Center)
+                            .padding(horizontal = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = todayTemperature,
+                            text = "No readings logged this cycle",
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF382A31)
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Log morning BBT to detect your ovulation thermal shift.",
                             fontFamily = ManropeFontFamily,
                             fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF26181F)
+                            color = Color(0xFF82727B),
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
             }
 
             // X-Axis labels
+            val xLabels = if (points.isEmpty()) {
+                val base = maxOf(1, currentCycleDay - 2)
+                listOf(base, base + 2, base + 4, base + 6, base + 8)
+            } else {
+                val minDay = minOf(points.minOf { it.cycleDay }, maxOf(1, currentCycleDay - 3))
+                val maxDay = maxOf(points.maxOf { it.cycleDay }, maxOf(minDay + 5, currentCycleDay + 3))
+                val step = maxOf(1, (maxDay - minDay) / 4)
+                listOf(minDay, minDay + step, minDay + 2 * step, minDay + 3 * step, maxDay).distinct()
+            }
+
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 36.dp, end = 12.dp, top = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                listOf("CD10", "CD12", "CD14", "CD16", "CD18").forEach { cd ->
+                xLabels.forEach { cd ->
+                    val isCurrent = cd == currentCycleDay
                     Text(
-                        text = cd,
+                        text = "CD$cd",
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
-                        fontWeight = if (cd == "CD16" && todayTemperature != null) FontWeight.Bold else FontWeight.Normal,
-                        color = if (cd == "CD16" && todayTemperature != null) Primary else Color(0xFF8C7C85)
+                        fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal,
+                        color = if (isCurrent) Primary else Color(0xFF8C7C85)
                     )
                 }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Action / Status prompt
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFFBF6F8))
+                    .clickable { onLogBBTClick() }
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Outlined.Thermostat,
+                        contentDescription = null,
+                        tint = Primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (todayTemperature != null) "Logged: $todayTemperature" else "Morning temperature not logged",
+                        fontFamily = ManropeFontFamily,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF382A31)
+                    )
+                }
+
+                Text(
+                    text = if (todayTemperature != null) "Update →" else "+ Log BBT",
+                    fontFamily = ManropeFontFamily,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Primary
+                )
             }
         }
     }

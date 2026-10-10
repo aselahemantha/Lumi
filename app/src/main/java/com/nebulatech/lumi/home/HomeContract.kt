@@ -2,6 +2,7 @@ package com.nebulatech.lumi.home
 
 import com.nebulatech.lumi.data.model.CyclePhase
 
+import com.nebulatech.lumi.home.components.BbtChartPoint
 import com.nebulatech.lumi.home.components.DayItem
 import com.nebulatech.lumi.home.components.LogEntryItem
 
@@ -29,7 +30,8 @@ data class HomeState(
     val overdueDays: Int = 0,
     val next7Days: List<DayItem> = emptyList(),
     val todaysLogs: List<LogEntryItem> = emptyList(),
-    val todayBbtTemperature: String? = null
+    val todayBbtTemperature: String? = null,
+    val bbtChartPoints: List<BbtChartPoint> = emptyList()
 )
 
 sealed interface HomeAction {
