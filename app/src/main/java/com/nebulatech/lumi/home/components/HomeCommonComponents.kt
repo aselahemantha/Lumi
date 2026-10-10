@@ -802,7 +802,8 @@ fun FertilityHeaderCard(
 // ==========================================
 @Composable
 fun BasalBodyTempChartCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    todayTemperature: String? = null
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -908,27 +909,31 @@ fun BasalBodyTempChartCard(
                         drawCircle(color = Primary, radius = 5.dp.toPx(), center = pt, style = Stroke(width = 2.dp.toPx()))
                     }
 
-                    // Highlighted peak point CD16
-                    val peakPt = Offset(width * 0.78f, height * 0.24f)
-                    drawCircle(color = Primary, radius = 6.dp.toPx(), center = peakPt)
+                    // Highlighted peak point if reading exists
+                    if (todayTemperature != null) {
+                        val peakPt = Offset(width * 0.78f, height * 0.24f)
+                        drawCircle(color = Primary, radius = 6.dp.toPx(), center = peakPt)
+                    }
                 }
 
-                // Callout for 98.1° tag
-                Box(
-                    modifier = Modifier
-                        .padding(start = 190.dp, top = 8.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color.White)
-                        .border(1.dp, Color(0xFFE2D6DC), RoundedCornerShape(8.dp))
-                        .padding(horizontal = 8.dp, vertical = 2.dp)
-                ) {
-                    Text(
-                        text = "98.1°",
-                        fontFamily = ManropeFontFamily,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F)
-                    )
+                // Callout for today's temperature tag if recorded
+                if (todayTemperature != null) {
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 190.dp, top = 8.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color.White)
+                            .border(1.dp, Color(0xFFE2D6DC), RoundedCornerShape(8.dp))
+                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = todayTemperature,
+                            fontFamily = ManropeFontFamily,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF26181F)
+                        )
+                    }
                 }
             }
 
@@ -942,8 +947,8 @@ fun BasalBodyTempChartCard(
                         text = cd,
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
-                        fontWeight = if (cd == "CD16") FontWeight.Bold else FontWeight.Normal,
-                        color = if (cd == "CD16") Primary else Color(0xFF8C7C85)
+                        fontWeight = if (cd == "CD16" && todayTemperature != null) FontWeight.Bold else FontWeight.Normal,
+                        color = if (cd == "CD16" && todayTemperature != null) Primary else Color(0xFF8C7C85)
                     )
                 }
             }
@@ -963,10 +968,7 @@ data class LogEntryItem(
 @Composable
 fun TodaysLogsCard(
     modifier: Modifier = Modifier,
-    logs: List<LogEntryItem> = listOf(
-        LogEntryItem(Icons.Outlined.WaterDrop, "Egg White", "Cervical Mucus"),
-        LogEntryItem(Icons.Outlined.SentimentSatisfied, "Energetic, Calm", "Mood")
-    ),
+    logs: List<LogEntryItem> = emptyList(),
     onAddMoreLogsClick: () -> Unit = {}
 ) {
     Card(
@@ -990,43 +992,53 @@ fun TodaysLogsCard(
             )
             Spacer(modifier = Modifier.height(14.dp))
 
-            logs.forEachIndexed { index, item ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.title,
-                        tint = Primary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(14.dp))
-                    Column {
-                        Text(
-                            text = item.title,
-                            fontFamily = ManropeFontFamily,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF26181F)
+            if (logs.isEmpty()) {
+                Text(
+                    text = "No symptoms or logs recorded yet today.",
+                    fontFamily = ManropeFontFamily,
+                    fontSize = 14.sp,
+                    color = Color(0xFF82727B),
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+            } else {
+                logs.forEachIndexed { index, item ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.title,
+                            tint = Primary,
+                            modifier = Modifier.size(20.dp)
                         )
-                        Text(
-                            text = item.category,
-                            fontFamily = ManropeFontFamily,
-                            fontSize = 12.sp,
-                            color = Color(0xFF82727B)
-                        )
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column {
+                            Text(
+                                text = item.title,
+                                fontFamily = ManropeFontFamily,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF26181F)
+                            )
+                            Text(
+                                text = item.category,
+                                fontFamily = ManropeFontFamily,
+                                fontSize = 12.sp,
+                                color = Color(0xFF82727B)
+                            )
+                        }
                     }
-                }
-                if (index < logs.size - 1) {
-                    Spacer(modifier = Modifier.height(12.dp))
+                    if (index < logs.size - 1) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(18.dp))
 
             Text(
-                text = "+ Add More Logs",
+                text = if (logs.isEmpty()) "+ Log Today's Symptoms" else "+ Add More Logs",
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,

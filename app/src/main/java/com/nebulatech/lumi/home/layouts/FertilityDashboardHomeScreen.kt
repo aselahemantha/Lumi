@@ -27,6 +27,7 @@ import com.nebulatech.lumi.home.components.FertilityHeaderCard
 import com.nebulatech.lumi.home.components.HomeTab
 import com.nebulatech.lumi.home.components.HomeTopBar
 import com.nebulatech.lumi.home.components.LibraryFeaturedCard
+import com.nebulatech.lumi.home.components.LogEntryItem
 import com.nebulatech.lumi.home.components.LumiBottomNavigationBar
 import com.nebulatech.lumi.home.components.LumiInsightCard
 import com.nebulatech.lumi.home.components.TodaysLogsCard
@@ -47,6 +48,10 @@ import com.nebulatech.lumi.ui.theme.LumiTheme
 fun FertilityDashboardHomeScreen(
     modifier: Modifier = Modifier,
     userName: String = "",
+    insightTitle: String = "Peak Fertility Window",
+    insightText: String = "Your luteinizing hormone (LH) is surging. Likelihood of ovulation is peaking over the next 24–48 hours.",
+    todaysLogs: List<LogEntryItem> = emptyList(),
+    todayBbtTemperature: String? = null,
     loggingViewModel: LoggingViewModel? = null,
     onLogBBTClick: () -> Unit = {},
     onLogLHClick: () -> Unit = {},
@@ -114,13 +119,16 @@ fun FertilityDashboardHomeScreen(
             )
 
             LumiInsightCard(
-                title = "Daily Insight",
-                text = "Your BBT spiked by 0.6° today and you logged egg-white cervical mucus. Likelihood of ovulation is peaking. If you are trying to conceive, today and tomorrow are optimal."
+                title = insightTitle,
+                text = insightText
             )
 
-            BasalBodyTempChartCard()
+            BasalBodyTempChartCard(
+                todayTemperature = todayBbtTemperature
+            )
 
             TodaysLogsCard(
+                logs = todaysLogs,
                 onAddMoreLogsClick = {
                     tracker.trackButtonClick(AnalyticsConstants.Buttons.QUICK_LOG_TODAY, AnalyticsConstants.Screens.HOME_FERTILITY_DASHBOARD)
                     showFlowSheet = true

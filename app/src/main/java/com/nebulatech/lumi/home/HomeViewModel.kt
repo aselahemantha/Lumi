@@ -1,11 +1,24 @@
 package com.nebulatech.lumi.home
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Biotech
+import androidx.compose.material.icons.outlined.Healing
+import androidx.compose.material.icons.outlined.SentimentSatisfied
+import androidx.compose.material.icons.outlined.Thermostat
+import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nebulatech.lumi.data.model.BbtReading
 import com.nebulatech.lumi.data.model.CyclePhase
+import com.nebulatech.lumi.data.model.DailyLog
+import com.nebulatech.lumi.data.model.LhTest
+import com.nebulatech.lumi.data.repository.BbtRepository
 import com.nebulatech.lumi.data.repository.CycleRepository
+import com.nebulatech.lumi.data.repository.DailyLogRepository
+import com.nebulatech.lumi.data.repository.LhTestRepository
 import com.nebulatech.lumi.data.repository.RoomUserRepository
 import com.nebulatech.lumi.data.repository.UserRepository
+import com.nebulatech.lumi.home.components.LogEntryItem
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +30,10 @@ import java.time.LocalDate
 
 class HomeViewModel(
     userRepository: UserRepository,
-    private val cycleRepository: CycleRepository
+    private val cycleRepository: CycleRepository,
+    dailyLogRepository: DailyLogRepository,
+    bbtRepository: BbtRepository,
+    lhTestRepository: LhTestRepository
 ) : ViewModel() {
 
     private val userId = RoomUserRepository.DEFAULT_LOCAL_USER_ID
@@ -36,8 +52,13 @@ class HomeViewModel(
             cycleRepository.getAverageCycleLength(userId),
             cycleRepository.getAveragePeriodLength(userId),
             cycleRepository.getCurrentPhase(userId, today)
-        ) { avgCycle, avgPeriod, phase -> Triple(avgCycle, avgPeriod, phase) }
-    ) { (user, cycle, cycleDay), (avgCycleLength, avgPeriodLength, phase) ->
+        ) { avgCycle, avgPeriod, phase -> Triple(avgCycle, avgPeriod, phase) },
+        combine(
+            dailyLogRepository.getLogForDate(userId, today),
+            bbtRepository.getBbtForDate(userId, today),
+            lhTestRepository.getLhTestForDate(userId, today)
+        ) { dailyLog, bbtReading, lhTest -> Triple(dailyLog, bbtReading, lhTest) }
+    ) { (user, cycle, cycleDay), (avgCycleLength, avgPeriodLength, phase), (dailyLog, bbtReading, lhTest) ->
         if (user == null) {
             viewModelScope.launch { _events.send(HomeEvent.NavigateToOnboarding) }
             return@combine HomeState(isLoading = false)
@@ -46,8 +67,10 @@ class HomeViewModel(
         val progressRatio = (cycleDay.toFloat() / avgCycleLength.toFloat()).coerceIn(0f, 1f)
         val overdueDays = if (cycleDay > avgCycleLength) cycleDay - avgCycleLength else 0
         val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength, avgPeriodLength, overdueDays)
-        val (insightTitle, insightText) = buildInsight(phase, overdueDays)
+        val (insightTitle, insightText) = buildInsight(phase, overdueDays, bbtReading, lhTest)
         val next7Days = buildNext7Days(today, cycle, avgCycleLength, avgPeriodLength)
+        val todaysLogs = buildTodaysLogs(dailyLog, bbtReading, lhTest)
+        val todayBbtTemp = bbtReading?.let { "${it.temperature}°${it.temperatureUnit}" }
 
         HomeState(
             isLoading = false,
@@ -65,7 +88,9 @@ class HomeViewModel(
             isPeriodPredicted = phase == CyclePhase.PERIOD_PREDICTED,
             isPeriodMissed = phase == CyclePhase.PERIOD_MISSED,
             overdueDays = overdueDays,
-            next7Days = next7Days
+            next7Days = next7Days,
+            todaysLogs = todaysLogs,
+            todayBbtTemperature = todayBbtTemp
         )
     }.stateIn(
         scope = viewModelScope,
@@ -128,7 +153,9 @@ class HomeViewModel(
 
     private fun buildInsight(
         phase: CyclePhase,
-        overdueDays: Int
+        overdueDays: Int,
+        bbtReading: BbtReading? = null,
+        lhTest: LhTest? = null
     ): Pair<String, String> {
         return when (phase) {
             CyclePhase.MENSTRUATION -> {
@@ -138,7 +165,12 @@ class HomeViewModel(
                 "Follicular Phase Insight" to "Estrogen is rising steadily. Your natural energy and cognitive focus are peaking—ideal for high-intensity training and creative projects."
             }
             CyclePhase.FERTILE_WINDOW -> {
-                "Peak Fertility Window" to "Your luteinizing hormone (LH) is surging. Likelihood of ovulation is peaking over the next 24–48 hours."
+                val extras = buildList {
+                    if (bbtReading != null) add("Today's BBT reading: ${bbtReading.temperature}°${bbtReading.temperatureUnit}.")
+                    if (lhTest != null) add("LH test recorded: ${lhTest.intensity.name.lowercase().replaceFirstChar { it.uppercase() }} surge.")
+                }
+                val details = if (extras.isNotEmpty()) " " + extras.joinToString(" ") else ""
+                "Peak Fertility Window" to "Likelihood of ovulation is peaking over the next 24–48 hours.$details Consider logging BBT or LH test for optimal tracking."
             }
             CyclePhase.LUTEAL -> {
                 "Luteal Phase Insight" to "Progesterone is the dominant hormone right now. Consider swapping high-intensity cardio for calming yoga or walking to balance cortisol."
@@ -153,6 +185,69 @@ class HomeViewModel(
                 "Missed Period Guidance" to "Your period is $overdueDays ${if (overdueDays == 1) "day" else "days"} past expected. Missed or delayed cycles can happen from stress, travel, hormonal shifts, or pregnancy. Tap below to log flow or mark this cycle as missed."
             }
         }
+    }
+
+    private fun buildTodaysLogs(
+        dailyLog: DailyLog?,
+        bbtReading: BbtReading?,
+        lhTest: LhTest?
+    ): List<LogEntryItem> {
+        val items = mutableListOf<LogEntryItem>()
+
+        if (bbtReading != null) {
+            items.add(
+                LogEntryItem(
+                    icon = Icons.Outlined.Thermostat,
+                    title = "${bbtReading.temperature}°${bbtReading.temperatureUnit}",
+                    category = "Basal Body Temp"
+                )
+            )
+        }
+
+        if (lhTest != null) {
+            val intensityName = lhTest.intensity.name.lowercase().replaceFirstChar { it.uppercase() }
+            items.add(
+                LogEntryItem(
+                    icon = Icons.Outlined.Biotech,
+                    title = "$intensityName Surge",
+                    category = "LH Test"
+                )
+            )
+        }
+
+        if (dailyLog?.flowIntensity != null) {
+            val flowName = dailyLog.flowIntensity.name.lowercase().replaceFirstChar { it.uppercase() }
+            items.add(
+                LogEntryItem(
+                    icon = Icons.Outlined.WaterDrop,
+                    title = flowName,
+                    category = "Flow"
+                )
+            )
+        }
+
+        if (dailyLog?.mood != null) {
+            val moodName = dailyLog.mood.name.lowercase().replaceFirstChar { it.uppercase() }
+            items.add(
+                LogEntryItem(
+                    icon = Icons.Outlined.SentimentSatisfied,
+                    title = moodName,
+                    category = "Mood"
+                )
+            )
+        }
+
+        dailyLog?.symptoms?.forEach { symptom ->
+            items.add(
+                LogEntryItem(
+                    icon = Icons.Outlined.Healing,
+                    title = symptom.symptomDisplayName,
+                    category = "Symptom"
+                )
+            )
+        }
+
+        return items
     }
 
     private fun buildNext7Days(
