@@ -145,6 +145,7 @@ fun HomeScreenContainer(
                                 HomeLayoutType.FERTILITY_DASHBOARD -> {
                                     FertilityDashboardHomeScreen(
                                         userName = state.userName,
+                                        fertilityDescription = state.fertilityDescription,
                                         insightTitle = state.insightTitle,
                                         insightText = state.insightText,
                                         todaysLogs = state.todaysLogs,
@@ -161,6 +162,8 @@ fun HomeScreenContainer(
                                         cycleDay = state.cycleDay,
                                         progressRatio = state.progressRatio,
                                         userName = state.userName,
+                                        insightText = state.insightText,
+                                        mostFrequentSymptom = state.mostFrequentSymptom,
                                         loggingViewModel = loggingVm,
                                         onNotificationClick = onNotificationClickWithAnalytics,
                                         onTabSelected = onTabSelectedWithAnalytics

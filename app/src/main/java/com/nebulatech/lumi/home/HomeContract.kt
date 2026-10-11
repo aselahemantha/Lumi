@@ -31,7 +31,9 @@ data class HomeState(
     val next7Days: List<DayItem> = emptyList(),
     val todaysLogs: List<LogEntryItem> = emptyList(),
     val todayBbtTemperature: String? = null,
-    val bbtChartPoints: List<BbtChartPoint> = emptyList()
+    val bbtChartPoints: List<BbtChartPoint> = emptyList(),
+    val mostFrequentSymptom: String? = null,
+    val fertilityDescription: String = ""
 )
 
 sealed interface HomeAction {

@@ -49,6 +49,7 @@ import com.nebulatech.lumi.ui.theme.LumiTheme
 fun FertilityDashboardHomeScreen(
     modifier: Modifier = Modifier,
     userName: String = "",
+    fertilityDescription: String = "",
     insightTitle: String = "Peak Fertility Window",
     insightText: String = "Your luteinizing hormone (LH) is surging. Likelihood of ovulation is peaking over the next 24–48 hours.",
     todaysLogs: List<LogEntryItem> = emptyList(),
@@ -108,7 +109,9 @@ fun FertilityDashboardHomeScreen(
             FertilityHeaderCard(
                 statusTag = "CURRENT STATUS",
                 title = "High Fertility Today",
-                description = "Ovulation expected tomorrow. This is your peak window.",
+                description = fertilityDescription.ifBlank {
+                    "You are in your peak fertility window."
+                },
                 onLogBBTClick = {
                     tracker.trackButtonClick("btn_log_bbt", AnalyticsConstants.Screens.HOME_FERTILITY_DASHBOARD)
                     showBBTSheet = true

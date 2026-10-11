@@ -63,6 +63,8 @@ fun LateLutealHomeScreen(
     cycleDay: Int = 24,
     progressRatio: Float = 0.85f,
     userName: String = "",
+    insightText: String = "",
+    mostFrequentSymptom: String? = null,
     loggingViewModel: LoggingViewModel? = null,
     onViewAllSymptoms: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
@@ -158,12 +160,14 @@ fun LateLutealHomeScreen(
             )
 
             LumiInsightPinkCard(
-                insightText = "You frequently log migraines around Day $cycleDay. This is common when estrogen drops.",
-                actionText = "Action: Try increasing magnesium intake today."
+                insightText = insightText.ifBlank {
+                    "Estrogen and progesterone taper down around Day $cycleDay. Staying well-hydrated and getting restful sleep can help ease pre-menstrual shifts."
+                },
+                actionText = "Action: Prioritize hydration and magnesium-rich foods today."
             )
 
             ThirtyDayTrendsCard(
-                mostFrequentSymptom = "Headaches"
+                mostFrequentSymptom = mostFrequentSymptom
             )
 
             Spacer(modifier = Modifier.height(16.dp))

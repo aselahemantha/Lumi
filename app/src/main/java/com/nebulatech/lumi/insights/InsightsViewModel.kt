@@ -139,7 +139,7 @@ class InsightsViewModel(
                 "Estrogen and progesterone are at baseline. Your body is directing energy toward renewal—prioritize iron-rich foods, restorative hydration, and gentle movement."
             }
             phase == CyclePhase.FOLLICULAR -> {
-                "We noticed your high-energy days consistently align with your Follicular phase. Estrogen is rising steadily—making this a great time for creative projects or intense workouts."
+                "Estrogen is rising steadily during your Follicular phase, naturally supporting higher energy and focus—making this a great time for creative projects or intense workouts."
             }
             phase == CyclePhase.FERTILE_WINDOW -> {
                 "Luteinizing hormone (LH) is surging. Conception probability peaks over the next 24 to 48 hours with elevated natural vitality."

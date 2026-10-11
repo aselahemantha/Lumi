@@ -37,7 +37,7 @@ import com.nebulatech.lumi.ui.theme.Primary
 
 @Composable
 fun InsightsLumiBannerCard(
-    text: String = "We noticed your 'High Energy' days consistently align with your Follicular phase. This is a great time for creative projects or intense workouts.",
+    text: String = "Estrogen and progesterone shift throughout your cycle. Log daily symptoms to receive personalized phase insights.",
     modifier: Modifier = Modifier
 ) {
     Card(

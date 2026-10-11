@@ -38,12 +38,7 @@ data class CycleHistoryItem(
 
 @Composable
 fun CycleAtAGlanceSection(
-    cycles: List<CycleHistoryItem> = listOf(
-        CycleHistoryItem("Oct", 28),
-        CycleHistoryItem("Sep", 29),
-        CycleHistoryItem("Aug", 28),
-        CycleHistoryItem("Jul", 30)
-    ),
+    cycles: List<CycleHistoryItem> = emptyList(),
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {

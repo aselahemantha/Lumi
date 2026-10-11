@@ -171,7 +171,7 @@ fun CycleRingWidget(
 fun LumiInsightCard(
     modifier: Modifier = Modifier,
     title: String = "Lumi Insight",
-    text: String = "Your last 3 cycles have varied by 8 days. To help stabilize ovulation this week, try swapping high-intensity workouts for yoga."
+    text: String = "Listen to your body's natural rhythm today. Log your daily symptoms and flow to keep your cycle predictions accurate."
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -234,15 +234,18 @@ data class DayItem(
 @Composable
 fun Next7DaysCalendarStrip(
     modifier: Modifier = Modifier,
-    days: List<DayItem> = listOf(
-        DayItem("Mon", 12),
-        DayItem("Tue", 13, isToday = true),
-        DayItem("Wed", 14),
-        DayItem("Thu", 15),
-        DayItem("Fri", 16, hasPeriodDot = true),
-        DayItem("Sat", 17, hasPeriodDot = true),
-        DayItem("Sun", 18, hasPeriodDot = true)
-    )
+    days: List<DayItem> = run {
+        val today = java.time.LocalDate.now()
+        (0..6).map { offset ->
+            val target = today.plusDays(offset.toLong())
+            DayItem(
+                dayName = target.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() },
+                dateNumber = target.dayOfMonth,
+                isToday = offset == 0,
+                hasPeriodDot = false
+            )
+        }
+    }
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
@@ -418,7 +421,7 @@ fun LogSymptomsSection(
     modifier: Modifier = Modifier,
     symptoms: List<SymptomCategory> = listOf(
         SymptomCategory("energy", "Energy", Icons.Outlined.Spa),
-        SymptomCategory("mood", "Mood", Icons.Outlined.SentimentDissatisfied, isSelected = true),
+        SymptomCategory("mood", "Mood", Icons.Outlined.SentimentDissatisfied, isSelected = false),
         SymptomCategory("skin", "Skin", Icons.Outlined.Face),
         SymptomCategory("digestion", "Digestion", Icons.Outlined.Restaurant),
         SymptomCategory("pain", "Pain", Icons.Outlined.Healing),
@@ -538,8 +541,8 @@ fun LogSymptomsSection(
 @Composable
 fun LumiInsightPinkCard(
     modifier: Modifier = Modifier,
-    insightText: String = "You frequently log migraines around Day 24. This is common when estrogen drops.",
-    actionText: String = "Action: Try increasing magnesium intake today."
+    insightText: String = "Estrogen and progesterone taper down before your period. Staying well-hydrated and getting restful sleep can help ease pre-menstrual shifts.",
+    actionText: String = "Action: Prioritize hydration and magnesium-rich foods today."
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -623,7 +626,7 @@ fun LumiInsightPinkCard(
 @Composable
 fun ThirtyDayTrendsCard(
     modifier: Modifier = Modifier,
-    mostFrequentSymptom: String = "Headaches"
+    mostFrequentSymptom: String? = null
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -664,27 +667,37 @@ fun ThirtyDayTrendsCard(
                 letterSpacing = 1.sp,
                 color = Color(0xFF73636B)
             )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = mostFrequentSymptom,
-                fontFamily = ManropeFontFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF26181F)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Mini bar representation
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Text("Week 1", fontFamily = ManropeFontFamily, fontSize = 11.sp, color = Color(0xFF8A7A83))
-                Text("W3", fontFamily = ManropeFontFamily, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Primary)
-                Text("Week 4", fontFamily = ManropeFontFamily, fontSize = 11.sp, color = Color(0xFF8A7A83))
+            Spacer(modifier = Modifier.height(4.dp))
+            if (!mostFrequentSymptom.isNullOrBlank()) {
+                Text(
+                    text = mostFrequentSymptom,
+                    fontFamily = ManropeFontFamily,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF26181F)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Based on your logged symptoms over the past 30 days.",
+                    fontFamily = ManropeFontFamily,
+                    fontSize = 12.sp,
+                    color = Color(0xFF8A7A83)
+                )
+            } else {
+                Text(
+                    text = "No symptoms logged yet",
+                    fontFamily = ManropeFontFamily,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF594852)
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "Log your daily symptoms above to uncover your 30-day patterns.",
+                    fontFamily = ManropeFontFamily,
+                    fontSize = 12.sp,
+                    color = Color(0xFF8A7A83)
+                )
             }
         }
     }

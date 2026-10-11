@@ -35,7 +35,8 @@ private data class TodayLogsData(
     val dailyLog: DailyLog?,
     val bbtReading: BbtReading?,
     val lhTest: LhTest?,
-    val recentBbtReadings: List<BbtReading>
+    val recentBbtReadings: List<BbtReading>,
+    val recentDailyLogs: List<DailyLog>
 )
 
 class HomeViewModel(
@@ -67,9 +68,10 @@ class HomeViewModel(
             dailyLogRepository.getLogForDate(userId, today),
             bbtRepository.getBbtForDate(userId, today),
             lhTestRepository.getLhTestForDate(userId, today),
-            bbtRepository.getBbtInRange(userId, today.minusDays(35), today)
-        ) { dailyLog, bbtReading, lhTest, recentBbtReadings ->
-            TodayLogsData(dailyLog, bbtReading, lhTest, recentBbtReadings)
+            bbtRepository.getBbtInRange(userId, today.minusDays(35), today),
+            dailyLogRepository.getLogsInRange(userId, today.minusDays(30), today)
+        ) { dailyLog, bbtReading, lhTest, recentBbtReadings, recentDailyLogs ->
+            TodayLogsData(dailyLog, bbtReading, lhTest, recentBbtReadings, recentDailyLogs)
         }
     ) { (user, cycle, cycleDay), (avgCycleLength, avgPeriodLength, phase), logsData ->
         if (user == null) {
@@ -77,14 +79,35 @@ class HomeViewModel(
             return@combine HomeState(isLoading = false)
         }
 
+        val topSymptom = logsData.recentDailyLogs
+            .flatMap { it.symptoms }
+            .map { it.symptomDisplayName }
+            .groupBy { it }
+            .maxByOrNull { it.value.size }
+            ?.key
+
         val progressRatio = (cycleDay.toFloat() / avgCycleLength.toFloat()).coerceIn(0f, 1f)
         val overdueDays = if (cycleDay > avgCycleLength) cycleDay - avgCycleLength else 0
         val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength, avgPeriodLength, overdueDays)
-        val (insightTitle, insightText) = buildInsight(phase, overdueDays, logsData.bbtReading, logsData.lhTest)
+        val (insightTitle, insightText) = buildInsight(
+            phase = phase,
+            overdueDays = overdueDays,
+            bbtReading = logsData.bbtReading,
+            lhTest = logsData.lhTest,
+            topSymptom = topSymptom,
+            cycleDay = cycleDay
+        )
         val next7Days = buildNext7Days(today, cycle, avgCycleLength, avgPeriodLength)
         val todaysLogs = buildTodaysLogs(logsData.dailyLog, logsData.bbtReading, logsData.lhTest)
         val todayBbtTemp = logsData.bbtReading?.let { "${it.temperature}°${it.temperatureUnit}" }
         val bbtChartPoints = buildBbtChartPoints(logsData.recentBbtReadings, cycle, today)
+        val ovulationDay = maxOf(avgCycleLength - 14, avgPeriodLength + 1)
+        val daysToOvulation = ovulationDay - cycleDay
+        val fertilityDesc = when {
+            daysToOvulation <= 0 -> "Estimated ovulation day. This is your peak fertility window."
+            daysToOvulation == 1 -> "Ovulation expected tomorrow. This is your peak window."
+            else -> "Ovulation expected in ~$daysToOvulation days. You are in your fertile window."
+        }
 
         HomeState(
             isLoading = false,
@@ -105,7 +128,9 @@ class HomeViewModel(
             next7Days = next7Days,
             todaysLogs = todaysLogs,
             todayBbtTemperature = todayBbtTemp,
-            bbtChartPoints = bbtChartPoints
+            bbtChartPoints = bbtChartPoints,
+            mostFrequentSymptom = topSymptom,
+            fertilityDescription = fertilityDesc
         )
     }.stateIn(
         scope = viewModelScope,
@@ -170,7 +195,9 @@ class HomeViewModel(
         phase: CyclePhase,
         overdueDays: Int,
         bbtReading: BbtReading? = null,
-        lhTest: LhTest? = null
+        lhTest: LhTest? = null,
+        topSymptom: String? = null,
+        cycleDay: Int = 1
     ): Pair<String, String> {
         return when (phase) {
             CyclePhase.MENSTRUATION -> {
@@ -191,7 +218,12 @@ class HomeViewModel(
                 "Luteal Phase Insight" to "Progesterone is the dominant hormone right now. Consider swapping high-intensity cardio for calming yoga or walking to balance cortisol."
             }
             CyclePhase.LATE_LUTEAL -> {
-                "Pre-Menstrual Insight" to "Progesterone is tapering down before your period. Staying well-hydrated and increasing magnesium intake can help prevent PMS headaches."
+                val body = if (topSymptom != null) {
+                    "You've logged $topSymptom recently. Around Day $cycleDay, estrogen and progesterone taper down before your period."
+                } else {
+                    "Estrogen and progesterone taper down around Day $cycleDay. Staying well-hydrated and getting restful sleep can help ease pre-menstrual shifts."
+                }
+                "Pre-Menstrual Insight" to body
             }
             CyclePhase.PERIOD_PREDICTED -> {
                 "Period Expected" to "Your period is predicted to start soon. When your bleeding begins, log your flow below to start your new cycle."

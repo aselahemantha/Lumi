@@ -66,6 +66,15 @@ fun OnboardingScreen(
                 onBackClick = {
                     tracker.trackButtonClick(AnalyticsConstants.Buttons.ONBOARDING_BACK, stepScreenName)
                     onAction(OnboardingAction.ClickBack)
+                },
+                showSkip = state.currentStep == OnboardingStep.HEALTH_PROFILE,
+                onSkipClick = {
+                    tracker.trackButtonClick(
+                        buttonName = "btn_onboarding_skip",
+                        screenName = stepScreenName,
+                        extraParams = mapOf("step" to state.currentStep.name)
+                    )
+                    onAction(OnboardingAction.ClickContinue)
                 }
             )
         },
@@ -87,7 +96,7 @@ fun OnboardingScreen(
                     OnboardingStep.WELCOME -> state.name.isNotBlank()
                     OnboardingStep.SELECT_GOAL -> state.selectedGoal != null
                     OnboardingStep.CORE_DATA -> true
-                    OnboardingStep.HEALTH_PROFILE -> state.age.isNotEmpty()
+                    OnboardingStep.HEALTH_PROFILE -> true
                 }
             )
         },

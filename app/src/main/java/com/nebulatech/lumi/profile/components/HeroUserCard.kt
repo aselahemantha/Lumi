@@ -34,8 +34,8 @@ import com.nebulatech.lumi.ui.theme.Primary
 
 @Composable
 fun HeroUserCard(
-    userName: String = "Sarah Mitchell",
-    trackingDuration: String = "Tracking for 14 months",
+    userName: String = "Lumi User",
+    trackingDuration: String = "Tracking with Lumi",
     memberStatus: String = "Free Member",
     onMembershipClick: () -> Unit = {},
     modifier: Modifier = Modifier
