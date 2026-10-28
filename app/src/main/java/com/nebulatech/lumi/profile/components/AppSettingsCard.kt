@@ -79,13 +79,11 @@ fun AppSettingsCard(
     onPrivacyClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    val showIntegrationsDialog = remember { mutableStateOf(false) }
 
     var isNotificationsExpanded by remember { mutableStateOf(false) }
     var isBiometricLockOn by remember {
         mutableStateOf(BiometricAuthManager.isBiometricEnabled(context))
     }
-    var isAnonymousAnalyticsOn by remember { mutableStateOf(true) }
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -335,134 +333,14 @@ fun AppSettingsCard(
                 color = Color(0xFFF2ECEF)
             )
 
-            // 3. Anonymous Diagnostic Insights
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.PrivacyTip,
-                        contentDescription = null,
-                        tint = Color(0xFF4A3A43),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(14.dp))
-                    Column {
-                        Text(
-                            text = "Anonymous Diagnostics",
-                            fontFamily = ManropeFontFamily,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF26181F)
-                        )
-                        Text(
-                            text = "Improve cycle algorithms without personal IDs",
-                            fontFamily = ManropeFontFamily,
-                            fontSize = 12.sp,
-                            color = Color(0xFF8A7A83)
-                        )
-                    }
-                }
-
-                Switch(
-                    checked = isAnonymousAnalyticsOn,
-                    onCheckedChange = { isAnonymousAnalyticsOn = it },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = Primary,
-                        uncheckedThumbColor = Color.White,
-                        uncheckedTrackColor = Color(0xFFE4DCDD)
-                    )
-                )
-            }
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 12.dp),
-                color = Color(0xFFF2ECEF)
-            )
-
-            // 4. Data Privacy & Export Item
+            // 3. Data Privacy & Export Item
             SettingsRowItem(
                 icon = Icons.Outlined.Security,
                 title = "Data Privacy & Export",
                 subtitle = "Clinical summary export, encryption & erasure",
                 onClick = onPrivacyClick
             )
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 12.dp),
-                color = Color(0xFFF2ECEF)
-            )
-
-            // 5. App Integrations Item (Marked as Available Soon)
-            SettingsRowItem(
-                icon = Icons.Outlined.HealthAndSafety,
-                title = "App Integrations",
-                subtitle = "Apple Health, Health Connect & Oura Ring",
-                badgeText = "Available Soon",
-                onClick = { showIntegrationsDialog.value = true }
-            )
         }
-    }
-
-    // "Available Soon" Dialog
-    if (showIntegrationsDialog.value) {
-        AlertDialog(
-            onDismissRequest = { showIntegrationsDialog.value = false },
-            icon = {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFF9E4EB)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.AutoAwesome,
-                        contentDescription = null,
-                        tint = Primary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            },
-            title = {
-                Text(
-                    text = "Integrations Available Soon",
-                    fontFamily = LiterataFontFamily,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Primary
-                )
-            },
-            text = {
-                Text(
-                    text = "We are currently building seamless synchronization with Apple Health, Health Connect, Oura Ring, and Garmin to automatically sync your BBT and sleep data.",
-                    fontFamily = ManropeFontFamily,
-                    fontSize = 14.sp,
-                    color = Color(0xFF5E4E57)
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = { showIntegrationsDialog.value = false },
-                    colors = ButtonDefaults.buttonColors(containerColor = Primary),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
-                    Text(
-                        text = "Got it",
-                        fontFamily = ManropeFontFamily,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            },
-            containerColor = Color.White,
-            shape = RoundedCornerShape(24.dp)
-        )
     }
 }
 
