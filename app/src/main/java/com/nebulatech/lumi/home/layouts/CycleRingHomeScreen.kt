@@ -126,7 +126,7 @@ fun CycleRingHomeScreen(
             LumiInsightCard(
                 title = insightTitle.ifBlank { "Lumi Insight" },
                 text = insightText.ifBlank {
-                    "Your last 3 cycles have varied by 8 days. To help stabilize ovulation this week, try swapping high-intensity workouts for yoga."
+                    "Listen to your body's natural rhythm today. Log your daily symptoms and flow to keep your cycle predictions accurate."
                 }
             )
 

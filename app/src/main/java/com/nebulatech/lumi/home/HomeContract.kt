@@ -2,7 +2,9 @@ package com.nebulatech.lumi.home
 
 import com.nebulatech.lumi.data.model.CyclePhase
 
+import com.nebulatech.lumi.home.components.BbtChartPoint
 import com.nebulatech.lumi.home.components.DayItem
+import com.nebulatech.lumi.home.components.LogEntryItem
 
 enum class HomeLayoutType {
     CYCLE_RING,
@@ -26,7 +28,12 @@ data class HomeState(
     val isPeriodPredicted: Boolean = false,
     val isPeriodMissed: Boolean = false,
     val overdueDays: Int = 0,
-    val next7Days: List<DayItem> = emptyList()
+    val next7Days: List<DayItem> = emptyList(),
+    val todaysLogs: List<LogEntryItem> = emptyList(),
+    val todayBbtTemperature: String? = null,
+    val bbtChartPoints: List<BbtChartPoint> = emptyList(),
+    val mostFrequentSymptom: String? = null,
+    val fertilityDescription: String = ""
 )
 
 sealed interface HomeAction {

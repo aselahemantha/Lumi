@@ -99,7 +99,7 @@ fun InsightsScreen(
             // 2. Dynamic Lumi AI Insight Dark Banner
             InsightsLumiBannerCard(
                 text = state.dynamicInsightText.ifBlank {
-                    "We noticed your high-energy days consistently align with your Follicular phase. This is a great time for creative projects or intense workouts."
+                    "Estrogen and progesterone shift throughout your cycle. Log daily symptoms to receive personalized phase insights."
                 }
             )
 

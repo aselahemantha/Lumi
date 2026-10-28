@@ -103,7 +103,7 @@ fun LogFlowBottomSheet(
 
     var selectedDate by remember(initialDate) { mutableStateOf(initialDate) }
     val showDatePicker = remember { mutableStateOf(false) }
-    var selectedFlow by remember { mutableStateOf<FlowIntensity?>(FlowIntensity.MEDIUM) }
+    var selectedFlow by remember { mutableStateOf<FlowIntensity?>(null) }
     var selectedSymptoms by remember { mutableStateOf(emptySet<String>()) }
     var selectedMood by remember { mutableStateOf<MoodItem?>(null) }
     var isMoreDetailsExpanded by remember { mutableStateOf(false) }
@@ -251,7 +251,7 @@ fun LogFlowBottomSheet(
                         modifier = Modifier
                             .weight(1f)
                             .height(100.dp)
-                            .clickable { selectedFlow = flow },
+                            .clickable { selectedFlow = if (isSelected) null else flow },
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = if (isSelected) Color(0xFFFDF2F6) else Color(0xFFF5F3F1)

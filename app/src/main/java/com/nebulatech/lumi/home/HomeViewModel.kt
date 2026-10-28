@@ -1,11 +1,26 @@
 package com.nebulatech.lumi.home
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Biotech
+import androidx.compose.material.icons.outlined.Healing
+import androidx.compose.material.icons.outlined.SentimentSatisfied
+import androidx.compose.material.icons.outlined.Thermostat
+import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nebulatech.lumi.data.model.BbtReading
+import com.nebulatech.lumi.data.model.Cycle
 import com.nebulatech.lumi.data.model.CyclePhase
+import com.nebulatech.lumi.data.model.DailyLog
+import com.nebulatech.lumi.data.model.LhTest
+import com.nebulatech.lumi.data.repository.BbtRepository
 import com.nebulatech.lumi.data.repository.CycleRepository
+import com.nebulatech.lumi.data.repository.DailyLogRepository
+import com.nebulatech.lumi.data.repository.LhTestRepository
 import com.nebulatech.lumi.data.repository.RoomUserRepository
 import com.nebulatech.lumi.data.repository.UserRepository
+import com.nebulatech.lumi.home.components.BbtChartPoint
+import com.nebulatech.lumi.home.components.LogEntryItem
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,10 +29,22 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+
+private data class TodayLogsData(
+    val dailyLog: DailyLog?,
+    val bbtReading: BbtReading?,
+    val lhTest: LhTest?,
+    val recentBbtReadings: List<BbtReading>,
+    val recentDailyLogs: List<DailyLog>
+)
 
 class HomeViewModel(
     userRepository: UserRepository,
-    private val cycleRepository: CycleRepository
+    private val cycleRepository: CycleRepository,
+    dailyLogRepository: DailyLogRepository,
+    bbtRepository: BbtRepository,
+    lhTestRepository: LhTestRepository
 ) : ViewModel() {
 
     private val userId = RoomUserRepository.DEFAULT_LOCAL_USER_ID
@@ -36,18 +63,51 @@ class HomeViewModel(
             cycleRepository.getAverageCycleLength(userId),
             cycleRepository.getAveragePeriodLength(userId),
             cycleRepository.getCurrentPhase(userId, today)
-        ) { avgCycle, avgPeriod, phase -> Triple(avgCycle, avgPeriod, phase) }
-    ) { (user, cycle, cycleDay), (avgCycleLength, avgPeriodLength, phase) ->
+        ) { avgCycle, avgPeriod, phase -> Triple(avgCycle, avgPeriod, phase) },
+        combine(
+            dailyLogRepository.getLogForDate(userId, today),
+            bbtRepository.getBbtForDate(userId, today),
+            lhTestRepository.getLhTestForDate(userId, today),
+            bbtRepository.getBbtInRange(userId, today.minusDays(35), today),
+            dailyLogRepository.getLogsInRange(userId, today.minusDays(30), today)
+        ) { dailyLog, bbtReading, lhTest, recentBbtReadings, recentDailyLogs ->
+            TodayLogsData(dailyLog, bbtReading, lhTest, recentBbtReadings, recentDailyLogs)
+        }
+    ) { (user, cycle, cycleDay), (avgCycleLength, avgPeriodLength, phase), logsData ->
         if (user == null) {
             viewModelScope.launch { _events.send(HomeEvent.NavigateToOnboarding) }
             return@combine HomeState(isLoading = false)
         }
 
+        val topSymptom = logsData.recentDailyLogs
+            .flatMap { it.symptoms }
+            .map { it.symptomDisplayName }
+            .groupBy { it }
+            .maxByOrNull { it.value.size }
+            ?.key
+
         val progressRatio = (cycleDay.toFloat() / avgCycleLength.toFloat()).coerceIn(0f, 1f)
         val overdueDays = if (cycleDay > avgCycleLength) cycleDay - avgCycleLength else 0
         val subLabel = buildSubLabel(phase, cycleDay, avgCycleLength, avgPeriodLength, overdueDays)
-        val (insightTitle, insightText) = buildInsight(phase, overdueDays)
+        val (insightTitle, insightText) = buildInsight(
+            phase = phase,
+            overdueDays = overdueDays,
+            bbtReading = logsData.bbtReading,
+            lhTest = logsData.lhTest,
+            topSymptom = topSymptom,
+            cycleDay = cycleDay
+        )
         val next7Days = buildNext7Days(today, cycle, avgCycleLength, avgPeriodLength)
+        val todaysLogs = buildTodaysLogs(logsData.dailyLog, logsData.bbtReading, logsData.lhTest)
+        val todayBbtTemp = logsData.bbtReading?.let { "${it.temperature}°${it.temperatureUnit}" }
+        val bbtChartPoints = buildBbtChartPoints(logsData.recentBbtReadings, cycle, today)
+        val ovulationDay = maxOf(avgCycleLength - 14, avgPeriodLength + 1)
+        val daysToOvulation = ovulationDay - cycleDay
+        val fertilityDesc = when {
+            daysToOvulation <= 0 -> "Estimated ovulation day. This is your peak fertility window."
+            daysToOvulation == 1 -> "Ovulation expected tomorrow. This is your peak window."
+            else -> "Ovulation expected in ~$daysToOvulation days. You are in your fertile window."
+        }
 
         HomeState(
             isLoading = false,
@@ -65,7 +125,12 @@ class HomeViewModel(
             isPeriodPredicted = phase == CyclePhase.PERIOD_PREDICTED,
             isPeriodMissed = phase == CyclePhase.PERIOD_MISSED,
             overdueDays = overdueDays,
-            next7Days = next7Days
+            next7Days = next7Days,
+            todaysLogs = todaysLogs,
+            todayBbtTemperature = todayBbtTemp,
+            bbtChartPoints = bbtChartPoints,
+            mostFrequentSymptom = topSymptom,
+            fertilityDescription = fertilityDesc
         )
     }.stateIn(
         scope = viewModelScope,
@@ -128,7 +193,11 @@ class HomeViewModel(
 
     private fun buildInsight(
         phase: CyclePhase,
-        overdueDays: Int
+        overdueDays: Int,
+        bbtReading: BbtReading? = null,
+        lhTest: LhTest? = null,
+        topSymptom: String? = null,
+        cycleDay: Int = 1
     ): Pair<String, String> {
         return when (phase) {
             CyclePhase.MENSTRUATION -> {
@@ -138,13 +207,23 @@ class HomeViewModel(
                 "Follicular Phase Insight" to "Estrogen is rising steadily. Your natural energy and cognitive focus are peaking—ideal for high-intensity training and creative projects."
             }
             CyclePhase.FERTILE_WINDOW -> {
-                "Peak Fertility Window" to "Your luteinizing hormone (LH) is surging. Likelihood of ovulation is peaking over the next 24–48 hours."
+                val extras = buildList {
+                    if (bbtReading != null) add("Today's BBT reading: ${bbtReading.temperature}°${bbtReading.temperatureUnit}.")
+                    if (lhTest != null) add("LH test recorded: ${lhTest.intensity.name.lowercase().replaceFirstChar { it.uppercase() }} surge.")
+                }
+                val details = if (extras.isNotEmpty()) " " + extras.joinToString(" ") else ""
+                "Peak Fertility Window" to "Likelihood of ovulation is peaking over the next 24–48 hours.$details Consider logging BBT or LH test for optimal tracking."
             }
             CyclePhase.LUTEAL -> {
                 "Luteal Phase Insight" to "Progesterone is the dominant hormone right now. Consider swapping high-intensity cardio for calming yoga or walking to balance cortisol."
             }
             CyclePhase.LATE_LUTEAL -> {
-                "Pre-Menstrual Insight" to "Progesterone is tapering down before your period. Staying well-hydrated and increasing magnesium intake can help prevent PMS headaches."
+                val body = if (topSymptom != null) {
+                    "You've logged $topSymptom recently. Around Day $cycleDay, estrogen and progesterone taper down before your period."
+                } else {
+                    "Estrogen and progesterone taper down around Day $cycleDay. Staying well-hydrated and getting restful sleep can help ease pre-menstrual shifts."
+                }
+                "Pre-Menstrual Insight" to body
             }
             CyclePhase.PERIOD_PREDICTED -> {
                 "Period Expected" to "Your period is predicted to start soon. When your bleeding begins, log your flow below to start your new cycle."
@@ -153,6 +232,69 @@ class HomeViewModel(
                 "Missed Period Guidance" to "Your period is $overdueDays ${if (overdueDays == 1) "day" else "days"} past expected. Missed or delayed cycles can happen from stress, travel, hormonal shifts, or pregnancy. Tap below to log flow or mark this cycle as missed."
             }
         }
+    }
+
+    private fun buildTodaysLogs(
+        dailyLog: DailyLog?,
+        bbtReading: BbtReading?,
+        lhTest: LhTest?
+    ): List<LogEntryItem> {
+        val items = mutableListOf<LogEntryItem>()
+
+        if (bbtReading != null) {
+            items.add(
+                LogEntryItem(
+                    icon = Icons.Outlined.Thermostat,
+                    title = "${bbtReading.temperature}°${bbtReading.temperatureUnit}",
+                    category = "Basal Body Temp"
+                )
+            )
+        }
+
+        if (lhTest != null) {
+            val intensityName = lhTest.intensity.name.lowercase().replaceFirstChar { it.uppercase() }
+            items.add(
+                LogEntryItem(
+                    icon = Icons.Outlined.Biotech,
+                    title = "$intensityName Surge",
+                    category = "LH Test"
+                )
+            )
+        }
+
+        if (dailyLog?.flowIntensity != null) {
+            val flowName = dailyLog.flowIntensity.name.lowercase().replaceFirstChar { it.uppercase() }
+            items.add(
+                LogEntryItem(
+                    icon = Icons.Outlined.WaterDrop,
+                    title = flowName,
+                    category = "Flow"
+                )
+            )
+        }
+
+        if (dailyLog?.mood != null) {
+            val moodName = dailyLog.mood.name.lowercase().replaceFirstChar { it.uppercase() }
+            items.add(
+                LogEntryItem(
+                    icon = Icons.Outlined.SentimentSatisfied,
+                    title = moodName,
+                    category = "Mood"
+                )
+            )
+        }
+
+        dailyLog?.symptoms?.forEach { symptom ->
+            items.add(
+                LogEntryItem(
+                    icon = Icons.Outlined.Healing,
+                    title = symptom.symptomDisplayName,
+                    category = "Symptom"
+                )
+            )
+        }
+
+        return items
     }
 
     private fun buildNext7Days(
@@ -185,5 +327,40 @@ class HomeViewModel(
                 hasPeriodDot = isPredictedPeriod
             )
         }
+    }
+
+    private fun buildBbtChartPoints(
+        readings: List<BbtReading>,
+        currentCycle: Cycle?,
+        today: LocalDate
+    ): List<BbtChartPoint> {
+        val cycleStart = currentCycle?.startDate?.let {
+            try { LocalDate.parse(it) } catch (_: Exception) { null }
+        }
+        return readings
+            .filter { reading ->
+                if (currentCycle?.id != null && reading.cycleId == currentCycle.id) true
+                else if (cycleStart != null) {
+                    val rDate = try { LocalDate.parse(reading.readingDate) } catch (_: Exception) { null }
+                    rDate != null && !rDate.isBefore(cycleStart)
+                } else true
+            }
+            .mapNotNull { reading ->
+                val rDate = try { LocalDate.parse(reading.readingDate) } catch (_: Exception) { null }
+                val cDay = reading.cycleDay ?: if (cycleStart != null && rDate != null) {
+                    ChronoUnit.DAYS.between(cycleStart, rDate).toInt() + 1
+                } else null
+
+                if (cDay != null && cDay > 0) {
+                    BbtChartPoint(
+                        cycleDay = cDay,
+                        temperature = reading.temperature.toFloat(),
+                        unit = reading.temperatureUnit,
+                        dateString = reading.readingDate,
+                        isToday = reading.readingDate == today.toString()
+                    )
+                } else null
+            }
+            .sortedBy { it.cycleDay }
     }
 }
