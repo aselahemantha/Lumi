@@ -176,7 +176,10 @@ fun HomeScreenContainer(
                         CalendarScreen(onTabSelected = onTabSelectedWithAnalytics)
                     }
                     HomeTab.INSIGHTS -> {
-                        InsightsScreen(onTabSelected = onTabSelectedWithAnalytics)
+                        InsightsScreen(
+                            onTabSelected = onTabSelectedWithAnalytics,
+                            onNotificationClick = onNotificationClickWithAnalytics
+                        )
                     }
                     HomeTab.PROFILE -> {
                         ProfileScreen(

@@ -4,12 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -24,27 +22,9 @@ fun InsightsScreenSkeleton(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+            .padding(horizontal = 20.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header Title Shimmer
-        Column(modifier = Modifier.padding(top = 4.dp)) {
-            Box(
-                modifier = Modifier
-                    .width(140.dp)
-                    .height(34.dp)
-                    .shimmerEffect(RoundedCornerShape(8.dp))
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier = Modifier
-                    .width(220.dp)
-                    .height(18.dp)
-                    .shimmerEffect(RoundedCornerShape(6.dp))
-            )
-        }
-
         // Hormone & Phase Status Card Shimmer
         Box(
             modifier = Modifier
@@ -58,17 +38,45 @@ fun InsightsScreenSkeleton(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Box(modifier = Modifier.weight(1f).height(90.dp).shimmerEffect(RoundedCornerShape(18.dp)))
-            Box(modifier = Modifier.weight(1f).height(90.dp).shimmerEffect(RoundedCornerShape(18.dp)))
-            Box(modifier = Modifier.weight(1f).height(90.dp).shimmerEffect(RoundedCornerShape(18.dp)))
+            repeat(3) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(80.dp)
+                        .shimmerEffect(RoundedCornerShape(18.dp))
+                )
+            }
         }
 
-        // Hormone Trend Interactive Chart Shimmer
+        // Dark Banner Shimmer
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(220.dp)
+                .height(140.dp)
                 .shimmerEffect(RoundedCornerShape(24.dp))
         )
+
+        // Section Title Shimmer
+        Box(
+            modifier = Modifier
+                .width(160.dp)
+                .height(20.dp)
+                .shimmerEffect(RoundedCornerShape(6.dp))
+        )
+
+        // 3 Past Cycles Shimmer Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            repeat(3) {
+                Box(
+                    modifier = Modifier
+                        .width(105.dp)
+                        .height(120.dp)
+                        .shimmerEffect(RoundedCornerShape(20.dp))
+                )
+            }
+        }
     }
 }

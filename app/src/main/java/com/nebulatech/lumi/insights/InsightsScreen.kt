@@ -2,17 +2,25 @@ package com.nebulatech.lumi.insights
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -31,14 +39,46 @@ import com.nebulatech.lumi.insights.components.InsightsLumiBannerCard
 import com.nebulatech.lumi.insights.components.LearnArticlesSection
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
-import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
+fun InsightsTopBar(
+    modifier: Modifier = Modifier,
+    onNotificationClick: () -> Unit = {}
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Insights",
+            fontFamily = LiterataFontFamily,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            color = Primary
+        )
+
+        IconButton(onClick = onNotificationClick) {
+            Icon(
+                imageVector = Icons.Outlined.Notifications,
+                contentDescription = "Notifications",
+                tint = Color(0xFF4A3A43),
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+@Composable
 fun InsightsScreen(
     modifier: Modifier = Modifier,
-    onTabSelected: (HomeTab) -> Unit = {}
+    onTabSelected: (HomeTab) -> Unit = {},
+    onNotificationClick: () -> Unit = {}
 ) {
     val viewModel: InsightsViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -48,6 +88,7 @@ fun InsightsScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = { InsightsTopBar(onNotificationClick = onNotificationClick) },
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.INSIGHTS,
@@ -65,54 +106,35 @@ fun InsightsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .statusBarsPadding()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                    .padding(horizontal = 20.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-            // Header Title & Subtitle
-            Column(modifier = Modifier.padding(top = 4.dp)) {
-                Text(
-                    text = "Insights",
-                    fontFamily = LiterataFontFamily,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Primary
+                // 1. Hormone & Phase Status Widget
+                HormonePhaseStatusCard(
+                    currentPhase = state.currentPhase,
+                    currentCycleDay = state.currentCycleDay,
+                    cycleLength = state.cycleLength,
+                    loggedSymptoms = state.loggedSymptomPoints
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Understanding your unique rhythms.",
-                    fontFamily = ManropeFontFamily,
-                    fontSize = 15.sp,
-                    color = Color(0xFF5E4E57)
+
+                // 2. Dynamic Lumi AI Insight Dark Banner
+                InsightsLumiBannerCard(
+                    text = state.dynamicInsightText.ifBlank {
+                        "Estrogen and progesterone shift throughout your cycle. Log daily symptoms to receive personalized phase insights."
+                    }
                 )
+
+                // 3. Cycle At A Glance (Room cycles history)
+                CycleAtAGlanceSection(
+                    cycles = state.cycleHistory
+                )
+
+                // 4. Learn Section (Online Cloud Sync banner)
+                LearnArticlesSection()
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
-
-            // 1. Hormone & Phase Status Widget (Clean non-chart status card, moved up!)
-            HormonePhaseStatusCard(
-                currentPhase = state.currentPhase,
-                currentCycleDay = state.currentCycleDay,
-                cycleLength = state.cycleLength,
-                loggedSymptoms = state.loggedSymptomPoints
-            )
-
-            // 2. Dynamic Lumi AI Insight Dark Banner
-            InsightsLumiBannerCard(
-                text = state.dynamicInsightText.ifBlank {
-                    "Estrogen and progesterone shift throughout your cycle. Log daily symptoms to receive personalized phase insights."
-                }
-            )
-
-            // 3. Cycle At A Glance (Room cycles history)
-            CycleAtAGlanceSection(
-                cycles = state.cycleHistory
-            )
-
-            // 4. Learn Section (Online Cloud Sync banner)
-            LearnArticlesSection()
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
         }
     }
 }
