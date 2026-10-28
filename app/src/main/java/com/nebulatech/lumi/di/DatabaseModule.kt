@@ -1,6 +1,7 @@
 package com.nebulatech.lumi.di
 
 import androidx.room.Room
+import com.nebulatech.lumi.data.local.database.DatabaseMigrator
 import com.nebulatech.lumi.data.local.database.LumiDatabase
 import com.nebulatech.lumi.data.repository.BbtRepository
 import com.nebulatech.lumi.data.repository.CycleRepository
@@ -14,19 +15,37 @@ import com.nebulatech.lumi.data.repository.RoomLhTestRepository
 import com.nebulatech.lumi.data.repository.RoomNotificationRepository
 import com.nebulatech.lumi.data.repository.RoomUserRepository
 import com.nebulatech.lumi.data.repository.UserRepository
+import com.nebulatech.lumi.security.DatabaseKeyManager
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val databaseModule = module {
+    // Security & Encryption
+    singleOf(::DatabaseKeyManager)
+
     // Database
     single {
+        val context = androidContext()
+        val keyManager = get<DatabaseKeyManager>()
+        val passphrase = keyManager.getOrCreatePassphrase()
+        val passphraseHex = keyManager.getPassphraseString()
+
+        // Safely migrate existing unencrypted databases (from previous releases)
+        DatabaseMigrator.migrateIfNeeded(context, LumiDatabase.DATABASE_NAME, passphraseHex)
+
+        val factory = SupportOpenHelperFactory(passphrase)
+
         Room.databaseBuilder(
-            androidContext(),
+            context,
             LumiDatabase::class.java,
             LumiDatabase.DATABASE_NAME
-        ).fallbackToDestructiveMigration(true).build()
+        )
+        .openHelperFactory(factory)
+        .fallbackToDestructiveMigration(true)
+        .build()
     }
 
     // DAOs

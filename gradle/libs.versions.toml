@@ -66,6 +66,11 @@ koin-androidx-workmanager = { group = "io.insert-koin", name = "koin-androidx-wo
 # Biometric
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version = "1.2.0-alpha05" }
 
+# Security & Encryption
+androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version = "1.1.0-alpha06" }
+sqlcipher-android = { group = "net.zetetic", name = "sqlcipher-android", version = "4.6.1" }
+sqlite-ktx = { group = "androidx.sqlite", name = "sqlite-ktx", version = "2.4.0" }
+
 # Testing
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version = "1.9.0" }
 

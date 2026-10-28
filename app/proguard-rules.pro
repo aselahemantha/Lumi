@@ -34,3 +34,13 @@
 
 # Lottie
 -keep class com.airbnb.lottie.** { *; }
+
+# SQLCipher
+-keep class net.zetetic.** { *; }
+-dontwarn net.zetetic.**
+
+# AndroidX Security Crypto
+-keepclassmembers class * extends java.lang.Enum {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}

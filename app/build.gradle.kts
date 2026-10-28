@@ -83,6 +83,11 @@ dependencies {
     // Biometric Security
     implementation(libs.androidx.biometric)
 
+    // Security & Database Encryption
+    implementation(libs.androidx.security.crypto)
+    implementation(libs.sqlcipher.android)
+    implementation(libs.sqlite.ktx)
+
     // Firebase BoM, Analytics & Crashlytics
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
