@@ -27,9 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import android.widget.Toast
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -77,12 +79,19 @@ fun CycleRingHomeScreen(
     var showLogSheet by remember { mutableStateOf(false) }
     var showMissedConfirmDialog by remember { mutableStateOf(false) }
     val tracker = LocalAnalyticsTracker.current
+    val context = LocalContext.current
 
-    // Dismiss sheet when save succeeds
+    // Dismiss sheet and notify user when save succeeds or fails
     LaunchedEffect(loggingViewModel) {
         loggingViewModel?.events?.collect { event ->
             when (event) {
-                is LoggingEvent.FlowSaved -> showLogSheet = false
+                is LoggingEvent.FlowSaved -> {
+                    showLogSheet = false
+                    Toast.makeText(context, "Daily log saved", Toast.LENGTH_SHORT).show()
+                }
+                is LoggingEvent.SaveError -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
                 else -> Unit
             }
         }
@@ -119,7 +128,11 @@ fun CycleRingHomeScreen(
             CycleRingWidget(
                 cycleDay = cycleDay,
                 subLabelText = subLabelText.ifBlank { "Day $cycleDay of $cycleDayTotal" },
-                progressRatio = progressRatio
+                progressRatio = progressRatio,
+                onClick = {
+                    showLogSheet = true
+                    onLogFlowClick()
+                }
             )
 
             // 2. Lumi Insight Card (Shown right below Cycle Ring)

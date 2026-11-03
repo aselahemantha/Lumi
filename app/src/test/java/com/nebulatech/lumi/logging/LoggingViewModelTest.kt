@@ -120,6 +120,29 @@ class LoggingViewModelTest {
         assertEquals(FlowIntensityType.LIGHT, fakeDailyLogRepository.savedFlowLogRecord?.flowIntensity)
     }
 
+    @Test
+    fun `saveFlowLog when period is missed defaults to medium flow and starts new cycle if no flow selected`() = runTest {
+        val logDate = LocalDate.of(2026, 11, 2)
+        fakeCycleRepository.currentPhase = CyclePhase.PERIOD_MISSED
+        fakeCycleRepository.cycleDay = 39
+        fakeCycleRepository.avgCycleLength = 28
+
+        viewModel.onAction(
+            LoggingAction.SaveFlowLog(
+                flow = null,
+                mood = null,
+                symptoms = emptySet(),
+                logDate = logDate
+            )
+        )
+
+        advanceUntilIdle()
+
+        assertEquals(logDate, fakeCycleRepository.startedCycleDate)
+        assertNotNull(fakeDailyLogRepository.savedFlowLogRecord)
+        assertEquals(FlowIntensityType.MEDIUM, fakeDailyLogRepository.savedFlowLogRecord?.flowIntensity)
+    }
+
     // ── Test Fakes ────────────────────────────────────────────────────────────
 
     private class FakeDailyLogRepository : DailyLogRepository {

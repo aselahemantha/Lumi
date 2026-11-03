@@ -86,7 +86,8 @@ fun CycleRingWidget(
     modifier: Modifier = Modifier,
     cycleDay: Int = 24,
     subLabelText: String = "Period starts in ~4 days",
-    progressRatio: Float = 0.85f
+    progressRatio: Float = 0.85f,
+    onClick: (() -> Unit)? = null
 ) {
     val progressAnimatable = remember { Animatable(0f) }
 
@@ -104,6 +105,8 @@ fun CycleRingWidget(
     Box(
         modifier = modifier
             .size(270.dp)
+            .clip(CircleShape)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(6.dp),
         contentAlignment = Alignment.Center
     ) {

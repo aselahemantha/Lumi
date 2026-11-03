@@ -94,6 +94,7 @@ enum class MoodItem(val label: String, val icon: ImageVector) {
 fun LogFlowBottomSheet(
     onDismissRequest: () -> Unit,
     initialDate: LocalDate = LocalDate.now(),
+    initialFlow: FlowIntensity? = FlowIntensity.MEDIUM,
     onSaveLog: (LocalDate, FlowIntensity?, Set<String>, MoodItem?) -> Unit = { _, _, _, _ -> },
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier
@@ -103,7 +104,7 @@ fun LogFlowBottomSheet(
 
     var selectedDate by remember(initialDate) { mutableStateOf(initialDate) }
     val showDatePicker = remember { mutableStateOf(false) }
-    var selectedFlow by remember { mutableStateOf<FlowIntensity?>(null) }
+    var selectedFlow by remember(initialFlow) { mutableStateOf(initialFlow) }
     var selectedSymptoms by remember { mutableStateOf(emptySet<String>()) }
     var selectedMood by remember { mutableStateOf<MoodItem?>(null) }
     var isMoreDetailsExpanded by remember { mutableStateOf(false) }

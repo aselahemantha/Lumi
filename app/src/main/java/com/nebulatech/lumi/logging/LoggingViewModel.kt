@@ -51,17 +51,39 @@ class LoggingViewModel(
             _state.update { it.copy(isSaving = true) }
             try {
                 val targetDate = action.logDate
-                val phase = cycleRepository.getCurrentPhase(userId, targetDate).first()
-                val cycleDay = cycleRepository.getCycleDay(userId, targetDate).first()
+                val phaseOnTarget = cycleRepository.getCurrentPhase(userId, targetDate).first()
+                val cycleDayOnTarget = cycleRepository.getCycleDay(userId, targetDate).first()
+                val phaseToday = cycleRepository.getCurrentPhase(userId, today).first()
                 val avgCycleLength = cycleRepository.getAverageCycleLength(userId).first()
+                val avgPeriodLength = cycleRepository.getAveragePeriodLength(userId).first()
 
-                // If period is predicted/overdue/late luteal and user logs flow, auto-start a new cycle.
-                // This confirms Day 1 MENSTRUATION instead of logging against the old stale cycle.
-                val shouldStartNewCycle = action.flow != null && (
-                    phase == CyclePhase.PERIOD_PREDICTED ||
-                    phase == CyclePhase.PERIOD_MISSED ||
-                    phase == CyclePhase.LATE_LUTEAL ||
-                    cycleDay >= avgCycleLength
+                val isPeriodDueOrMissed =
+                    phaseOnTarget == CyclePhase.PERIOD_PREDICTED ||
+                    phaseOnTarget == CyclePhase.PERIOD_MISSED ||
+                    phaseToday == CyclePhase.PERIOD_PREDICTED ||
+                    phaseToday == CyclePhase.PERIOD_MISSED
+
+                // If user confirms period / saves log while period is predicted or missed without
+                // picking a specific flow or other details, default to MEDIUM flow so the period is logged.
+                val effectiveFlow = if (
+                    action.flow == null &&
+                    isPeriodDueOrMissed &&
+                    action.symptoms.isEmpty() &&
+                    action.mood == null
+                ) {
+                    FlowIntensity.MEDIUM
+                } else {
+                    action.flow
+                }
+
+                // If period is predicted/overdue/late luteal (on targetDate or today after initial period window)
+                // and user logs flow, auto-start a new cycle on targetDate.
+                val shouldStartNewCycle = effectiveFlow != null && (
+                    phaseOnTarget == CyclePhase.PERIOD_PREDICTED ||
+                    phaseOnTarget == CyclePhase.PERIOD_MISSED ||
+                    phaseOnTarget == CyclePhase.LATE_LUTEAL ||
+                    cycleDayOnTarget >= avgCycleLength ||
+                    (isPeriodDueOrMissed && cycleDayOnTarget > avgPeriodLength)
                 )
                 val currentCycleId: String?
                 if (shouldStartNewCycle) {
@@ -78,7 +100,7 @@ class LoggingViewModel(
                 val result = dailyLogRepository.saveFlowLog(
                     userId = userId,
                     date = targetDate,
-                    flowIntensity = action.flow?.toDomainType(),
+                    flowIntensity = effectiveFlow?.toDomainType(),
                     mood = action.mood?.toDomainType(),
                     symptoms = action.symptoms,
                     cycleId = currentCycleId,
