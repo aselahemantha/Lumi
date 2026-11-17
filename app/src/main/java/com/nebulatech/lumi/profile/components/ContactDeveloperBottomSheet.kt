@@ -69,10 +69,7 @@ import java.net.URL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactDeveloperBottomSheet(
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -89,37 +86,37 @@ fun ContactDeveloperBottomSheet(
         sheetState = sheetState,
         containerColor = Color(0xFFFBF9F7),
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = 36.dp)
+                .padding(bottom = 36.dp),
         ) {
             // Header Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
                     Box(
                         modifier = Modifier
                             .size(46.dp)
                             .clip(CircleShape)
                             .background(Color(0xFFF7DDE6)),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             imageVector = if (isSentSuccess) Icons.Outlined.CheckCircle else Icons.Outlined.MailOutline,
                             contentDescription = null,
                             tint = Primary,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
                     }
                     Column {
@@ -128,13 +125,13 @@ fun ContactDeveloperBottomSheet(
                             fontFamily = LiterataFontFamily,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Primary
+                            color = Primary,
                         )
                         Text(
                             text = if (isSentSuccess) "Thank you for your feedback" else "Send a note to Asela Hemantha",
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
-                            color = Color(0xFF7A6872)
+                            color = Color(0xFF7A6872),
                         )
                     }
                 }
@@ -143,7 +140,7 @@ fun ContactDeveloperBottomSheet(
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = "Close",
-                        tint = Color(0xFF5E4E57)
+                        tint = Color(0xFF5E4E57),
                     )
                 }
             }
@@ -156,20 +153,20 @@ fun ContactDeveloperBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Box(
                         modifier = Modifier
                             .size(72.dp)
                             .clip(CircleShape)
                             .background(Color(0xFFE8F5E9)),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.CheckCircle,
                             contentDescription = null,
                             tint = Color(0xFF2E7D32),
-                            modifier = Modifier.size(42.dp)
+                            modifier = Modifier.size(42.dp),
                         )
                     }
 
@@ -180,7 +177,7 @@ fun ContactDeveloperBottomSheet(
                         fontFamily = LiterataFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F)
+                        color = Color(0xFF26181F),
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -192,7 +189,7 @@ fun ContactDeveloperBottomSheet(
                         lineHeight = 20.sp,
                         textAlign = TextAlign.Center,
                         color = Color(0xFF6E5E67),
-                        modifier = Modifier.padding(horizontal = 12.dp)
+                        modifier = Modifier.padding(horizontal = 12.dp),
                     )
 
                     Spacer(modifier = Modifier.height(28.dp))
@@ -203,13 +200,13 @@ fun ContactDeveloperBottomSheet(
                             .fillMaxWidth()
                             .height(48.dp),
                         shape = RoundedCornerShape(14.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Primary)
+                        colors = ButtonDefaults.buttonColors(containerColor = Primary),
                     ) {
                         Text(
                             text = "Done",
                             fontFamily = ManropeFontFamily,
                             fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -222,7 +219,7 @@ fun ContactDeveloperBottomSheet(
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(14.dp))
                         .background(Color.White)
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -230,7 +227,7 @@ fun ContactDeveloperBottomSheet(
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF5E4E57)
+                            color = Color(0xFF5E4E57),
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -238,7 +235,7 @@ fun ContactDeveloperBottomSheet(
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Primary
+                            color = Primary,
                         )
                     }
                 }
@@ -251,7 +248,7 @@ fun ContactDeveloperBottomSheet(
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF3B2B34)
+                    color = Color(0xFF3B2B34),
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 OutlinedTextField(
@@ -262,7 +259,7 @@ fun ContactDeveloperBottomSheet(
                             text = "name@example.com",
                             fontFamily = ManropeFontFamily,
                             fontSize = 14.sp,
-                            color = Color(0xFFA5949D)
+                            color = Color(0xFFA5949D),
                         )
                     },
                     singleLine = true,
@@ -274,8 +271,8 @@ fun ContactDeveloperBottomSheet(
                         focusedBorderColor = Primary,
                         unfocusedBorderColor = Color(0xFFE4DCDD),
                         focusedTextColor = Color(0xFF26181F),
-                        unfocusedTextColor = Color(0xFF26181F)
-                    )
+                        unfocusedTextColor = Color(0xFF26181F),
+                    ),
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -286,7 +283,7 @@ fun ContactDeveloperBottomSheet(
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF3B2B34)
+                    color = Color(0xFF3B2B34),
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 OutlinedTextField(
@@ -301,8 +298,8 @@ fun ContactDeveloperBottomSheet(
                         focusedBorderColor = Primary,
                         unfocusedBorderColor = Color(0xFFE4DCDD),
                         focusedTextColor = Color(0xFF26181F),
-                        unfocusedTextColor = Color(0xFF26181F)
-                    )
+                        unfocusedTextColor = Color(0xFF26181F),
+                    ),
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -313,7 +310,7 @@ fun ContactDeveloperBottomSheet(
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF3B2B34)
+                    color = Color(0xFF3B2B34),
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 OutlinedTextField(
@@ -324,7 +321,7 @@ fun ContactDeveloperBottomSheet(
                             text = "Describe your questions, suggestions, or bugs...",
                             fontFamily = ManropeFontFamily,
                             fontSize = 14.sp,
-                            color = Color(0xFFA5949D)
+                            color = Color(0xFFA5949D),
                         )
                     },
                     minLines = 4,
@@ -337,14 +334,14 @@ fun ContactDeveloperBottomSheet(
                         focusedBorderColor = Primary,
                         unfocusedBorderColor = Color(0xFFE4DCDD),
                         focusedTextColor = Color(0xFF26181F),
-                        unfocusedTextColor = Color(0xFF26181F)
-                    )
+                        unfocusedTextColor = Color(0xFF26181F),
+                    ),
                 )
 
                 AnimatedVisibility(
                     visible = errorMessage != null,
                     enter = fadeIn(),
-                    exit = fadeOut()
+                    exit = fadeOut(),
                 ) {
                     errorMessage?.let {
                         Text(
@@ -352,7 +349,7 @@ fun ContactDeveloperBottomSheet(
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
                             color = Color(0xFFD32F2F),
-                            modifier = Modifier.padding(top = 8.dp)
+                            modifier = Modifier.padding(top = 8.dp),
                         )
                     }
                 }
@@ -374,14 +371,15 @@ fun ContactDeveloperBottomSheet(
                                 recipient = "asela.hemantha.p@gmail.com",
                                 replyTo = userEmail.ifBlank { "anonymous@lumiapp.com" },
                                 subject = subject.ifBlank { "Lumi App Feedback" },
-                                body = message
+                                body = message,
                             )
                             isSending = false
                             if (success) {
                                 isSentSuccess = true
                             } else {
                                 // Fallback: prompt email app if network fails
-                                errorMessage = "In-app dispatch couldn't connect. You can send directly using your email app below."
+                                errorMessage =
+                                    "In-app dispatch couldn't connect. You can send directly using your email app below."
                             }
                         }
                     },
@@ -390,37 +388,37 @@ fun ContactDeveloperBottomSheet(
                         .fillMaxWidth()
                         .height(50.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Primary)
+                    colors = ButtonDefaults.buttonColors(containerColor = Primary),
                 ) {
                     if (isSending) {
                         CircularProgressIndicator(
                             color = Color.White,
                             modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp
+                            strokeWidth = 2.dp,
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "Sending...",
                             fontFamily = ManropeFontFamily,
                             fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     } else {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.Center,
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.Send,
                                 contentDescription = null,
-                                modifier = Modifier.size(18.dp)
+                                modifier = Modifier.size(18.dp),
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "Send In-App Message",
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             )
                         }
                     }
@@ -448,23 +446,23 @@ fun ContactDeveloperBottomSheet(
                         .fillMaxWidth()
                         .height(46.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF5E4E57))
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF5E4E57)),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Center,
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.OpenInNew,
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Or Open in Email App",
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
                         )
                     }
                 }
@@ -476,45 +474,41 @@ fun ContactDeveloperBottomSheet(
 /**
  * Dispatches an in-app feedback payload directly via HTTP POST to the developer destination webhook.
  */
-private suspend fun sendInAppMessage(
-    recipient: String,
-    replyTo: String,
-    subject: String,
-    body: String
-): Boolean = withContext(Dispatchers.IO) {
-    try {
-        // Formspree / Webhook submission endpoint for asela.hemantha.p@gmail.com
-        val url = URL("https://formspree.io/f/xbjnqvgk")
-        val connection = (url.openConnection() as HttpURLConnection).apply {
-            requestMethod = "POST"
-            connectTimeout = 8000
-            readTimeout = 8000
-            doOutput = true
-            setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-            setRequestProperty("Accept", "application/json")
-        }
+private suspend fun sendInAppMessage(recipient: String, replyTo: String, subject: String, body: String): Boolean =
+    withContext(Dispatchers.IO) {
+        try {
+            // Formspree / Webhook submission endpoint for asela.hemantha.p@gmail.com
+            val url = URL("https://formspree.io/f/xbjnqvgk")
+            val connection = (url.openConnection() as HttpURLConnection).apply {
+                requestMethod = "POST"
+                connectTimeout = 8000
+                readTimeout = 8000
+                doOutput = true
+                setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                setRequestProperty("Accept", "application/json")
+            }
 
-        val json = JSONObject().apply {
-            put("email", replyTo)
-            put("_replyto", replyTo)
-            put("_subject", subject)
-            put("recipient", recipient)
-            put("message", body)
-            put("app", "Lumi Android")
-        }
+            val json = JSONObject().apply {
+                put("email", replyTo)
+                put("_replyto", replyTo)
+                put("_subject", subject)
+                put("recipient", recipient)
+                put("message", body)
+                put("app", "Lumi Android")
+            }
 
-        OutputStreamWriter(connection.outputStream).use { writer ->
-            writer.write(json.toString())
-            writer.flush()
-        }
+            OutputStreamWriter(connection.outputStream).use { writer ->
+                writer.write(json.toString())
+                writer.flush()
+            }
 
-        val responseCode = connection.responseCode
-        connection.disconnect()
-        // If 200..299 or simulated connection
-        responseCode in 200..299
-    } catch (_: Exception) {
-        // Graceful network delay fallback simulation for offline/preview environments
-        delay(1200)
-        true
+            val responseCode = connection.responseCode
+            connection.disconnect()
+            // If 200..299 or simulated connection
+            responseCode in 200..299
+        } catch (_: Exception) {
+            // Graceful network delay fallback simulation for offline/preview environments
+            delay(1200)
+            true
+        }
     }
-}

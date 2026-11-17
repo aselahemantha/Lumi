@@ -33,7 +33,7 @@ val LocalAnalyticsTracker = staticCompositionLocalOf<AnalyticsTracker> {
 fun TrackScreenView(
     screenName: String,
     screenClass: String? = null,
-    tracker: AnalyticsTracker = LocalAnalyticsTracker.current
+    tracker: AnalyticsTracker = LocalAnalyticsTracker.current,
 ) {
     LaunchedEffect(screenName) {
         tracker.trackScreenView(screenName = screenName, screenClass = screenClass)

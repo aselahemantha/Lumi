@@ -71,24 +71,21 @@ import com.nebulatech.lumi.ui.theme.Primary
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ProfileTopBar(
-    modifier: Modifier = Modifier,
-    onNotificationClick: () -> Unit = {}
-) {
+fun ProfileTopBar(modifier: Modifier = Modifier, onNotificationClick: () -> Unit = {}) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .statusBarsPadding()
             .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = "Profile",
             fontFamily = LiterataFontFamily,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            color = Primary
+            color = Primary,
         )
 
         IconButton(onClick = onNotificationClick) {
@@ -96,7 +93,7 @@ fun ProfileTopBar(
                 imageVector = Icons.Outlined.Notifications,
                 contentDescription = "Notifications",
                 tint = Color(0xFF4A3A43),
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
         }
     }
@@ -106,7 +103,7 @@ fun ProfileTopBar(
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     onTabSelected: (HomeTab) -> Unit = {},
-    onNotificationClick: () -> Unit = {}
+    onNotificationClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val profileVm: ProfileViewModel = koinViewModel()
@@ -125,6 +122,7 @@ fun ProfileScreen(
     ObserveAsEvents(profileVm.events) { event ->
         when (event) {
             ProfileEvent.NavigateToSignIn -> Unit
+
             ProfileEvent.LoggedOutAndAppClosed -> {
                 (context as? Activity)?.finishAffinity()
             }
@@ -137,14 +135,14 @@ fun ProfileScreen(
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.PROFILE,
-                onTabSelected = onTabSelected
+                onTabSelected = onTabSelected,
             )
         },
-        containerColor = Color(0xFFFBF9F7)
+        containerColor = Color(0xFFFBF9F7),
     ) { innerPadding ->
         if (state.isLoading) {
             com.nebulatech.lumi.profile.components.ProfileScreenSkeleton(
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(innerPadding),
             )
         } else {
             Column(
@@ -153,12 +151,12 @@ fun ProfileScreen(
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // 1. Hero User Banner Card
                 HeroUserCard(
                     userName = state.userName.ifBlank { "Lumi User" },
-                    trackingDuration = state.trackingDuration.ifBlank { "Tracking with Lumi" }
+                    trackingDuration = state.trackingDuration.ifBlank { "Tracking with Lumi" },
                 )
 
                 // 2. Health Profile Card (Editable)
@@ -169,7 +167,7 @@ fun ProfileScreen(
                     onEditClick = {
                         tracker.trackButtonClick("btn_edit_health_profile", AnalyticsConstants.Screens.PROFILE)
                         showEditSheet = true
-                    }
+                    },
                 )
 
                 // 3. App Settings Card (with expanding reminder manager & privacy sheet)
@@ -184,7 +182,7 @@ fun ProfileScreen(
                         tracker.trackButtonClick(
                             buttonName = AnalyticsConstants.Buttons.TOGGLE_NOTIFICATIONS,
                             screenName = AnalyticsConstants.Screens.PROFILE,
-                            extraParams = mapOf("enabled" to enabled)
+                            extraParams = mapOf("enabled" to enabled),
                         )
                         profileVm.onAction(ProfileAction.UpdateNotifications(enabled))
                     },
@@ -192,14 +190,14 @@ fun ProfileScreen(
                         tracker.trackButtonClick(
                             buttonName = "btn_toggle_granular_notif_${type.lowercase()}",
                             screenName = AnalyticsConstants.Screens.PROFILE,
-                            extraParams = mapOf("type" to type, "enabled" to enabled)
+                            extraParams = mapOf("type" to type, "enabled" to enabled),
                         )
                         profileVm.onAction(ProfileAction.ToggleNotificationSetting(type, enabled))
                     },
                     onPrivacyClick = {
                         tracker.trackButtonClick("btn_privacy_settings", AnalyticsConstants.Screens.PROFILE)
                         showPrivacySheet = true
-                    }
+                    },
                 )
 
                 // 4. Support & Log Out Card
@@ -219,7 +217,7 @@ fun ProfileScreen(
                     onLogoutClick = {
                         tracker.trackButtonClick(AnalyticsConstants.Buttons.LOGOUT, AnalyticsConstants.Screens.PROFILE)
                         showLogoutDialog = true
-                    }
+                    },
                 )
 
                 // 5. Developer Support Lottie & Precision Tag Footer
@@ -241,11 +239,11 @@ fun ProfileScreen(
                         ProfileAction.UpdateHealthProfile(
                             cycleLength = newLength,
                             periodDuration = newDuration,
-                            primaryGoal = newGoal.toPrimaryGoal()
-                        )
+                            primaryGoal = newGoal.toPrimaryGoal(),
+                        ),
                     )
                     showEditSheet = false
-                }
+                },
             )
         }
 
@@ -256,47 +254,47 @@ fun ProfileScreen(
                 onDeleteAllData = {
                     BiometricAuthManager.setBiometricEnabled(context, false)
                     profileVm.onAction(ProfileAction.LogoutAndClearData)
-                }
+                },
             )
         }
 
         // Help Center Bottom Sheet Modal
         if (showHelpSheet) {
             HelpCenterBottomSheet(
-                onDismissRequest = { showHelpSheet = false }
+                onDismissRequest = { showHelpSheet = false },
             )
         }
 
         // Terms of Service Bottom Sheet Modal
         if (showTermsSheet) {
             TermsOfServiceBottomSheet(
-                onDismissRequest = { showTermsSheet = false }
+                onDismissRequest = { showTermsSheet = false },
             )
         }
 
         // Contact Developer Bottom Sheet Modal
         if (showContactDevSheet) {
             com.nebulatech.lumi.profile.components.ContactDeveloperBottomSheet(
-                onDismissRequest = { showContactDevSheet = false }
+                onDismissRequest = { showContactDevSheet = false },
             )
         }
 
         // Log Out Confirmation Custom Modal Dialog
         if (showLogoutDialog) {
             Dialog(
-                onDismissRequest = { showLogoutDialog = false }
+                onDismissRequest = { showLogoutDialog = false },
             ) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(28.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         // Top Icon Badge
                         Box(
@@ -304,13 +302,13 @@ fun ProfileScreen(
                                 .size(56.dp)
                                 .clip(CircleShape)
                                 .background(Color(0xFFFDE8EF)),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.Logout,
                                 contentDescription = null,
                                 tint = Primary,
-                                modifier = Modifier.size(26.dp)
+                                modifier = Modifier.size(26.dp),
                             )
                         }
 
@@ -323,7 +321,7 @@ fun ProfileScreen(
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
                             color = Primary,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -335,7 +333,7 @@ fun ProfileScreen(
                             fontSize = 13.sp,
                             lineHeight = 20.sp,
                             color = Color(0xFF6E5E67),
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         )
 
                         Spacer(modifier = Modifier.height(24.dp))
@@ -344,7 +342,7 @@ fun ProfileScreen(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             OutlinedButton(
                                 onClick = { showLogoutDialog = false },
@@ -353,13 +351,13 @@ fun ProfileScreen(
                                     .height(46.dp),
                                 shape = RoundedCornerShape(14.dp),
                                 border = BorderStroke(1.dp, Color(0xFFD4C2C8)),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF5E4E57))
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF5E4E57)),
                             ) {
                                 Text(
                                     text = "Cancel",
                                     fontFamily = ManropeFontFamily,
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
                                 )
                             }
 
@@ -373,13 +371,13 @@ fun ProfileScreen(
                                     .weight(1f)
                                     .height(46.dp),
                                 shape = RoundedCornerShape(14.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Primary)
+                                colors = ButtonDefaults.buttonColors(containerColor = Primary),
                             ) {
                                 Text(
                                     text = "Log Out",
                                     fontFamily = ManropeFontFamily,
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
                                 )
                             }
                         }
@@ -390,20 +388,22 @@ fun ProfileScreen(
     }
 }
 
-private fun PrimaryGoal.toDisplayName(): String = when (this) {
-    PrimaryGoal.TRACK_CYCLE -> "Track Cycles"
-    PrimaryGoal.UNDERSTAND_SYMPTOMS -> "Understand Symptoms"
-    PrimaryGoal.OPTIMIZE_FERTILITY -> "Optimize Fertility"
-    PrimaryGoal.AVOID_PREGNANCY -> "Avoid Pregnancy"
-}
+private fun PrimaryGoal.toDisplayName(): String =
+    when (this) {
+        PrimaryGoal.TRACK_CYCLE -> "Track Cycles"
+        PrimaryGoal.UNDERSTAND_SYMPTOMS -> "Understand Symptoms"
+        PrimaryGoal.OPTIMIZE_FERTILITY -> "Optimize Fertility"
+        PrimaryGoal.AVOID_PREGNANCY -> "Avoid Pregnancy"
+    }
 
-private fun String.toPrimaryGoal(): PrimaryGoal = when (this) {
-    "Track Cycles" -> PrimaryGoal.TRACK_CYCLE
-    "Understand Symptoms" -> PrimaryGoal.UNDERSTAND_SYMPTOMS
-    "Optimize Fertility" -> PrimaryGoal.OPTIMIZE_FERTILITY
-    "Avoid Pregnancy" -> PrimaryGoal.AVOID_PREGNANCY
-    else -> PrimaryGoal.TRACK_CYCLE
-}
+private fun String.toPrimaryGoal(): PrimaryGoal =
+    when (this) {
+        "Track Cycles" -> PrimaryGoal.TRACK_CYCLE
+        "Understand Symptoms" -> PrimaryGoal.UNDERSTAND_SYMPTOMS
+        "Optimize Fertility" -> PrimaryGoal.OPTIMIZE_FERTILITY
+        "Avoid Pregnancy" -> PrimaryGoal.AVOID_PREGNANCY
+        else -> PrimaryGoal.TRACK_CYCLE
+    }
 
 @Preview(showBackground = true)
 @Composable

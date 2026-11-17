@@ -1,7 +1,7 @@
 package com.nebulatech.lumi.onboarding
 
-import java.time.LocalDate
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
 object OnboardingRoute
@@ -10,20 +10,16 @@ enum class OnboardingStep {
     WELCOME,
     SELECT_GOAL,
     CORE_DATA,
-    HEALTH_PROFILE
+    HEALTH_PROFILE,
 }
 
 enum class OnboardingGoal {
     TRACK_CYCLE,
     UNDERSTAND_SYMPTOMS,
-    OPTIMIZE_FERTILITY
+    OPTIMIZE_FERTILITY,
 }
 
-data class ManualPastCycle(
-    val startDate: LocalDate,
-    val cycleLength: Int = 28,
-    val periodDuration: Int = 5
-)
+data class ManualPastCycle(val startDate: LocalDate, val cycleLength: Int = 28, val periodDuration: Int = 5)
 
 data class OnboardingState(
     val currentStep: OnboardingStep = OnboardingStep.WELCOME,
@@ -37,7 +33,7 @@ data class OnboardingState(
     val weightUnit: String = "kg",
     val selectedConditions: Set<String> = emptySet(),
     val name: String = "",
-    val isSaving: Boolean = false
+    val isSaving: Boolean = false,
 )
 
 sealed interface OnboardingAction {

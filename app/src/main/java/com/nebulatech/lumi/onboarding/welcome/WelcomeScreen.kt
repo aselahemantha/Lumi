@@ -23,14 +23,10 @@ import com.nebulatech.lumi.onboarding.components.HeroImageCard
 import com.nebulatech.lumi.onboarding.components.OnboardingHeader
 
 @Composable
-fun WelcomeScreen(
-    name: String,
-    onNameChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun WelcomeScreen(name: String, onNameChange: (String) -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         OnboardingHeader()
         Spacer(modifier = Modifier.height(24.dp))
@@ -41,7 +37,7 @@ fun WelcomeScreen(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
         Spacer(modifier = Modifier.height(28.dp))
 
@@ -50,12 +46,12 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 8.dp),
         ) {
             Text(
                 text = stringResource(R.string.name_label),
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -64,7 +60,7 @@ fun WelcomeScreen(
                 placeholder = {
                     Text(
                         text = stringResource(R.string.name_placeholder),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                     )
                 },
                 singleLine = true,
@@ -76,9 +72,9 @@ fun WelcomeScreen(
                     focusedTextColor = Color(0xFF26181F),
                     unfocusedTextColor = Color(0xFF26181F),
                     focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
+                    unfocusedContainerColor = Color.White,
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }

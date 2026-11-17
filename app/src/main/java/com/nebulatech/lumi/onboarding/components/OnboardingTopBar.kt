@@ -25,7 +25,7 @@ fun OnboardingTopBar(
     onBackClick: () -> Unit,
     showSkip: Boolean = false,
     onSkipClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     CenterAlignedTopAppBar(
         title = {},
@@ -34,7 +34,7 @@ fun OnboardingTopBar(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         },
@@ -46,14 +46,14 @@ fun OnboardingTopBar(
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Primary
+                        color = Primary,
                     )
                 }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.background,
         ),
-        modifier = modifier
+        modifier = modifier,
     )
 }

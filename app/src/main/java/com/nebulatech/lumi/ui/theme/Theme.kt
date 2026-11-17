@@ -34,7 +34,7 @@ private val LightColorScheme = lightColorScheme(
     error = Error,
     onError = OnError,
     errorContainer = ErrorContainer,
-    onErrorContainer = OnErrorContainer
+    onErrorContainer = OnErrorContainer,
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -61,14 +61,11 @@ private val DarkColorScheme = darkColorScheme(
     error = Error,
     onError = OnError,
     errorContainer = ErrorContainer,
-    onErrorContainer = OnErrorContainer
+    onErrorContainer = OnErrorContainer,
 )
 
 @Composable
-fun LumiTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
+fun LumiTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     // Lumi uses its signature warm, organic rose/cream palette throughout the entire app.
     // We use LightColorScheme so all cards, text fields, and pickers remain consistent.
     val colorScheme = LightColorScheme
@@ -86,6 +83,6 @@ fun LumiTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

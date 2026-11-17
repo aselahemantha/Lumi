@@ -76,7 +76,7 @@ fun AppSettingsCard(
     notifPhaseInsights: Boolean = true,
     onNotificationsToggle: (Boolean) -> Unit = {},
     onGranularToggle: (type: String, enabled: Boolean) -> Unit = { _, _ -> },
-    onPrivacyClick: () -> Unit = {}
+    onPrivacyClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -89,19 +89,19 @@ fun AppSettingsCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(20.dp),
         ) {
             Text(
                 text = "App Settings",
                 fontFamily = LiterataFontFamily,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Primary
+                color = Primary,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -110,7 +110,7 @@ fun AppSettingsCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -120,13 +120,13 @@ fun AppSettingsCard(
                         .clickable(enabled = notificationsEnabled) {
                             isNotificationsExpanded = !isNotificationsExpanded
                         }
-                        .padding(vertical = 4.dp)
+                        .padding(vertical = 4.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Notifications,
                         contentDescription = null,
                         tint = Color(0xFF4A3A43),
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
@@ -136,7 +136,7 @@ fun AppSettingsCard(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF26181F)
+                                color = Color(0xFF26181F),
                             )
                             if (notificationsEnabled) {
                                 Spacer(modifier = Modifier.width(6.dp))
@@ -144,7 +144,7 @@ fun AppSettingsCard(
                                     imageVector = if (isNotificationsExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                                     contentDescription = if (isNotificationsExpanded) "Collapse" else "Expand",
                                     tint = Primary,
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(18.dp),
                                 )
                             }
                         }
@@ -156,7 +156,7 @@ fun AppSettingsCard(
                             },
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
-                            color = if (notificationsEnabled) Primary else Color(0xFF8A7A83)
+                            color = if (notificationsEnabled) Primary else Color(0xFF8A7A83),
                         )
                     }
                 }
@@ -173,8 +173,8 @@ fun AppSettingsCard(
                         checkedThumbColor = Color.White,
                         checkedTrackColor = Primary,
                         uncheckedThumbColor = Color.White,
-                        uncheckedTrackColor = Color(0xFFE4DCDD)
-                    )
+                        uncheckedTrackColor = Color(0xFFE4DCDD),
+                    ),
                 )
             }
 
@@ -182,7 +182,7 @@ fun AppSettingsCard(
             AnimatedVisibility(
                 visible = notificationsEnabled && isNotificationsExpanded,
                 enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
+                exit = shrinkVertically() + fadeOut(),
             ) {
                 Column(
                     modifier = Modifier
@@ -191,14 +191,14 @@ fun AppSettingsCard(
                         .clip(RoundedCornerShape(18.dp))
                         .background(Color(0xFFFBF8F9))
                         .padding(14.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     // Sub-item 1: Daily Log Reflection
                     NotificationSubToggleRow(
                         title = "Daily Log Reflection",
                         timeBadge = "8:30 PM",
                         isChecked = notifDailyLog,
-                        onCheckedChange = { onGranularToggle("DAILY_LOG", it) }
+                        onCheckedChange = { onGranularToggle("DAILY_LOG", it) },
                     )
 
                     HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
@@ -208,7 +208,7 @@ fun AppSettingsCard(
                         title = "Morning BBT Reminder",
                         timeBadge = "7:00 AM",
                         isChecked = notifMorningBbt,
-                        onCheckedChange = { onGranularToggle("BBT_REMINDER", it) }
+                        onCheckedChange = { onGranularToggle("BBT_REMINDER", it) },
                     )
 
                     HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
@@ -218,7 +218,7 @@ fun AppSettingsCard(
                         title = "Period Predictions & Alerts",
                         timeBadge = "7:00 AM",
                         isChecked = notifPeriodAlerts,
-                        onCheckedChange = { onGranularToggle("PERIOD_START", it) }
+                        onCheckedChange = { onGranularToggle("PERIOD_START", it) },
                     )
 
                     HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
@@ -228,7 +228,7 @@ fun AppSettingsCard(
                         title = "Fertile Window & Peak Ovulation",
                         timeBadge = "11:00 AM",
                         isChecked = notifFertilityAlerts,
-                        onCheckedChange = { onGranularToggle("FERTILE_WINDOW", it) }
+                        onCheckedChange = { onGranularToggle("FERTILE_WINDOW", it) },
                     )
 
                     HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
@@ -238,31 +238,31 @@ fun AppSettingsCard(
                         title = "Cycle Phase & Morning Readiness",
                         timeBadge = "7:00 AM",
                         isChecked = notifPhaseInsights,
-                        onCheckedChange = { onGranularToggle("PHASE_INSIGHT", it) }
+                        onCheckedChange = { onGranularToggle("PHASE_INSIGHT", it) },
                     )
                 }
             }
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 14.dp),
-                color = Color(0xFFF2ECEF)
+                color = Color(0xFFF2ECEF),
             )
 
             // 2. Biometric App Lock (Real Android BiometricPrompt implementation)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Fingerprint,
                         contentDescription = null,
                         tint = Color(0xFF4A3A43),
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(22.dp),
                     )
                     Spacer(modifier = Modifier.width(14.dp))
                     Column {
@@ -271,13 +271,13 @@ fun AppSettingsCard(
                             fontFamily = ManropeFontFamily,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF26181F)
+                            color = Color(0xFF26181F),
                         )
                         Text(
                             text = "Require fingerprint or Face ID to open Lumi",
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
-                            color = Color(0xFF8A7A83)
+                            color = Color(0xFF8A7A83),
                         )
                     }
                 }
@@ -300,10 +300,14 @@ fun AppSettingsCard(
                                         },
                                         onError = {
                                             isBiometricLockOn = false
-                                        }
+                                        },
                                     )
                                 } else {
-                                    Toast.makeText(context, "Biometric authentication not supported or enrolled on this device", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Biometric authentication not supported or enrolled on this device",
+                                        Toast.LENGTH_LONG,
+                                    ).show()
                                 }
                             } else {
                                 BiometricAuthManager.showBiometricPrompt(
@@ -314,7 +318,7 @@ fun AppSettingsCard(
                                         BiometricAuthManager.setBiometricEnabled(context, false)
                                         isBiometricLockOn = false
                                         Toast.makeText(context, "Biometric lock disabled", Toast.LENGTH_SHORT).show()
-                                    }
+                                    },
                                 )
                             }
                         }
@@ -323,14 +327,14 @@ fun AppSettingsCard(
                         checkedThumbColor = Color.White,
                         checkedTrackColor = Primary,
                         uncheckedThumbColor = Color.White,
-                        uncheckedTrackColor = Color(0xFFE4DCDD)
-                    )
+                        uncheckedTrackColor = Color(0xFFE4DCDD),
+                    ),
                 )
             }
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 12.dp),
-                color = Color(0xFFF2ECEF)
+                color = Color(0xFFF2ECEF),
             )
 
             // 3. Data Privacy & Export Item
@@ -338,7 +342,7 @@ fun AppSettingsCard(
                 icon = Icons.Outlined.Security,
                 title = "Data Privacy & Export",
                 subtitle = "Clinical summary export, encryption & erasure",
-                onClick = onPrivacyClick
+                onClick = onPrivacyClick,
             )
         }
     }
@@ -349,25 +353,25 @@ private fun NotificationSubToggleRow(
     title: String,
     timeBadge: String? = null,
     isChecked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 12.dp),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = title,
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.5.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF26181F)
+                color = Color(0xFF26181F),
             )
 
             if (timeBadge != null) {
@@ -376,14 +380,14 @@ private fun NotificationSubToggleRow(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
                         .background(Color(0xFFF3EAF0))
-                        .padding(horizontal = 7.dp, vertical = 2.dp)
+                        .padding(horizontal = 7.dp, vertical = 2.dp),
                 ) {
                     Text(
                         text = timeBadge,
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Primary
+                        color = Primary,
                     )
                 }
             }
@@ -396,8 +400,8 @@ private fun NotificationSubToggleRow(
                 checkedThumbColor = Color.White,
                 checkedTrackColor = Primary,
                 uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = Color(0xFFE4DCDD)
-            )
+                uncheckedTrackColor = Color(0xFFE4DCDD),
+            ),
         )
     }
 }
@@ -408,41 +412,41 @@ fun SupportAndLogoutCard(
     onHelpClick: () -> Unit = {},
     onTermsClick: () -> Unit = {},
     onContactDevClick: () -> Unit = {},
-    onLogoutClick: () -> Unit = {}
+    onLogoutClick: () -> Unit = {},
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(20.dp),
         ) {
             // Help Center Item
             SettingsRowItem(
                 icon = Icons.Outlined.Info,
                 title = "Help Center",
-                onClick = onHelpClick
+                onClick = onHelpClick,
             )
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 12.dp),
-                color = Color(0xFFF2ECEF)
+                color = Color(0xFFF2ECEF),
             )
 
             // Terms of Service Item
             SettingsRowItem(
                 icon = Icons.Outlined.Description,
                 title = "Terms of Service",
-                onClick = onTermsClick
+                onClick = onTermsClick,
             )
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 12.dp),
-                color = Color(0xFFF2ECEF)
+                color = Color(0xFFF2ECEF),
             )
 
             // Contact Developer Item
@@ -450,7 +454,7 @@ fun SupportAndLogoutCard(
                 icon = Icons.Outlined.MailOutline,
                 title = "Contact Developer",
                 subtitle = "Send direct feedback or questions",
-                onClick = onContactDevClick
+                onClick = onContactDevClick,
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -463,20 +467,20 @@ fun SupportAndLogoutCard(
                     .height(48.dp),
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = Primary),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Primary)
+                border = androidx.compose.foundation.BorderStroke(1.dp, Primary),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.Logout,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(18.dp),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Log Out",
                         fontFamily = ManropeFontFamily,
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
             }
@@ -490,24 +494,24 @@ private fun SettingsRowItem(
     title: String,
     subtitle: String? = null,
     badgeText: String? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = title,
                 tint = Color(0xFF4A3A43),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
             Spacer(modifier = Modifier.width(14.dp))
             Column {
@@ -516,7 +520,7 @@ private fun SettingsRowItem(
                         text = title,
                         fontFamily = ManropeFontFamily,
                         fontSize = 15.sp,
-                        color = Color(0xFF26181F)
+                        color = Color(0xFF26181F),
                     )
                     if (badgeText != null) {
                         Spacer(modifier = Modifier.width(8.dp))
@@ -524,14 +528,14 @@ private fun SettingsRowItem(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(Color(0xFFF9E4EB))
-                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                                .padding(horizontal = 8.dp, vertical = 2.dp),
                         ) {
                             Text(
                                 text = badgeText,
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Primary
+                                color = Primary,
                             )
                         }
                     }
@@ -541,7 +545,7 @@ private fun SettingsRowItem(
                         text = subtitle,
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        color = Color(0xFF8A7B84)
+                        color = Color(0xFF8A7B84),
                     )
                 }
             }
@@ -551,7 +555,7 @@ private fun SettingsRowItem(
             imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
             contentDescription = null,
             tint = Color(0xFF8A7B84),
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(20.dp),
         )
     }
 }

@@ -40,7 +40,7 @@ fun StandardLumiTopBar(
     userName: String? = null,
     showNotificationBell: Boolean = true,
     onNotificationClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
 ) {
     val formattedDate = remember {
         LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, MMM d", Locale.getDefault()))
@@ -62,7 +62,7 @@ fun StandardLumiTopBar(
             .statusBarsPadding()
             .padding(start = 20.dp, end = 16.dp, top = 8.dp, bottom = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column {
             Text(
@@ -70,7 +70,7 @@ fun StandardLumiTopBar(
                 fontFamily = LiterataFontFamily,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = Primary
+                color = Primary,
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
@@ -78,7 +78,7 @@ fun StandardLumiTopBar(
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF8A7982)
+                color = Color(0xFF8A7982),
             )
         }
 
@@ -88,7 +88,7 @@ fun StandardLumiTopBar(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = "Notifications",
                     tint = Color(0xFF4A3A43),
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
             }
         }
@@ -101,13 +101,13 @@ fun HomeTopBar(
     userName: String? = null,
     showNotificationBell: Boolean = true,
     onNotificationClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
 ) {
     StandardLumiTopBar(
         modifier = modifier,
         userName = userName,
         showNotificationBell = showNotificationBell,
         onNotificationClick = onNotificationClick,
-        onProfileClick = onProfileClick
+        onProfileClick = onProfileClick,
     )
 }

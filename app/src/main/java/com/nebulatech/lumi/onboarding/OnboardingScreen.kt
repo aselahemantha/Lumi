@@ -34,7 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 fun OnboardingRoot(
     onNavigateBack: () -> Unit,
     onNavigateNext: (OnboardingGoal) -> Unit,
-    viewModel: OnboardingViewModel = koinViewModel()
+    viewModel: OnboardingViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -47,15 +47,12 @@ fun OnboardingRoot(
 
     OnboardingScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
     )
 }
 
 @Composable
-fun OnboardingScreen(
-    state: OnboardingState,
-    onAction: (OnboardingAction) -> Unit
-) {
+fun OnboardingScreen(state: OnboardingState, onAction: (OnboardingAction) -> Unit) {
     val tracker = LocalAnalyticsTracker.current
     val stepScreenName = "onboarding_${state.currentStep.name.lowercase()}"
     TrackScreenView(stepScreenName)
@@ -72,10 +69,10 @@ fun OnboardingScreen(
                     tracker.trackButtonClick(
                         buttonName = "btn_onboarding_skip",
                         screenName = stepScreenName,
-                        extraParams = mapOf("step" to state.currentStep.name)
+                        extraParams = mapOf("step" to state.currentStep.name),
                     )
                     onAction(OnboardingAction.ClickContinue)
-                }
+                },
             )
         },
         bottomBar = {
@@ -88,7 +85,7 @@ fun OnboardingScreen(
                     tracker.trackButtonClick(
                         buttonName = AnalyticsConstants.Buttons.ONBOARDING_NEXT,
                         screenName = stepScreenName,
-                        extraParams = mapOf("step" to state.currentStep.name)
+                        extraParams = mapOf("step" to state.currentStep.name),
                     )
                     onAction(OnboardingAction.ClickContinue)
                 },
@@ -97,10 +94,10 @@ fun OnboardingScreen(
                     OnboardingStep.SELECT_GOAL -> state.selectedGoal != null
                     OnboardingStep.CORE_DATA -> true
                     OnboardingStep.HEALTH_PROFILE -> true
-                }
+                },
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -108,10 +105,10 @@ fun OnboardingScreen(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp, vertical = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             OnboardingProgressBar(currentStep = state.currentStep)
-            
+
             if (state.currentStep != OnboardingStep.WELCOME) {
                 Spacer(modifier = Modifier.height(24.dp))
             }
@@ -120,25 +117,28 @@ fun OnboardingScreen(
                 OnboardingStep.WELCOME -> {
                     WelcomeScreen(
                         name = state.name,
-                        onNameChange = { onAction(OnboardingAction.UpdateName(it)) }
+                        onNameChange = { onAction(OnboardingAction.UpdateName(it)) },
                     )
                 }
+
                 OnboardingStep.SELECT_GOAL -> {
                     GoalSelectionScreen(
                         state = state,
-                        onAction = onAction
+                        onAction = onAction,
                     )
                 }
+
                 OnboardingStep.CORE_DATA -> {
                     CoreDataScreen(
                         state = state,
-                        onAction = onAction
+                        onAction = onAction,
                     )
                 }
+
                 OnboardingStep.HEALTH_PROFILE -> {
                     HealthProfileScreen(
                         state = state,
-                        onAction = onAction
+                        onAction = onAction,
                     )
                 }
             }
@@ -153,7 +153,7 @@ private fun OnboardingWelcomeScreenPreview() {
     LumiTheme {
         OnboardingScreen(
             state = OnboardingState(currentStep = OnboardingStep.WELCOME),
-            onAction = {}
+            onAction = {},
         )
     }
 }
@@ -165,9 +165,9 @@ private fun OnboardingGoalScreenPreview() {
         OnboardingScreen(
             state = OnboardingState(
                 currentStep = OnboardingStep.SELECT_GOAL,
-                selectedGoal = OnboardingGoal.TRACK_CYCLE
+                selectedGoal = OnboardingGoal.TRACK_CYCLE,
             ),
-            onAction = {}
+            onAction = {},
         )
     }
 }
@@ -179,9 +179,9 @@ private fun OnboardingCoreDataScreenPreview() {
         OnboardingScreen(
             state = OnboardingState(
                 currentStep = OnboardingStep.CORE_DATA,
-                selectedGoal = OnboardingGoal.TRACK_CYCLE
+                selectedGoal = OnboardingGoal.TRACK_CYCLE,
             ),
-            onAction = {}
+            onAction = {},
         )
     }
 }
@@ -196,9 +196,9 @@ private fun OnboardingHealthProfileScreenPreview() {
                 selectedGoal = OnboardingGoal.TRACK_CYCLE,
                 age = "28",
                 weight = "65",
-                selectedConditions = setOf("PCOS")
+                selectedConditions = setOf("PCOS"),
             ),
-            onAction = {}
+            onAction = {},
         )
     }
 }

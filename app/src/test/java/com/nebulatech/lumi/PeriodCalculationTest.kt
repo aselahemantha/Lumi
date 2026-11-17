@@ -39,225 +39,229 @@ class PeriodCalculationTest {
         cycleRepository = RoomCycleRepository(
             cycleDao = fakeCycleDao,
             userProfileDao = fakeUserProfileDao,
-            dailyLogDao = fakeDailyLogDao
+            dailyLogDao = fakeDailyLogDao,
         )
     }
 
     // ── SCENARIO 1: Single Entry Baseline ─────────────────────────────────────
     @Test
-    fun `scenario 1 - single entry uses entered cycle length and flow duration`() = runBlocking {
-        val startDate = LocalDate.of(2026, 8, 1)
-        val enteredCycleLength = 30
-        val enteredFlowLength = 4
+    fun `scenario 1 - single entry uses entered cycle length and flow duration`() =
+        runBlocking {
+            val startDate = LocalDate.of(2026, 8, 1)
+            val enteredCycleLength = 30
+            val enteredFlowLength = 4
 
-        // Seed baseline historical cycles with entered values
-        val seedResult = cycleRepository.seedHistoricalCycles(
-            userId = testUserId,
-            currentCycleStartDate = startDate,
-            cycleLength = enteredCycleLength,
-            periodDuration = enteredFlowLength,
-            numberOfPastCycles = 3
-        )
-        assertTrue(seedResult is com.nebulatech.lumi.core.domain.Result.Success)
-
-        // Save user profile with entered values
-        fakeUserProfileDao.insertOrUpdate(
-            UserProfileEntity(
-                id = "p-1",
+            // Seed baseline historical cycles with entered values
+            val seedResult = cycleRepository.seedHistoricalCycles(
                 userId = testUserId,
+                currentCycleStartDate = startDate,
                 cycleLength = enteredCycleLength,
                 periodDuration = enteredFlowLength,
-                primaryGoal = "TRACK_CYCLE",
-                trackingStartedDate = "2026-08-01T00:00:00Z",
-                updatedAt = "2026-08-01T00:00:00Z"
+                numberOfPastCycles = 3,
             )
-        )
+            assertTrue(seedResult is com.nebulatech.lumi.core.domain.Result.Success)
 
-        // 1. Average cycle length should match entered value
-        val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
-        assertEquals(30, avgCycleLength)
+            // Save user profile with entered values
+            fakeUserProfileDao.insertOrUpdate(
+                UserProfileEntity(
+                    id = "p-1",
+                    userId = testUserId,
+                    cycleLength = enteredCycleLength,
+                    periodDuration = enteredFlowLength,
+                    primaryGoal = "TRACK_CYCLE",
+                    trackingStartedDate = "2026-08-01T00:00:00Z",
+                    updatedAt = "2026-08-01T00:00:00Z",
+                ),
+            )
 
-        // 2. Average period flow length should match entered value
-        val avgFlowLength = cycleRepository.getAveragePeriodLength(testUserId).first()
-        assertEquals(4, avgFlowLength)
+            // 1. Average cycle length should match entered value
+            val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
+            assertEquals(30, avgCycleLength)
 
-        // 3. Current active cycle should be created with correct start date and period length
-        val currentCycle = cycleRepository.getCurrentCycle(testUserId).first()
-        assertNotNull(currentCycle)
-        assertEquals("2026-08-01", currentCycle?.startDate)
-        assertEquals(4, currentCycle?.periodLength)
-        assertTrue(currentCycle?.isCurrent == true)
+            // 2. Average period flow length should match entered value
+            val avgFlowLength = cycleRepository.getAveragePeriodLength(testUserId).first()
+            assertEquals(4, avgFlowLength)
 
-        // 4. Phase calculation on cycle day 1-4 is Menstruation, 5-12 is Follicular, etc.
-        // Day 2 (Aug 2) -> Menstruation
-        val phaseDay2 = cycleRepository.getCurrentPhase(testUserId, startDate.plusDays(1)).first()
-        assertEquals(CyclePhase.MENSTRUATION, phaseDay2)
+            // 3. Current active cycle should be created with correct start date and period length
+            val currentCycle = cycleRepository.getCurrentCycle(testUserId).first()
+            assertNotNull(currentCycle)
+            assertEquals("2026-08-01", currentCycle?.startDate)
+            assertEquals(4, currentCycle?.periodLength)
+            assertTrue(currentCycle?.isCurrent == true)
 
-        // Day 5 (Aug 5) -> Follicular
-        val phaseDay5 = cycleRepository.getCurrentPhase(testUserId, startDate.plusDays(4)).first()
-        assertEquals(CyclePhase.FOLLICULAR, phaseDay5)
+            // 4. Phase calculation on cycle day 1-4 is Menstruation, 5-12 is Follicular, etc.
+            // Day 2 (Aug 2) -> Menstruation
+            val phaseDay2 = cycleRepository.getCurrentPhase(testUserId, startDate.plusDays(1)).first()
+            assertEquals(CyclePhase.MENSTRUATION, phaseDay2)
 
-        // Day 15 (Aug 15) -> Fertile Window (Ovulation = 30 - 14 = Day 16, Window = 13..17)
-        val phaseDay15 = cycleRepository.getCurrentPhase(testUserId, startDate.plusDays(14)).first()
-        assertEquals(CyclePhase.FERTILE_WINDOW, phaseDay15)
-    }
+            // Day 5 (Aug 5) -> Follicular
+            val phaseDay5 = cycleRepository.getCurrentPhase(testUserId, startDate.plusDays(4)).first()
+            assertEquals(CyclePhase.FOLLICULAR, phaseDay5)
+
+            // Day 15 (Aug 15) -> Fertile Window (Ovulation = 30 - 14 = Day 16, Window = 13..17)
+            val phaseDay15 = cycleRepository.getCurrentPhase(testUserId, startDate.plusDays(14)).first()
+            assertEquals(CyclePhase.FERTILE_WINDOW, phaseDay15)
+        }
 
     // ── SCENARIO 2: 3-Month Historical Manual Entry ───────────────────────────
     @Test
-    fun `scenario 2 - previous 3 months data calculates average cycle and flow length`() = runBlocking {
-        val startDate = LocalDate.of(2026, 8, 1)
+    fun `scenario 2 - previous 3 months data calculates average cycle and flow length`() =
+        runBlocking {
+            val startDate = LocalDate.of(2026, 8, 1)
 
-        // Past 3 cycles:
-        // Cycle 1 (most recent past): 28 days length, 4 days flow
-        // Cycle 2: 30 days length, 5 days flow
-        // Cycle 3 (oldest): 32 days length, 6 days flow
-        val pastCycles = listOf(
-            PastCycleInput(startDate = LocalDate.of(2026, 7, 4), cycleLength = 28, periodDuration = 4),
-            PastCycleInput(startDate = LocalDate.of(2026, 6, 4), cycleLength = 30, periodDuration = 5),
-            PastCycleInput(startDate = LocalDate.of(2026, 5, 3), cycleLength = 32, periodDuration = 6)
-        )
+            // Past 3 cycles:
+            // Cycle 1 (most recent past): 28 days length, 4 days flow
+            // Cycle 2: 30 days length, 5 days flow
+            // Cycle 3 (oldest): 32 days length, 6 days flow
+            val pastCycles = listOf(
+                PastCycleInput(startDate = LocalDate.of(2026, 7, 4), cycleLength = 28, periodDuration = 4),
+                PastCycleInput(startDate = LocalDate.of(2026, 6, 4), cycleLength = 30, periodDuration = 5),
+                PastCycleInput(startDate = LocalDate.of(2026, 5, 3), cycleLength = 32, periodDuration = 6),
+            )
 
-        val expectedAvgCycleLength = (28 + 30 + 32) / 3 // = 30
-        val expectedAvgPeriodLength = (4 + 5 + 6) / 3 // = 5
+            val expectedAvgCycleLength = (28 + 30 + 32) / 3 // = 30
+            val expectedAvgPeriodLength = (4 + 5 + 6) / 3 // = 5
 
-        val seedResult = cycleRepository.seedManualHistoricalCycles(
-            userId = testUserId,
-            currentCycleStartDate = startDate,
-            pastCycles = pastCycles,
-            currentPeriodDuration = expectedAvgPeriodLength
-        )
-        assertTrue(seedResult is com.nebulatech.lumi.core.domain.Result.Success)
+            val seedResult = cycleRepository.seedManualHistoricalCycles(
+                userId = testUserId,
+                currentCycleStartDate = startDate,
+                pastCycles = pastCycles,
+                currentPeriodDuration = expectedAvgPeriodLength,
+            )
+            assertTrue(seedResult is com.nebulatech.lumi.core.domain.Result.Success)
 
-        // 1. Verify average cycle length across the 3 historical cycles
-        val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
-        assertEquals(expectedAvgCycleLength, avgCycleLength)
+            // 1. Verify average cycle length across the 3 historical cycles
+            val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
+            assertEquals(expectedAvgCycleLength, avgCycleLength)
 
-        // 2. Verify average period flow length across the 3 historical cycles
-        val avgPeriodLength = cycleRepository.getAveragePeriodLength(testUserId).first()
-        assertEquals(expectedAvgPeriodLength, avgPeriodLength)
+            // 2. Verify average period flow length across the 3 historical cycles
+            val avgPeriodLength = cycleRepository.getAveragePeriodLength(testUserId).first()
+            assertEquals(expectedAvgPeriodLength, avgPeriodLength)
 
-        // 3. Verify that 3 past cycles + 1 current cycle were created
-        val allCycles = cycleRepository.getAllCycles(testUserId).first()
-        assertEquals(4, allCycles.size)
+            // 3. Verify that 3 past cycles + 1 current cycle were created
+            val allCycles = cycleRepository.getAllCycles(testUserId).first()
+            assertEquals(4, allCycles.size)
 
-        val activeCycle = allCycles.first { it.isCurrent }
-        assertEquals("2026-08-01", activeCycle.startDate)
-        assertEquals(5, activeCycle.periodLength)
-    }
+            val activeCycle = allCycles.first { it.isCurrent }
+            assertEquals("2026-08-01", activeCycle.startDate)
+            assertEquals(5, activeCycle.periodLength)
+        }
 
     @Test
-    fun `scenario 2b - previous 6 months manual data calculates average across all 6 cycles`() = runBlocking {
-        val startDate = LocalDate.of(2026, 8, 1)
+    fun `scenario 2b - previous 6 months manual data calculates average across all 6 cycles`() =
+        runBlocking {
+            val startDate = LocalDate.of(2026, 8, 1)
 
-        val pastCycles = listOf(
-            PastCycleInput(startDate = LocalDate.of(2026, 7, 4), cycleLength = 28, periodDuration = 4),
-            PastCycleInput(startDate = LocalDate.of(2026, 6, 4), cycleLength = 30, periodDuration = 5),
-            PastCycleInput(startDate = LocalDate.of(2026, 5, 3), cycleLength = 32, periodDuration = 6),
-            PastCycleInput(startDate = LocalDate.of(2026, 4, 3), cycleLength = 30, periodDuration = 5),
-            PastCycleInput(startDate = LocalDate.of(2026, 3, 4), cycleLength = 30, periodDuration = 5),
-            PastCycleInput(startDate = LocalDate.of(2026, 2, 2), cycleLength = 30, periodDuration = 5)
-        )
+            val pastCycles = listOf(
+                PastCycleInput(startDate = LocalDate.of(2026, 7, 4), cycleLength = 28, periodDuration = 4),
+                PastCycleInput(startDate = LocalDate.of(2026, 6, 4), cycleLength = 30, periodDuration = 5),
+                PastCycleInput(startDate = LocalDate.of(2026, 5, 3), cycleLength = 32, periodDuration = 6),
+                PastCycleInput(startDate = LocalDate.of(2026, 4, 3), cycleLength = 30, periodDuration = 5),
+                PastCycleInput(startDate = LocalDate.of(2026, 3, 4), cycleLength = 30, periodDuration = 5),
+                PastCycleInput(startDate = LocalDate.of(2026, 2, 2), cycleLength = 30, periodDuration = 5),
+            )
 
-        // (28 + 30 + 32 + 30 + 30 + 30) / 6 = 180 / 6 = 30
-        // (4 + 5 + 6 + 5 + 5 + 5) / 6 = 30 / 6 = 5
-        val seedResult = cycleRepository.seedManualHistoricalCycles(
-            userId = testUserId,
-            currentCycleStartDate = startDate,
-            pastCycles = pastCycles,
-            currentPeriodDuration = 5
-        )
-        assertTrue(seedResult is com.nebulatech.lumi.core.domain.Result.Success)
+            // (28 + 30 + 32 + 30 + 30 + 30) / 6 = 180 / 6 = 30
+            // (4 + 5 + 6 + 5 + 5 + 5) / 6 = 30 / 6 = 5
+            val seedResult = cycleRepository.seedManualHistoricalCycles(
+                userId = testUserId,
+                currentCycleStartDate = startDate,
+                pastCycles = pastCycles,
+                currentPeriodDuration = 5,
+            )
+            assertTrue(seedResult is com.nebulatech.lumi.core.domain.Result.Success)
 
-        val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
-        assertEquals(30, avgCycleLength)
+            val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
+            assertEquals(30, avgCycleLength)
 
-        val avgPeriodLength = cycleRepository.getAveragePeriodLength(testUserId).first()
-        assertEquals(5, avgPeriodLength)
+            val avgPeriodLength = cycleRepository.getAveragePeriodLength(testUserId).first()
+            assertEquals(5, avgPeriodLength)
 
-        val allCycles = cycleRepository.getAllCycles(testUserId).first()
-        assertEquals(7, allCycles.size)
-    }
+            val allCycles = cycleRepository.getAllCycles(testUserId).first()
+            assertEquals(7, allCycles.size)
+        }
 
     // ── SCENARIO 3: Dynamic Flow Logging and Subsequent Cycle Recalculation ────
     @Test
-    fun `scenario 3 - logging flow in current cycle and starting next cycle recalculates averages`() = runBlocking {
-        val cycle1Start = LocalDate.of(2026, 8, 1)
-        val now = "2026-08-01T00:00:00Z"
+    fun `scenario 3 - logging flow in current cycle and starting next cycle recalculates averages`() =
+        runBlocking {
+            val cycle1Start = LocalDate.of(2026, 8, 1)
+            val now = "2026-08-01T00:00:00Z"
 
-        // Seed with 1 past baseline cycle (30 days cycle, 5 days flow)
-        cycleRepository.seedHistoricalCycles(
-            userId = testUserId,
-            currentCycleStartDate = cycle1Start,
-            cycleLength = 30,
-            periodDuration = 5,
-            numberOfPastCycles = 1
-        )
-
-        // Initial averages before logging:
-        assertEquals(30, cycleRepository.getAverageCycleLength(testUserId).first())
-        assertEquals(5, cycleRepository.getAveragePeriodLength(testUserId).first())
-
-        val currentCycle = cycleRepository.getCurrentCycle(testUserId).first()
-        assertNotNull(currentCycle)
-
-        // User logs flow on 3 consecutive days in Cycle 1
-        fakeDailyLogDao.insertOrUpdate(
-            DailyLogEntity(
-                id = "log-1",
+            // Seed with 1 past baseline cycle (30 days cycle, 5 days flow)
+            cycleRepository.seedHistoricalCycles(
                 userId = testUserId,
-                cycleId = currentCycle!!.id,
-                logDate = "2026-08-01",
-                flowIntensity = FlowIntensityType.HEAVY.name,
-                createdAt = now,
-                updatedAt = now
+                currentCycleStartDate = cycle1Start,
+                cycleLength = 30,
+                periodDuration = 5,
+                numberOfPastCycles = 1,
             )
-        )
-        fakeDailyLogDao.insertOrUpdate(
-            DailyLogEntity(
-                id = "log-2",
-                userId = testUserId,
-                cycleId = currentCycle.id,
-                logDate = "2026-08-02",
-                flowIntensity = FlowIntensityType.MEDIUM.name,
-                createdAt = now,
-                updatedAt = now
+
+            // Initial averages before logging:
+            assertEquals(30, cycleRepository.getAverageCycleLength(testUserId).first())
+            assertEquals(5, cycleRepository.getAveragePeriodLength(testUserId).first())
+
+            val currentCycle = cycleRepository.getCurrentCycle(testUserId).first()
+            assertNotNull(currentCycle)
+
+            // User logs flow on 3 consecutive days in Cycle 1
+            fakeDailyLogDao.insertOrUpdate(
+                DailyLogEntity(
+                    id = "log-1",
+                    userId = testUserId,
+                    cycleId = currentCycle!!.id,
+                    logDate = "2026-08-01",
+                    flowIntensity = FlowIntensityType.HEAVY.name,
+                    createdAt = now,
+                    updatedAt = now,
+                ),
             )
-        )
-        fakeDailyLogDao.insertOrUpdate(
-            DailyLogEntity(
-                id = "log-3",
-                userId = testUserId,
-                cycleId = currentCycle.id,
-                logDate = "2026-08-03",
-                flowIntensity = FlowIntensityType.LIGHT.name,
-                createdAt = now,
-                updatedAt = now
+            fakeDailyLogDao.insertOrUpdate(
+                DailyLogEntity(
+                    id = "log-2",
+                    userId = testUserId,
+                    cycleId = currentCycle.id,
+                    logDate = "2026-08-02",
+                    flowIntensity = FlowIntensityType.MEDIUM.name,
+                    createdAt = now,
+                    updatedAt = now,
+                ),
             )
-        )
+            fakeDailyLogDao.insertOrUpdate(
+                DailyLogEntity(
+                    id = "log-3",
+                    userId = testUserId,
+                    cycleId = currentCycle.id,
+                    logDate = "2026-08-03",
+                    flowIntensity = FlowIntensityType.LIGHT.name,
+                    createdAt = now,
+                    updatedAt = now,
+                ),
+            )
 
-        // 26 days later (Aug 27), user starts a new cycle (Cycle 2)
-        val cycle2Start = LocalDate.of(2026, 8, 27)
-        val startResult = cycleRepository.startNewCycle(testUserId, cycle2Start)
-        assertTrue(startResult is com.nebulatech.lumi.core.domain.Result.Success)
+            // 26 days later (Aug 27), user starts a new cycle (Cycle 2)
+            val cycle2Start = LocalDate.of(2026, 8, 27)
+            val startResult = cycleRepository.startNewCycle(testUserId, cycle2Start)
+            assertTrue(startResult is com.nebulatech.lumi.core.domain.Result.Success)
 
-        // Verify Cycle 1 was closed with:
-        // - cycleLength = 26 days (from Aug 1 to Aug 26)
-        // - periodLength = 3 days (actual flow logs logged in Cycle 1)
-        val allCycles = cycleRepository.getAllCycles(testUserId).first()
-        val closedCycle1 = allCycles.first { it.id == currentCycle.id }
-        assertEquals(false, closedCycle1.isCurrent)
-        assertEquals(26, closedCycle1.cycleLength)
-        assertEquals(3, closedCycle1.periodLength)
+            // Verify Cycle 1 was closed with:
+            // - cycleLength = 26 days (from Aug 1 to Aug 26)
+            // - periodLength = 3 days (actual flow logs logged in Cycle 1)
+            val allCycles = cycleRepository.getAllCycles(testUserId).first()
+            val closedCycle1 = allCycles.first { it.id == currentCycle.id }
+            assertEquals(false, closedCycle1.isCurrent)
+            assertEquals(26, closedCycle1.cycleLength)
+            assertEquals(3, closedCycle1.periodLength)
 
-        // Now in Cycle 2, averages should be updated with the newly completed cycle:
-        // Cycle Lengths: [30 (baseline), 26 (cycle 1)] -> Average = (30 + 26) / 2 = 28 days
-        val newAvgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
-        assertEquals(28, newAvgCycleLength)
+            // Now in Cycle 2, averages should be updated with the newly completed cycle:
+            // Cycle Lengths: [30 (baseline), 26 (cycle 1)] -> Average = (30 + 26) / 2 = 28 days
+            val newAvgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
+            assertEquals(28, newAvgCycleLength)
 
-        // Flow Lengths: [5 (baseline), 3 (cycle 1)] -> Average = (5 + 3) / 2 = 4 days
-        val newAvgPeriodLength = cycleRepository.getAveragePeriodLength(testUserId).first()
-        assertEquals(4, newAvgPeriodLength)
-    }
+            // Flow Lengths: [5 (baseline), 3 (cycle 1)] -> Average = (5 + 3) / 2 = 4 days
+            val newAvgPeriodLength = cycleRepository.getAveragePeriodLength(testUserId).first()
+            assertEquals(4, newAvgPeriodLength)
+        }
 
     // ── Phase Calculation Companion Test ──────────────────────────────────────
     @Test
@@ -288,38 +292,39 @@ class PeriodCalculationTest {
 
     // ── SCENARIO 4: Missed Period Marking & Average Cycle Protection ───────────
     @Test
-    fun `scenario 4 - marking current cycle as missed sets isMissed and excludes from average calculation`() = runBlocking {
-        val cycle1Start = LocalDate.of(2026, 8, 1)
+    fun `scenario 4 - marking current cycle as missed sets isMissed and excludes from average calculation`() =
+        runBlocking {
+            val cycle1Start = LocalDate.of(2026, 8, 1)
 
-        // Seed 1 past baseline cycle (28 days)
-        cycleRepository.seedHistoricalCycles(
-            userId = testUserId,
-            currentCycleStartDate = cycle1Start,
-            cycleLength = 28,
-            periodDuration = 5,
-            numberOfPastCycles = 1
-        )
+            // Seed 1 past baseline cycle (28 days)
+            cycleRepository.seedHistoricalCycles(
+                userId = testUserId,
+                currentCycleStartDate = cycle1Start,
+                cycleLength = 28,
+                periodDuration = 5,
+                numberOfPastCycles = 1,
+            )
 
-        val currentCycle = cycleRepository.getCurrentCycle(testUserId).first()
-        assertNotNull(currentCycle)
-        assertEquals(false, currentCycle!!.isMissed)
+            val currentCycle = cycleRepository.getCurrentCycle(testUserId).first()
+            assertNotNull(currentCycle)
+            assertEquals(false, currentCycle!!.isMissed)
 
-        // Mark cycle as missed
-        val markResult = cycleRepository.markCurrentCycleAsMissed(testUserId)
-        assertTrue(markResult is com.nebulatech.lumi.core.domain.Result.Success)
+            // Mark cycle as missed
+            val markResult = cycleRepository.markCurrentCycleAsMissed(testUserId)
+            assertTrue(markResult is com.nebulatech.lumi.core.domain.Result.Success)
 
-        val updatedCycle = cycleRepository.getCurrentCycle(testUserId).first()
-        assertNotNull(updatedCycle)
-        assertEquals(true, updatedCycle!!.isMissed)
+            val updatedCycle = cycleRepository.getCurrentCycle(testUserId).first()
+            assertNotNull(updatedCycle)
+            assertEquals(true, updatedCycle!!.isMissed)
 
-        // 50 days later, user logs flow and starts a new cycle
-        val cycle2Start = LocalDate.of(2026, 9, 20)
-        cycleRepository.startNewCycle(testUserId, cycle2Start)
+            // 50 days later, user logs flow and starts a new cycle
+            val cycle2Start = LocalDate.of(2026, 9, 20)
+            cycleRepository.startNewCycle(testUserId, cycle2Start)
 
-        // Averages should ignore the 50-day missed cycle and remain at baseline (28 days)
-        val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
-        assertEquals(28, avgCycleLength)
-    }
+            // Averages should ignore the 50-day missed cycle and remain at baseline (28 days)
+            val avgCycleLength = cycleRepository.getAverageCycleLength(testUserId).first()
+            assertEquals(28, avgCycleLength)
+        }
 
     // ── Fakes ─────────────────────────────────────────────────────────────────
 
@@ -341,51 +346,50 @@ class PeriodCalculationTest {
             insertOrUpdate(cycle)
         }
 
-        override fun getCurrentCycleFlow(userId: String): Flow<CycleEntity?> {
-            return cycles.map { list ->
+        override fun getCurrentCycleFlow(userId: String): Flow<CycleEntity?> =
+            cycles.map { list ->
                 list.filter { it.userId == userId && it.isCurrent }
                     .maxByOrNull { it.startDate }
             }
-        }
 
-        override suspend fun getCurrentCycle(userId: String): CycleEntity? {
-            return cycles.value.filter { it.userId == userId && it.isCurrent }
+        override suspend fun getCurrentCycle(userId: String): CycleEntity? =
+            cycles.value.filter {
+                it.userId == userId && it.isCurrent
+            }
                 .maxByOrNull { it.startDate }
-        }
 
-        override suspend fun getCycleById(cycleId: String): CycleEntity? {
-            return cycles.value.firstOrNull { it.id == cycleId }
-        }
+        override suspend fun getCycleById(cycleId: String): CycleEntity? = cycles.value.firstOrNull { it.id == cycleId }
 
-        override fun getCycleByIdFlow(cycleId: String): Flow<CycleEntity?> {
-            return cycles.map { list -> list.firstOrNull { it.id == cycleId } }
-        }
+        override fun getCycleByIdFlow(cycleId: String): Flow<CycleEntity?> =
+            cycles.map { list ->
+                list.firstOrNull { it.id == cycleId }
+            }
 
-        override fun getLastNCyclesFlow(userId: String, n: Int): Flow<List<CycleEntity>> {
-            return cycles.map { list ->
+        override fun getLastNCyclesFlow(userId: String, n: Int): Flow<List<CycleEntity>> =
+            cycles.map { list ->
                 list.filter { it.userId == userId }
                     .sortedByDescending { it.startDate }
                     .take(n)
             }
-        }
 
-        override suspend fun getLastNCycles(userId: String, n: Int): List<CycleEntity> {
-            return cycles.value.filter { it.userId == userId }
+        override suspend fun getLastNCycles(userId: String, n: Int): List<CycleEntity> =
+            cycles.value.filter {
+                it.userId == userId
+            }
                 .sortedByDescending { it.startDate }
                 .take(n)
-        }
 
-        override fun getAllCyclesFlow(userId: String): Flow<List<CycleEntity>> {
-            return cycles.map { list ->
+        override fun getAllCyclesFlow(userId: String): Flow<List<CycleEntity>> =
+            cycles.map { list ->
                 list.filter { it.userId == userId }
                     .sortedByDescending { it.startDate }
             }
-        }
 
-        override suspend fun getAllCycles(userId: String): List<CycleEntity> {
-            return cycles.value.filter { it.userId == userId }
+        override suspend fun getAllCycles(userId: String): List<CycleEntity> =
+            cycles.value.filter {
+                it.userId == userId
+            }
                 .sortedByDescending { it.startDate }
-        }
 
         override suspend fun markAllNotCurrent(userId: String, updatedAt: String): Int {
             var count = 0
@@ -393,7 +397,9 @@ class PeriodCalculationTest {
                 if (it.userId == userId && it.isCurrent) {
                     count++
                     it.copy(isCurrent = false, updatedAt = updatedAt)
-                } else it
+                } else {
+                    it
+                }
             }
             cycles.value = updated
             return count
@@ -406,7 +412,7 @@ class PeriodCalculationTest {
             periodLength: Int?,
             isRegular: Boolean?,
             isMissed: Boolean,
-            updatedAt: String
+            updatedAt: String,
         ): Int {
             val current = cycles.value.toMutableList()
             val index = current.indexOfFirst { it.id == cycleId }
@@ -418,7 +424,7 @@ class PeriodCalculationTest {
                     isCurrent = false,
                     isRegular = isRegular,
                     isMissed = isMissed,
-                    updatedAt = updatedAt
+                    updatedAt = updatedAt,
                 )
                 cycles.value = current
                 return 1
@@ -433,7 +439,7 @@ class PeriodCalculationTest {
                 current[index] = current[index].copy(
                     isMissed = true,
                     isRegular = false,
-                    updatedAt = updatedAt
+                    updatedAt = updatedAt,
                 )
                 cycles.value = current
                 return 1
@@ -455,28 +461,26 @@ class PeriodCalculationTest {
             profiles.value = profiles.value + (profile.userId to profile)
         }
 
-        override fun getProfileFlow(userId: String): Flow<UserProfileEntity?> {
-            return profiles.map { it[userId] }
-        }
+        override fun getProfileFlow(userId: String): Flow<UserProfileEntity?> = profiles.map { it[userId] }
 
-        override suspend fun getProfile(userId: String): UserProfileEntity? {
-            return profiles.value[userId]
-        }
+        override suspend fun getProfile(userId: String): UserProfileEntity? = profiles.value[userId]
 
         override suspend fun updateCycleSettings(
             userId: String,
             cycleLength: Int,
             periodDuration: Int,
             primaryGoal: String,
-            updatedAt: String
+            updatedAt: String,
         ): Int {
             val p = profiles.value[userId] ?: return 0
-            profiles.value = profiles.value + (userId to p.copy(
-                cycleLength = cycleLength,
-                periodDuration = periodDuration,
-                primaryGoal = primaryGoal,
-                updatedAt = updatedAt
-            ))
+            profiles.value = profiles.value + (
+                userId to p.copy(
+                    cycleLength = cycleLength,
+                    periodDuration = periodDuration,
+                    primaryGoal = primaryGoal,
+                    updatedAt = updatedAt,
+                )
+                )
             return 1
         }
 
@@ -507,31 +511,35 @@ class PeriodCalculationTest {
             logs.value = current
         }
 
-        override suspend fun getLogForDate(userId: String, date: String): DailyLogEntity? {
-            return logs.value.firstOrNull { it.userId == userId && it.logDate == date }
-        }
+        override suspend fun getLogForDate(userId: String, date: String): DailyLogEntity? =
+            logs.value.firstOrNull {
+                it.userId == userId && it.logDate == date
+            }
 
-        override fun getLogForDateFlow(userId: String, date: String): Flow<DailyLogEntity?> {
-            return logs.map { list -> list.firstOrNull { it.userId == userId && it.logDate == date } }
-        }
+        override fun getLogForDateFlow(userId: String, date: String): Flow<DailyLogEntity?> =
+            logs.map { list ->
+                list.firstOrNull { it.userId == userId && it.logDate == date }
+            }
 
-        override fun getLogsInRangeFlow(userId: String, from: String, to: String): Flow<List<DailyLogEntity>> {
-            return logs.map { list ->
+        override fun getLogsInRangeFlow(userId: String, from: String, to: String): Flow<List<DailyLogEntity>> =
+            logs.map { list ->
                 list.filter { it.userId == userId && it.logDate in from..to }
             }
-        }
 
-        override suspend fun getLogsInRange(userId: String, from: String, to: String): List<DailyLogEntity> {
-            return logs.value.filter { it.userId == userId && it.logDate in from..to }
-        }
+        override suspend fun getLogsInRange(userId: String, from: String, to: String): List<DailyLogEntity> =
+            logs.value.filter {
+                it.userId == userId && it.logDate in from..to
+            }
 
-        override fun getLogsForCycleFlow(cycleId: String): Flow<List<DailyLogEntity>> {
-            return logs.map { list -> list.filter { it.cycleId == cycleId } }
-        }
+        override fun getLogsForCycleFlow(cycleId: String): Flow<List<DailyLogEntity>> =
+            logs.map { list ->
+                list.filter { it.cycleId == cycleId }
+            }
 
-        override suspend fun getLogsForCycle(cycleId: String): List<DailyLogEntity> {
-            return logs.value.filter { it.cycleId == cycleId }
-        }
+        override suspend fun getLogsForCycle(cycleId: String): List<DailyLogEntity> =
+            logs.value.filter {
+                it.cycleId == cycleId
+            }
 
         override suspend fun deleteLog(logId: String): Int {
             val initial = logs.value.size

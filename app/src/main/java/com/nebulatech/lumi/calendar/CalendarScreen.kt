@@ -48,10 +48,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun CalendarScreen(
-    modifier: Modifier = Modifier,
-    onTabSelected: (HomeTab) -> Unit = {}
-) {
+fun CalendarScreen(modifier: Modifier = Modifier, onTabSelected: (HomeTab) -> Unit = {}) {
     val calendarVm: CalendarViewModel = koinViewModel()
     val state by calendarVm.state.collectAsStateWithLifecycle()
     val tracker = LocalAnalyticsTracker.current
@@ -67,14 +64,14 @@ fun CalendarScreen(
         bottomBar = {
             LumiBottomNavigationBar(
                 selectedTab = HomeTab.CALENDAR,
-                onTabSelected = onTabSelected
+                onTabSelected = onTabSelected,
             )
         },
-        containerColor = Color(0xFFFBF9F7)
+        containerColor = Color(0xFFFBF9F7),
     ) { innerPadding ->
         if (state.isLoading) {
             com.nebulatech.lumi.calendar.components.CalendarScreenSkeleton(
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(innerPadding),
             )
         } else {
             Column(
@@ -84,120 +81,121 @@ fun CalendarScreen(
                     .statusBarsPadding()
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-            // Month Header Row with Interactive Navigation Arrows (< and >)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp, bottom = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = formattedMonthYear,
-                    fontFamily = LiterataFontFamily,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF26181F)
+                // Month Header Row with Interactive Navigation Arrows (< and >)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp, bottom = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = formattedMonthYear,
+                        fontFamily = LiterataFontFamily,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF26181F),
+                    )
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = {
+                                tracker.trackButtonClick(
+                                    buttonName = AnalyticsConstants.Buttons.CALENDAR_MONTH_PREV,
+                                    screenName = AnalyticsConstants.Screens.CALENDAR,
+                                )
+                                calendarVm.onAction(CalendarAction.ChangeMonth(state.selectedYearMonth.minusMonths(1)))
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
+                                contentDescription = "Previous Month",
+                                tint = Color(0xFF3B2D34),
+                                modifier = Modifier.size(24.dp),
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        IconButton(
+                            onClick = {
+                                tracker.trackButtonClick(
+                                    buttonName = AnalyticsConstants.Buttons.CALENDAR_MONTH_NEXT,
+                                    screenName = AnalyticsConstants.Screens.CALENDAR,
+                                )
+                                calendarVm.onAction(CalendarAction.ChangeMonth(state.selectedYearMonth.plusMonths(1)))
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                                contentDescription = "Next Month",
+                                tint = Color(0xFF3B2D34),
+                                modifier = Modifier.size(24.dp),
+                            )
+                        }
+                    }
+                }
+
+                // 1. Monthly Calendar Grid Card (Dynamically populated from Room)
+                MonthlyCalendarCard(
+                    yearMonth = state.selectedYearMonth,
+                    cells = state.gridCells,
+                    onDayClick = { cell ->
+                        tracker.trackButtonClick(
+                            buttonName = AnalyticsConstants.Buttons.CALENDAR_DAY_CLICK,
+                            screenName = AnalyticsConstants.Screens.CALENDAR,
+                            extraParams = mapOf(
+                                "day" to cell.dayNumber,
+                                "type" to cell.type.name,
+                                "isCurrentMonth" to cell.isCurrentMonth,
+                            ),
+                        )
+                    },
                 )
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = {
-                            tracker.trackButtonClick(
-                                buttonName = AnalyticsConstants.Buttons.CALENDAR_MONTH_PREV,
-                                screenName = AnalyticsConstants.Screens.CALENDAR
-                            )
-                            calendarVm.onAction(CalendarAction.ChangeMonth(state.selectedYearMonth.minusMonths(1)))
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
-                            contentDescription = "Previous Month",
-                            tint = Color(0xFF3B2D34),
-                            modifier = Modifier.size(24.dp)
+                // 2. Calendar Legend
+                CalendarLegend()
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // 3. Phase Detail Info Card
+                PhaseDetailCard(
+                    phaseName = state.phaseDisplayName,
+                    dayNumber = state.cycleDay,
+                    description = state.phaseDescription,
+                    daysUntilNextPeriod = state.daysUntilNextPeriod,
+                    statusBadgeText = state.periodStatusBadgeText,
+                    isOverdue = state.isPeriodOverdue,
+                )
+
+                // 4. Cycle Status Banner Card (View All navigates to Insights)
+                CycleStatusBannerCard(
+                    text = "Your average cycle length is steady at ${state.cycleLength} days.",
+                    onViewAllClick = {
+                        tracker.trackButtonClick(
+                            buttonName = "btn_calendar_view_insights",
+                            screenName = AnalyticsConstants.Screens.CALENDAR,
                         )
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                    IconButton(
-                        onClick = {
-                            tracker.trackButtonClick(
-                                buttonName = AnalyticsConstants.Buttons.CALENDAR_MONTH_NEXT,
-                                screenName = AnalyticsConstants.Screens.CALENDAR
-                            )
-                            calendarVm.onAction(CalendarAction.ChangeMonth(state.selectedYearMonth.plusMonths(1)))
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                            contentDescription = "Next Month",
-                            tint = Color(0xFF3B2D34),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
+                        onTabSelected(HomeTab.INSIGHTS)
+                    },
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
-
-            // 1. Monthly Calendar Grid Card (Dynamically populated from Room)
-            MonthlyCalendarCard(
-                yearMonth = state.selectedYearMonth,
-                cells = state.gridCells,
-                onDayClick = { cell ->
-                    tracker.trackButtonClick(
-                        buttonName = AnalyticsConstants.Buttons.CALENDAR_DAY_CLICK,
-                        screenName = AnalyticsConstants.Screens.CALENDAR,
-                        extraParams = mapOf(
-                            "day" to cell.dayNumber,
-                            "type" to cell.type.name,
-                            "isCurrentMonth" to cell.isCurrentMonth
-                        )
-                    )
-                }
-            )
-
-            // 2. Calendar Legend
-            CalendarLegend()
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // 3. Phase Detail Info Card
-            PhaseDetailCard(
-                phaseName = state.phaseDisplayName,
-                dayNumber = state.cycleDay,
-                description = state.phaseDescription,
-                daysUntilNextPeriod = state.daysUntilNextPeriod,
-                statusBadgeText = state.periodStatusBadgeText,
-                isOverdue = state.isPeriodOverdue
-            )
-
-            // 4. Cycle Status Banner Card (View All navigates to Insights)
-            CycleStatusBannerCard(
-                text = "Your average cycle length is steady at ${state.cycleLength} days.",
-                onViewAllClick = {
-                    tracker.trackButtonClick(
-                        buttonName = "btn_calendar_view_insights",
-                        screenName = AnalyticsConstants.Screens.CALENDAR
-                    )
-                    onTabSelected(HomeTab.INSIGHTS)
-                }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
         }
     }
 }
 
-private fun CyclePhase.toDisplayName(): String = when (this) {
-    CyclePhase.MENSTRUATION -> "Menstrual Phase"
-    CyclePhase.FOLLICULAR -> "Follicular Phase"
-    CyclePhase.FERTILE_WINDOW -> "Fertile Window"
-    CyclePhase.LUTEAL -> "Luteal Phase"
-    CyclePhase.LATE_LUTEAL -> "Late Luteal Phase"
-    CyclePhase.PERIOD_PREDICTED -> "Period Expected"
-    CyclePhase.PERIOD_MISSED -> "Period Missed"
-}
+private fun CyclePhase.toDisplayName(): String =
+    when (this) {
+        CyclePhase.MENSTRUATION -> "Menstrual Phase"
+        CyclePhase.FOLLICULAR -> "Follicular Phase"
+        CyclePhase.FERTILE_WINDOW -> "Fertile Window"
+        CyclePhase.LUTEAL -> "Luteal Phase"
+        CyclePhase.LATE_LUTEAL -> "Late Luteal Phase"
+        CyclePhase.PERIOD_PREDICTED -> "Period Expected"
+        CyclePhase.PERIOD_MISSED -> "Period Missed"
+    }
 
 @Preview(showBackground = true)
 @Composable

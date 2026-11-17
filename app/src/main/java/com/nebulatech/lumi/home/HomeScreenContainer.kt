@@ -30,9 +30,7 @@ import org.koin.androidx.compose.koinViewModel
  * active [com.nebulatech.lumi.data.model.CyclePhase] read from Room.
  */
 @Composable
-fun HomeScreenContainer(
-    modifier: Modifier = Modifier
-) {
+fun HomeScreenContainer(modifier: Modifier = Modifier) {
     val homeVm: HomeViewModel = koinViewModel()
     val loggingVm: LoggingViewModel = koinViewModel()
     val tracker = LocalAnalyticsTracker.current
@@ -52,8 +50,11 @@ fun HomeScreenContainer(
                     HomeLayoutType.FERTILITY_DASHBOARD -> AnalyticsConstants.Screens.HOME_FERTILITY_DASHBOARD
                     HomeLayoutType.SYMPTOM_GRID -> AnalyticsConstants.Screens.HOME_LATE_LUTEAL
                 }
+
                 HomeTab.CALENDAR -> AnalyticsConstants.Screens.CALENDAR
+
                 HomeTab.INSIGHTS -> AnalyticsConstants.Screens.INSIGHTS
+
                 HomeTab.PROFILE -> AnalyticsConstants.Screens.PROFILE
             }
         }
@@ -71,14 +72,14 @@ fun HomeScreenContainer(
         tracker.trackButtonClick(
             buttonName = buttonName,
             screenName = activeScreenName,
-            extraParams = mapOf(AnalyticsConstants.Params.TAB_NAME to tab.name)
+            extraParams = mapOf(AnalyticsConstants.Params.TAB_NAME to tab.name),
         )
         tracker.trackEvent(
             AnalyticsConstants.Events.TAB_SWITCH,
             mapOf(
                 AnalyticsConstants.Params.PREVIOUS_SCREEN to activeScreenName,
-                AnalyticsConstants.Params.TAB_NAME to tab.name
-            )
+                AnalyticsConstants.Params.TAB_NAME to tab.name,
+            ),
         )
         selectedBottomTab.value = tab
     }
@@ -86,7 +87,7 @@ fun HomeScreenContainer(
     val onNotificationClickWithAnalytics: () -> Unit = {
         tracker.trackButtonClick(
             buttonName = AnalyticsConstants.Buttons.NOTIFICATION_BELL,
-            screenName = activeScreenName
+            screenName = activeScreenName,
         )
         showNotificationCenter.value = true
     }
@@ -101,14 +102,14 @@ fun HomeScreenContainer(
             onNavigateBack = {
                 tracker.trackButtonClick(
                     buttonName = AnalyticsConstants.Buttons.BACK,
-                    screenName = AnalyticsConstants.Screens.NOTIFICATION_CENTER
+                    screenName = AnalyticsConstants.Screens.NOTIFICATION_CENTER,
                 )
                 showNotificationCenter.value = false
             },
             onTabSelected = { tab ->
                 onTabSelectedWithAnalytics(tab)
                 showNotificationCenter.value = false
-            }
+            },
         )
     } else {
         Column(modifier = modifier.fillMaxSize()) {
@@ -118,7 +119,7 @@ fun HomeScreenContainer(
                         if (state.isLoading) {
                             com.nebulatech.lumi.home.components.HomeScreenSkeleton(
                                 selectedTab = selectedBottomTab.value,
-                                onTabSelected = onTabSelectedWithAnalytics
+                                onTabSelected = onTabSelectedWithAnalytics,
                             )
                         } else {
                             when (state.layoutType) {
@@ -139,9 +140,10 @@ fun HomeScreenContainer(
                                             homeVm.onAction(HomeAction.MarkPeriodAsMissed)
                                         },
                                         onNotificationClick = onNotificationClickWithAnalytics,
-                                        onTabSelected = onTabSelectedWithAnalytics
+                                        onTabSelected = onTabSelectedWithAnalytics,
                                     )
                                 }
+
                                 HomeLayoutType.FERTILITY_DASHBOARD -> {
                                     FertilityDashboardHomeScreen(
                                         userName = state.userName,
@@ -154,9 +156,10 @@ fun HomeScreenContainer(
                                         currentCycleDay = state.cycleDay,
                                         loggingViewModel = loggingVm,
                                         onNotificationClick = onNotificationClickWithAnalytics,
-                                        onTabSelected = onTabSelectedWithAnalytics
+                                        onTabSelected = onTabSelectedWithAnalytics,
                                     )
                                 }
+
                                 HomeLayoutType.SYMPTOM_GRID -> {
                                     LateLutealHomeScreen(
                                         cycleDay = state.cycleDay,
@@ -166,25 +169,28 @@ fun HomeScreenContainer(
                                         mostFrequentSymptom = state.mostFrequentSymptom,
                                         loggingViewModel = loggingVm,
                                         onNotificationClick = onNotificationClickWithAnalytics,
-                                        onTabSelected = onTabSelectedWithAnalytics
+                                        onTabSelected = onTabSelectedWithAnalytics,
                                     )
                                 }
                             }
                         }
                     }
+
                     HomeTab.CALENDAR -> {
                         CalendarScreen(onTabSelected = onTabSelectedWithAnalytics)
                     }
+
                     HomeTab.INSIGHTS -> {
                         InsightsScreen(
                             onTabSelected = onTabSelectedWithAnalytics,
-                            onNotificationClick = onNotificationClickWithAnalytics
+                            onNotificationClick = onNotificationClickWithAnalytics,
                         )
                     }
+
                     HomeTab.PROFILE -> {
                         ProfileScreen(
                             onTabSelected = onTabSelectedWithAnalytics,
-                            onNotificationClick = onNotificationClickWithAnalytics
+                            onNotificationClick = onNotificationClickWithAnalytics,
                         )
                     }
                 }

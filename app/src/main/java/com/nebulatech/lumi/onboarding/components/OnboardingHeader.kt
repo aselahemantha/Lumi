@@ -24,27 +24,27 @@ fun OnboardingHeader(
     subtitleStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.bodyLarge.copy(
         fontSize = 24.sp,
         lineHeight = 30.sp,
-        fontWeight = FontWeight.Medium
+        fontWeight = FontWeight.Medium,
     ),
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     textAlign: TextAlign = TextAlign.Center,
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = horizontalAlignment
+        horizontalAlignment = horizontalAlignment,
     ) {
         Text(
             text = title,
             style = titleStyle,
             color = MaterialTheme.colorScheme.primary,
-            textAlign = textAlign
+            textAlign = textAlign,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = subtitle,
             style = subtitleStyle,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = textAlign
+            textAlign = textAlign,
         )
     }
 }

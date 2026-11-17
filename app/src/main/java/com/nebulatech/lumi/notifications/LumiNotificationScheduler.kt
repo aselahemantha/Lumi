@@ -23,7 +23,7 @@ object LumiNotificationScheduler {
             action = LumiNotificationReceiver.ACTION_MORNING_CHECK,
             title = "Period & Morning Cycle Check",
             body = "Your daily cycle predictions are ready.",
-            channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS
+            channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
         )
 
         // 2. Fertile & Peak Ovulation Alert (11:00 AM)
@@ -35,7 +35,7 @@ object LumiNotificationScheduler {
             action = LumiNotificationReceiver.ACTION_FERTILITY_ALERT,
             title = "Peak Vitality",
             body = "Peak fertility window today!",
-            channelId = LumiNotificationChannels.CHANNEL_FERTILITY_ALERTS
+            channelId = LumiNotificationChannels.CHANNEL_FERTILITY_ALERTS,
         )
 
         // 3. Evening Reflection Check (8:30 PM)
@@ -47,7 +47,7 @@ object LumiNotificationScheduler {
             action = LumiNotificationReceiver.ACTION_DAILY_REFLECTION,
             title = "Daily Reflection",
             body = "How are you feeling today? Log today's symptoms and mood.",
-            channelId = LumiNotificationChannels.CHANNEL_DAILY_REMINDERS
+            channelId = LumiNotificationChannels.CHANNEL_DAILY_REMINDERS,
         )
     }
 
@@ -59,7 +59,7 @@ object LumiNotificationScheduler {
         action: String,
         title: String,
         body: String,
-        channelId: String
+        channelId: String,
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
 
@@ -75,7 +75,7 @@ object LumiNotificationScheduler {
             context,
             requestCode,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
         val calendar = Calendar.getInstance().apply {
@@ -94,27 +94,27 @@ object LumiNotificationScheduler {
                     alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         calendar.timeInMillis,
-                        pendingIntent
+                        pendingIntent,
                     )
                 } else {
                     alarmManager.setAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         calendar.timeInMillis,
-                        pendingIntent
+                        pendingIntent,
                     )
                 }
             } else {
                 alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     calendar.timeInMillis,
-                    pendingIntent
+                    pendingIntent,
                 )
             }
         } catch (_: SecurityException) {
             alarmManager.set(
                 AlarmManager.RTC_WAKEUP,
                 calendar.timeInMillis,
-                pendingIntent
+                pendingIntent,
             )
         }
     }
@@ -128,7 +128,7 @@ object LumiNotificationScheduler {
         title: String = "Lumi Cycle Alert",
         body: String = "Your daily insights and cycle prediction are ready in Lumi.",
         channelId: String = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
-        notificationId: Int = 3001
+        notificationId: Int = 3001,
     ) {
         val intent = Intent(context, LumiNotificationReceiver::class.java).apply {
             action = LumiNotificationReceiver.ACTION_PERIOD_ALERT

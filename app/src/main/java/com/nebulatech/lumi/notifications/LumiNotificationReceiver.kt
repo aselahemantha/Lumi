@@ -75,9 +75,10 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                             settings = settings,
                             profile = profile,
                             currentCycle = currentCycle,
-                            today = today
+                            today = today,
                         )
                     }
+
                     ACTION_FERTILITY_ALERT -> {
                         handleFertilityCheck(
                             context = context,
@@ -86,9 +87,10 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                             settings = settings,
                             profile = profile,
                             currentCycle = currentCycle,
-                            today = today
+                            today = today,
                         )
                     }
+
                     ACTION_DAILY_REFLECTION -> {
                         handleDailyReflection(
                             context = context,
@@ -96,14 +98,17 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                             dailyLogRepo = dailyLogRepo,
                             userId = userId,
                             settings = settings,
-                            today = today
+                            today = today,
                         )
                     }
+
                     else -> {
                         // Manual test notification fallback
                         val title = intent.getStringExtra(EXTRA_TITLE) ?: "Lumi Cycle Alert"
                         val body = intent.getStringExtra(EXTRA_BODY) ?: "Your daily insights are updated."
-                        val channelId = intent.getStringExtra(EXTRA_CHANNEL_ID) ?: LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS
+                        val channelId =
+                            intent.getStringExtra(EXTRA_CHANNEL_ID)
+                                ?: LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS
                         val notifId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, 3001)
 
                         dispatchNotification(
@@ -114,7 +119,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                             body = body,
                             channelId = channelId,
                             notificationId = notifId,
-                            category = NotificationCategory.PERIOD_PREDICTION
+                            category = NotificationCategory.PERIOD_PREDICTION,
                         )
                     }
                 }
@@ -134,14 +139,18 @@ class LumiNotificationReceiver : BroadcastReceiver() {
         settings: Map<String, Boolean>,
         profile: com.nebulatech.lumi.data.model.UserProfile?,
         currentCycle: com.nebulatech.lumi.data.model.Cycle?,
-        today: LocalDate
+        today: LocalDate,
     ) {
         val periodAlertsOn = settings["PERIOD_START"] ?: true
         val phaseInsightsOn = settings["PHASE_INSIGHT"] ?: false
         val bbtReminderOn = settings["BBT_REMINDER"] ?: false
 
         if (currentCycle != null) {
-            val cycleStart = try { LocalDate.parse(currentCycle.startDate) } catch (_: Exception) { today }
+            val cycleStart = try {
+                LocalDate.parse(currentCycle.startDate)
+            } catch (_: Exception) {
+                today
+            }
             val cycleLen = currentCycle.cycleLength ?: (profile?.cycleLength ?: 28)
             val periodLen = currentCycle.periodLength ?: (profile?.periodDuration ?: 5)
             val predictedPeriodDate = cycleStart.plusDays(cycleLen.toLong())
@@ -150,7 +159,9 @@ class LumiNotificationReceiver : BroadcastReceiver() {
             val phase = RoomCycleRepository.calculatePhase(cycleDay, cycleLen, periodLen)
 
             val todaysLog = dailyLogRepo.getLogForDate(userId, today).first()
-            val hasLoggedFlowToday = todaysLog?.flowIntensity != null && todaysLog.flowIntensity != com.nebulatech.lumi.data.model.FlowIntensityType.NONE
+            val hasLoggedFlowToday =
+                todaysLog?.flowIntensity != null &&
+                    todaysLog.flowIntensity != com.nebulatech.lumi.data.model.FlowIntensityType.NONE
 
             var sentPeriodAlert = false
 
@@ -166,10 +177,11 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                             body = "Your period is predicted in 2 days. Stay hydrated and prioritize restorative rest.",
                             channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
                             notificationId = 1001,
-                            category = NotificationCategory.PERIOD_PREDICTION
+                            category = NotificationCategory.PERIOD_PREDICTION,
                         )
                         sentPeriodAlert = true
                     }
+
                     daysUntil == 1 -> {
                         dispatchNotification(
                             context = context,
@@ -179,10 +191,11 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                             body = "Your period is expected tomorrow. Keep your essentials close.",
                             channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
                             notificationId = 1002,
-                            category = NotificationCategory.PERIOD_PREDICTION
+                            category = NotificationCategory.PERIOD_PREDICTION,
                         )
                         sentPeriodAlert = true
                     }
+
                     daysUntil == 0 -> {
                         dispatchNotification(
                             context = context,
@@ -192,10 +205,11 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                             body = "Your period is predicted to start today. When bleeding begins, log your first flow to confirm.",
                             channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
                             notificationId = 1003,
-                            category = NotificationCategory.PERIOD_PREDICTION
+                            category = NotificationCategory.PERIOD_PREDICTION,
                         )
                         sentPeriodAlert = true
                     }
+
                     daysUntil <= -10 && phase == CyclePhase.PERIOD_MISSED -> {
                         dispatchNotification(
                             context = context,
@@ -205,10 +219,11 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                             body = "Your period is over 10 days late. Tap to log past bleeding or mark this cycle as missed.",
                             channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
                             notificationId = 1006,
-                            category = NotificationCategory.PERIOD_PREDICTION
+                            category = NotificationCategory.PERIOD_PREDICTION,
                         )
                         sentPeriodAlert = true
                     }
+
                     daysUntil < 0 && phase == CyclePhase.PERIOD_PREDICTED -> {
                         dispatchNotification(
                             context = context,
@@ -218,7 +233,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                             body = "Your period is due. Tap to log your flow and start your new cycle.",
                             channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
                             notificationId = 1004,
-                            category = NotificationCategory.PERIOD_PREDICTION
+                            category = NotificationCategory.PERIOD_PREDICTION,
                         )
                         sentPeriodAlert = true
                     }
@@ -245,7 +260,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                     body = insightBody,
                     channelId = LumiNotificationChannels.CHANNEL_PHASE_INSIGHTS,
                     notificationId = 1005,
-                    category = NotificationCategory.PHASE_INSIGHT
+                    category = NotificationCategory.PHASE_INSIGHT,
                 )
             }
         }
@@ -260,7 +275,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                 body = "Remember to take your waking temperature before getting up.",
                 channelId = LumiNotificationChannels.CHANNEL_DAILY_REMINDERS,
                 notificationId = 1006,
-                category = NotificationCategory.MORNING_BBT
+                category = NotificationCategory.MORNING_BBT,
             )
         }
     }
@@ -272,12 +287,16 @@ class LumiNotificationReceiver : BroadcastReceiver() {
         settings: Map<String, Boolean>,
         profile: com.nebulatech.lumi.data.model.UserProfile?,
         currentCycle: com.nebulatech.lumi.data.model.Cycle?,
-        today: LocalDate
+        today: LocalDate,
     ) {
         val fertilityAlertsOn = settings["FERTILE_WINDOW"] ?: true
         if (!fertilityAlertsOn || currentCycle == null) return
 
-        val cycleStart = try { LocalDate.parse(currentCycle.startDate) } catch (_: Exception) { today }
+        val cycleStart = try {
+            LocalDate.parse(currentCycle.startDate)
+        } catch (_: Exception) {
+            today
+        }
         val cycleLen = currentCycle.cycleLength ?: (profile?.cycleLength ?: 28)
         val ovulationDay = cycleLen - 14
         val ovulationDate = cycleStart.plusDays(ovulationDay.toLong())
@@ -291,7 +310,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                 body = "Peak fertility window today! Today is an optimal time for an LH ovulation test or conception tracking.",
                 channelId = LumiNotificationChannels.CHANNEL_FERTILITY_ALERTS,
                 notificationId = 1007,
-                category = NotificationCategory.PEAK_VITALITY
+                category = NotificationCategory.PEAK_VITALITY,
             )
         } else if (today.isEqual(ovulationDate.minusDays(1))) {
             dispatchNotification(
@@ -302,7 +321,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                 body = "Your fertile window is peaking. Ovulation is expected within the next 24–48 hours.",
                 channelId = LumiNotificationChannels.CHANNEL_FERTILITY_ALERTS,
                 notificationId = 1008,
-                category = NotificationCategory.FERTILITY_INSIGHT
+                category = NotificationCategory.FERTILITY_INSIGHT,
             )
         }
     }
@@ -313,13 +332,15 @@ class LumiNotificationReceiver : BroadcastReceiver() {
         dailyLogRepo: DailyLogRepository,
         userId: String,
         settings: Map<String, Boolean>,
-        today: LocalDate
+        today: LocalDate,
     ) {
         val dailyLogOn = settings["DAILY_LOG"] ?: false
         if (!dailyLogOn) return
 
         val existingLog = dailyLogRepo.getLogForDate(userId, today).first()
-        val hasLoggedToday = existingLog != null && (existingLog.symptoms.isNotEmpty() || existingLog.mood != null || existingLog.flowIntensity != null)
+        val hasLoggedToday =
+            existingLog != null &&
+                (existingLog.symptoms.isNotEmpty() || existingLog.mood != null || existingLog.flowIntensity != null)
 
         if (!hasLoggedToday) {
             dispatchNotification(
@@ -330,7 +351,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                 body = "How are you feeling tonight? Take 10 seconds to log today's symptoms and mood.",
                 channelId = LumiNotificationChannels.CHANNEL_DAILY_REMINDERS,
                 notificationId = 1009,
-                category = NotificationCategory.DAILY_REFLECTION
+                category = NotificationCategory.DAILY_REFLECTION,
             )
         }
     }
@@ -343,7 +364,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
         body: String,
         channelId: String,
         notificationId: Int,
-        category: NotificationCategory
+        category: NotificationCategory,
     ) {
         val openAppIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -352,7 +373,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
             context,
             notificationId,
             openAppIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
         val notification = NotificationCompat.Builder(context, channelId)
@@ -367,7 +388,7 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                     NotificationCompat.PRIORITY_HIGH
                 } else {
                     NotificationCompat.PRIORITY_DEFAULT
-                }
+                },
             )
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -389,8 +410,8 @@ class LumiNotificationReceiver : BroadcastReceiver() {
                 category = category,
                 title = title,
                 body = body,
-                timeText = "Just now"
-            )
+                timeText = "Just now",
+            ),
         )
     }
 }
