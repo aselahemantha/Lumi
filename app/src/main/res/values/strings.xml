@@ -119,6 +119,7 @@
     <string name="log_bbt_title">Log BBT</string>
     <string name="bbt_time_placeholder">Today, 7:30 AM</string>
     <string name="unit_fahrenheit">°F</string>
+    <string name="unit_celsius">°C</string>
     <string name="disturbed_sleep_label">Disturbed Sleep</string>
     <string name="fever_illness_label">Fever / Illness</string>
     <string name="save_reading_button">Save Reading</string>

@@ -22,6 +22,7 @@ sealed interface LoggingAction {
     /** Triggered by LogBBTBottomSheet.onSaveReading */
     data class SaveBbt(
         val temperatureStr: String,
+        val temperatureUnit: String = "F",
         val disturbedSleep: Boolean,
         val feverIllness: Boolean
     ) : LoggingAction

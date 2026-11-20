@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.R
+import com.nebulatech.lumi.data.model.CycleDefaults
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -72,41 +73,74 @@ data class HormoneLevels(
     val phaseName: String
 )
 
-fun calculateHormonesForDay(day: Float): HormoneLevels {
-    val d = day.coerceIn(1f, 28f)
+fun calculateHormonesForDay(
+    day: Float,
+    cycleLength: Int = CycleDefaults.DEFAULT_CYCLE_LENGTH,
+    periodLength: Int = CycleDefaults.DEFAULT_PERIOD_DURATION
+): HormoneLevels {
+    val safeCycleLength = cycleLength.coerceIn(CycleDefaults.MIN_CYCLE_LENGTH, CycleDefaults.MAX_CYCLE_LENGTH)
+    val safePeriodLength = periodLength.coerceIn(CycleDefaults.MIN_PERIOD_DURATION, CycleDefaults.MAX_PERIOD_DURATION)
+    val d = day.coerceIn(1f, safeCycleLength.toFloat())
+
+    val ovulationDay = maxOf(safeCycleLength - CycleDefaults.DEFAULT_LUTEAL_PHASE_DAYS, safePeriodLength + 2).toFloat()
+    val follicularRiseStart = (safePeriodLength + 2.5f).coerceAtMost(ovulationDay - 2f)
+    val surgePeakDay = ovulationDay - 0.5f
+    val lutealMidDay = ovulationDay + (safeCycleLength - ovulationDay) * 0.55f
 
     // Estrogen curve (pg/mL)
     val estrogen = when {
-        d < 8f -> 50f
-        d in 8f..13f -> 50f + 290f * Math.sin(((d - 8f) / 5f) * (Math.PI / 2)).toFloat()
-        d in 13f..16f -> 340f - 250f * Math.sin(((d - 13f) / 3f) * (Math.PI / 2)).toFloat()
-        d in 16f..22f -> 90f + 100f * Math.sin(((d - 16f) / 6f) * (Math.PI / 2)).toFloat()
-        else -> 190f - 140f * ((d - 22f) / 6f)
+        d < follicularRiseStart -> 50f
+        d <= surgePeakDay -> {
+            val t = ((d - follicularRiseStart) / (surgePeakDay - follicularRiseStart).coerceAtLeast(1f))
+            50f + 290f * Math.sin(t * (Math.PI / 2)).toFloat()
+        }
+        d <= ovulationDay + 2f -> {
+            val t = ((d - surgePeakDay) / ((ovulationDay + 2f) - surgePeakDay).coerceAtLeast(1f))
+            340f - 250f * Math.sin(t * (Math.PI / 2)).toFloat()
+        }
+        d <= lutealMidDay -> {
+            val t = ((d - (ovulationDay + 2f)) / (lutealMidDay - (ovulationDay + 2f)).coerceAtLeast(1f))
+            90f + 100f * Math.sin(t * (Math.PI / 2)).toFloat()
+        }
+        else -> {
+            val t = ((d - lutealMidDay) / (safeCycleLength - lutealMidDay).coerceAtLeast(1f))
+            190f - 140f * t
+        }
     }.coerceIn(20f, 350f)
 
     // Progesterone curve (ng/mL)
     val progesterone = when {
-        d < 13f -> 0.5f
-        d in 13f..21f -> 0.5f + 17.5f * Math.sin(((d - 13f) / 8f) * (Math.PI / 2)).toFloat()
-        else -> 18.0f - 17.5f * ((d - 21f) / 7f)
+        d < surgePeakDay -> 0.5f
+        d <= lutealMidDay -> {
+            val t = ((d - surgePeakDay) / (lutealMidDay - surgePeakDay).coerceAtLeast(1f))
+            0.5f + 17.5f * Math.sin(t * (Math.PI / 2)).toFloat()
+        }
+        else -> {
+            val t = ((d - lutealMidDay) / (safeCycleLength - lutealMidDay).coerceAtLeast(1f))
+            18.0f - 17.5f * t
+        }
     }.coerceIn(0.5f, 20.0f)
 
     // LH surge (mIU/mL)
     val lh = when {
-        d in 11.5f..15.5f -> 5f + 55f * Math.exp(-Math.pow((d - 13.5) / 0.8, 2.0)).toFloat()
+        d in (surgePeakDay - 2f)..(surgePeakDay + 2f) -> {
+            5f + 55f * Math.exp(-Math.pow(((d - surgePeakDay) / 0.8).toDouble(), 2.0)).toFloat()
+        }
         else -> 5f
     }.coerceIn(5f, 65f)
 
     // FSH surge (mIU/mL x2 scale)
     val fsh = when {
-        d in 11.5f..15.5f -> 8f + 27f * Math.exp(-Math.pow((d - 13.5) / 0.9, 2.0)).toFloat()
+        d in (surgePeakDay - 2f)..(surgePeakDay + 2f) -> {
+            8f + 27f * Math.exp(-Math.pow(((d - surgePeakDay) / 0.9).toDouble(), 2.0)).toFloat()
+        }
         else -> 8f
     }.coerceIn(5f, 35f)
 
     val phaseName = when {
-        d <= 5.5f -> "Menstruation"
-        d <= 12.5f -> "Follicular"
-        d <= 15.5f -> "Ovulation"
+        d <= safePeriodLength + 0.5f -> "Menstruation"
+        d <= ovulationDay - 1.5f -> "Follicular"
+        d <= ovulationDay + 1.5f -> "Ovulation"
         else -> "Luteal"
     }
 
@@ -116,10 +150,20 @@ fun calculateHormonesForDay(day: Float): HormoneLevels {
 @Composable
 fun InteractiveHormoneChartCard(
     initialDay: Int = 1,
+    cycleLength: Int = CycleDefaults.DEFAULT_CYCLE_LENGTH,
+    periodLength: Int = CycleDefaults.DEFAULT_PERIOD_DURATION,
     modifier: Modifier = Modifier
 ) {
-    var selectedDay by remember(initialDay) { mutableFloatStateOf(initialDay.toFloat().coerceIn(1f, 28f)) }
-    val currentHormones = remember(selectedDay) { calculateHormonesForDay(selectedDay) }
+    val safeCycleLength = cycleLength.coerceIn(CycleDefaults.MIN_CYCLE_LENGTH, CycleDefaults.MAX_CYCLE_LENGTH)
+    val maxDaySpan = (safeCycleLength - 1).toFloat().coerceAtLeast(1f)
+    val ovulationDay = maxOf(safeCycleLength - CycleDefaults.DEFAULT_LUTEAL_PHASE_DAYS, periodLength + 2).toFloat()
+
+    var selectedDay by remember(initialDay, safeCycleLength) {
+        mutableFloatStateOf(initialDay.toFloat().coerceIn(1f, safeCycleLength.toFloat()))
+    }
+    val currentHormones = remember(selectedDay, safeCycleLength, periodLength) {
+        calculateHormonesForDay(selectedDay, safeCycleLength, periodLength)
+    }
 
     val estrogenColor = ChartEstrogen     // Blue
     val progesteroneColor = SuccessGreen // Green
@@ -187,18 +231,18 @@ fun InteractiveHormoneChartCard(
                                 val chartWidth = chartRight - chartLeft
                                 if (chartWidth > 0) {
                                     val dayRatio = ((offset.x - chartLeft) / chartWidth).coerceIn(0f, 1f)
-                                    selectedDay = 1f + dayRatio * 27f
+                                    selectedDay = 1f + dayRatio * maxDaySpan
                                 }
                             }
                         }
-                        .pointerInput(Unit) {
+                        .pointerInput(maxDaySpan) {
                             detectDragGestures { change, _ ->
                                 val chartLeft = size.width * 0.12f
                                 val chartRight = size.width * 0.92f
                                 val chartWidth = chartRight - chartLeft
                                 if (chartWidth > 0) {
                                     val dayRatio = ((change.position.x - chartLeft) / chartWidth).coerceIn(0f, 1f)
-                                    selectedDay = 1f + dayRatio * 27f
+                                    selectedDay = 1f + dayRatio * maxDaySpan
                                 }
                             }
                         }
@@ -214,12 +258,12 @@ fun InteractiveHormoneChartCard(
                     val chartW = w - paddingLeft - paddingRight
                     val chartH = h - paddingTop - paddingBottom
 
-                    fun dayToX(day: Float): Float = paddingLeft + ((day - 1f) / 27f) * chartW
+                    fun dayToX(day: Float): Float = paddingLeft + ((day - 1f) / maxDaySpan) * chartW
                     fun valToY(value: Float, maxVal: Float = 400f): Float = paddingTop + (1f - (value / maxVal)) * chartH
 
-                    // 1. Ovulation Phase Highlight Band (Days 13 to 15)
-                    val ovulationX1 = dayToX(13f)
-                    val ovulationX2 = dayToX(15f)
+                    // 1. Ovulation Phase Highlight Band
+                    val ovulationX1 = dayToX(ovulationDay - 1f)
+                    val ovulationX2 = dayToX(ovulationDay + 1f)
                     drawRect(
                         color = ChartEstrogenBg,
                         topLeft = Offset(ovulationX1, paddingTop),
@@ -239,7 +283,11 @@ fun InteractiveHormoneChartCard(
                     }
 
                     // 3. Vertical Phase Grid Lines
-                    val phaseDays = listOf(5.5f, 12.5f, 15.5f)
+                    val phaseDays = listOf(
+                        (periodLength + 0.5f).coerceAtMost(ovulationDay - 2f),
+                        ovulationDay - 1.5f,
+                        ovulationDay + 1.5f
+                    )
                     phaseDays.forEach { pd ->
                         val x = dayToX(pd)
                         drawLine(
@@ -258,8 +306,8 @@ fun InteractiveHormoneChartCard(
                     val fshPoints = mutableListOf<Offset>()
 
                     for (i in 0..stepCount) {
-                        val d = 1f + (i.toFloat() / stepCount) * 27f
-                        val hData = calculateHormonesForDay(d)
+                        val d = 1f + (i.toFloat() / stepCount) * maxDaySpan
+                        val hData = calculateHormonesForDay(d, safeCycleLength, periodLength)
                         val x = dayToX(d)
 
                         estrogenPoints.add(Offset(x, valToY(hData.estrogen)))
@@ -302,7 +350,7 @@ fun InteractiveHormoneChartCard(
                     )
 
                     // 6. Color Dots on Curves at Cursor X Position
-                    val selHormones = calculateHormonesForDay(selectedDay)
+                    val selHormones = calculateHormonesForDay(selectedDay, safeCycleLength, periodLength)
                     val estY = valToY(selHormones.estrogen)
                     val progY = valToY(selHormones.progesterone * 10f)
                     val lhY = valToY(selHormones.lh)
@@ -332,7 +380,12 @@ fun InteractiveHormoneChartCard(
                     }
                 }
 
-                // X-Axis Day Numbers (1, 5, 10, 14, 20, 25, 28)
+                // X-Axis Day Numbers scaled dynamically to cycleLength
+                val xAxisDays = remember(safeCycleLength) {
+                    (0..6).map { i ->
+                        (1 + kotlin.math.round((i / 6f) * (safeCycleLength - 1)).toInt()).toString()
+                    }
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(0.80f)
@@ -340,7 +393,7 @@ fun InteractiveHormoneChartCard(
                         .padding(bottom = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    listOf("1", "5", "10", "14", "20", "25", "28").forEach { dayLabel ->
+                    xAxisDays.forEach { dayLabel ->
                         Text(
                             text = dayLabel,
                             fontFamily = ManropeFontFamily,
@@ -493,8 +546,8 @@ fun InteractiveHormoneChartCard(
                 Slider(
                     value = selectedDay,
                     onValueChange = { selectedDay = it },
-                    valueRange = 1f..28f,
-                    steps = 26,
+                    valueRange = 1f..safeCycleLength.toFloat(),
+                    steps = (safeCycleLength - 2).coerceAtLeast(1),
                     modifier = Modifier.weight(1f),
                     colors = SliderDefaults.colors(
                         thumbColor = TextPrimary,

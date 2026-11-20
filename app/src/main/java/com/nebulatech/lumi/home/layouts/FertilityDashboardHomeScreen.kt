@@ -164,10 +164,11 @@ fun FertilityDashboardHomeScreen(
         if (showBBTSheet) {
             LogBBTBottomSheet(
                 onDismissRequest = { showBBTSheet = false },
-                onSaveReading = { tempStr, disturbedSleep, feverIllness ->
+                onSaveReading = { tempStr, unit, disturbedSleep, feverIllness ->
                     loggingViewModel?.onAction(
                         LoggingAction.SaveBbt(
                             temperatureStr = tempStr,
+                            temperatureUnit = unit,
                             disturbedSleep = disturbedSleep,
                             feverIllness = feverIllness
                         )

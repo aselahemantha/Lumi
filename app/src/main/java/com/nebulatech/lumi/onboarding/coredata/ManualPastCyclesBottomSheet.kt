@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.R
+import com.nebulatech.lumi.data.model.CycleDefaults
 import com.nebulatech.lumi.onboarding.ManualPastCycle
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
@@ -75,8 +76,8 @@ import com.nebulatech.lumi.ui.theme.TextSecondary
 @Composable
 fun ManualPastCyclesBottomSheet(
     firstDayOfLastPeriod: LocalDate,
-    defaultCycleLength: Int = 28,
-    defaultPeriodDuration: Int = 5,
+    defaultCycleLength: Int = CycleDefaults.DEFAULT_CYCLE_LENGTH,
+    defaultPeriodDuration: Int = CycleDefaults.DEFAULT_PERIOD_DURATION,
     initialPastCycles: List<ManualPastCycle>? = null,
     onDismissRequest: () -> Unit,
     onSave: (List<ManualPastCycle>?) -> Unit
@@ -495,8 +496,8 @@ private fun PastCycleInputCard(
                 MiniCounterBox(
                     label = stringResource(R.string.cycle_length_title),
                     value = cycleLength,
-                    onDecrease = { if (cycleLength > 20) onLengthChange(cycleLength - 1) },
-                    onIncrease = { if (cycleLength < 45) onLengthChange(cycleLength + 1) },
+                    onDecrease = { if (cycleLength > CycleDefaults.MIN_CYCLE_LENGTH) onLengthChange(cycleLength - 1) },
+                    onIncrease = { if (cycleLength < CycleDefaults.MAX_CYCLE_LENGTH) onLengthChange(cycleLength + 1) },
                     modifier = Modifier.weight(1f)
                 )
 
@@ -504,8 +505,8 @@ private fun PastCycleInputCard(
                 MiniCounterBox(
                     label = stringResource(R.string.period_flow_label),
                     value = periodDuration,
-                    onDecrease = { if (periodDuration > 2) onDurationChange(periodDuration - 1) },
-                    onIncrease = { if (periodDuration < 10) onDurationChange(periodDuration + 1) },
+                    onDecrease = { if (periodDuration > CycleDefaults.MIN_PERIOD_DURATION) onDurationChange(periodDuration - 1) },
+                    onIncrease = { if (periodDuration < CycleDefaults.MAX_PERIOD_DURATION) onDurationChange(periodDuration + 1) },
                     modifier = Modifier.weight(1f)
                 )
             }

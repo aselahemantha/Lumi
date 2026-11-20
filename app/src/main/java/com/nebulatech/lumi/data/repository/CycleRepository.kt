@@ -9,6 +9,7 @@ import com.nebulatech.lumi.data.local.dao.UserProfileDao
 import com.nebulatech.lumi.data.mapper.toCycle
 import com.nebulatech.lumi.data.mapper.toCycleEntity
 import com.nebulatech.lumi.data.model.Cycle
+import com.nebulatech.lumi.data.model.CycleDefaults
 import com.nebulatech.lumi.data.model.CyclePhase
 import com.nebulatech.lumi.data.model.FlowIntensityType
 import com.nebulatech.lumi.data.model.PastCycleInput
@@ -84,10 +85,11 @@ class RoomCycleRepository(
                     actualFlowDays > 0 -> actualFlowDays
                     currentCycle.periodLength != null && currentCycle.periodLength > 0 -> currentCycle.periodLength
                     userProfile?.periodDuration != null && userProfile.periodDuration > 0 -> userProfile.periodDuration
-                    else -> 5
+                    else -> CycleDefaults.DEFAULT_PERIOD_DURATION
                 }
 
-                val isMissedCycle = currentCycle.isMissed || cycleLength >= (userProfile?.cycleLength ?: 28) + 10
+                val isMissedCycle = currentCycle.isMissed ||
+                    cycleLength >= (userProfile?.cycleLength ?: CycleDefaults.DEFAULT_CYCLE_LENGTH) + CycleDefaults.MISSED_PERIOD_THRESHOLD_DAYS
 
                 cycleDao.closeCycle(
                     cycleId = currentCycle.id,
@@ -103,7 +105,7 @@ class RoomCycleRepository(
             }
 
             val cycleCount = cycleDao.getAllCycles(userId).size
-            val defaultPeriodLength = userProfileDao.getProfile(userId)?.periodDuration ?: 5
+            val defaultPeriodLength = userProfileDao.getProfile(userId)?.periodDuration ?: CycleDefaults.DEFAULT_PERIOD_DURATION
             val newCycle = Cycle(
                 id = UUID.randomUUID().toString(),
                 userId = userId,
@@ -136,15 +138,15 @@ class RoomCycleRepository(
     ): EmptyResult<DataError.Local> {
         return try {
             val now = Instant.now().toString()
-            val safeCycleLength = if (cycleLength in 20..45) cycleLength else 28
-            val safePeriodLength = if (periodDuration in 2..10) periodDuration else 5
+            val safeCycleLength = if (cycleLength in CycleDefaults.MIN_CYCLE_LENGTH..CycleDefaults.MAX_CYCLE_LENGTH) cycleLength else CycleDefaults.DEFAULT_CYCLE_LENGTH
+            val safePeriodLength = if (periodDuration in CycleDefaults.MIN_PERIOD_DURATION..CycleDefaults.MAX_PERIOD_DURATION) periodDuration else CycleDefaults.DEFAULT_PERIOD_DURATION
 
             // Generate past completed cycles backwards
             for (i in numberOfPastCycles downTo 1) {
                 val cycleNum = numberOfPastCycles - i + 1
                 val cycleStart = currentCycleStartDate.minusDays((safeCycleLength * i).toLong())
                 val cycleEnd = currentCycleStartDate.minusDays((safeCycleLength * (i - 1) + 1).toLong())
-                val ovulationDay = maxOf(safeCycleLength - 14, safePeriodLength + 1)
+                val ovulationDay = maxOf(safeCycleLength - CycleDefaults.DEFAULT_LUTEAL_PHASE_DAYS, safePeriodLength + 1)
                 val ovulationDate = cycleStart.plusDays(ovulationDay.toLong()).toString()
 
                 val historicalCycle = Cycle(
@@ -207,7 +209,7 @@ class RoomCycleRepository(
                 val cycleNum = i + 1
                 val cycleStart = c.startDate
                 val cycleEnd = cycleStart.plusDays((c.cycleLength - 1).toLong())
-                val ovulationDay = maxOf(c.cycleLength - 14, c.periodDuration + 1)
+                val ovulationDay = maxOf(c.cycleLength - CycleDefaults.DEFAULT_LUTEAL_PHASE_DAYS, c.periodDuration + 1)
                 val ovulationDate = cycleStart.plusDays(ovulationDay.toLong()).toString()
 
                 val historicalCycle = Cycle(
@@ -295,11 +297,14 @@ class RoomCycleRepository(
             getLastNCycles(userId, 12),
             userProfileDao.getProfileFlow(userId)
         ) { recentCycles, profile ->
-            val completedCycles = recentCycles.filter { !it.isCurrent && !it.isMissed && it.cycleLength != null && it.cycleLength in 20..45 }
+            val completedCycles = recentCycles.filter {
+                !it.isCurrent && !it.isMissed && it.cycleLength != null &&
+                    it.cycleLength in CycleDefaults.MIN_CYCLE_LENGTH..CycleDefaults.MAX_CYCLE_LENGTH
+            }
             if (completedCycles.isNotEmpty()) {
                 completedCycles.mapNotNull { it.cycleLength }.average().toInt()
             } else {
-                profile?.cycleLength ?: 28
+                profile?.cycleLength ?: CycleDefaults.DEFAULT_CYCLE_LENGTH
             }
         }
     }
@@ -313,7 +318,7 @@ class RoomCycleRepository(
             if (completedPeriods.isNotEmpty()) {
                 completedPeriods.mapNotNull { it.periodLength }.average().toInt()
             } else {
-                profile?.periodDuration ?: 5
+                profile?.periodDuration ?: CycleDefaults.DEFAULT_PERIOD_DURATION
             }
         }
     }
@@ -333,9 +338,9 @@ class RoomCycleRepository(
             cycleDay: Int,
             cycleLength: Int,
             periodLength: Int,
-            missedThresholdDays: Int = 10
+            missedThresholdDays: Int = CycleDefaults.MISSED_PERIOD_THRESHOLD_DAYS
         ): CyclePhase {
-            val ovulationDay = cycleLength - 14
+            val ovulationDay = cycleLength - CycleDefaults.DEFAULT_LUTEAL_PHASE_DAYS
             val fertileStart = maxOf(ovulationDay - 3, periodLength + 1)
             val fertileEnd = ovulationDay + 1
             val lateLutealStart = maxOf(cycleLength - 6, fertileEnd + 1)

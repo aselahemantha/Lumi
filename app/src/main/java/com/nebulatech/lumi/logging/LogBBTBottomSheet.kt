@@ -57,6 +57,7 @@ import com.nebulatech.lumi.ui.theme.Primary
 import com.nebulatech.lumi.ui.theme.BorderSoft
 import com.nebulatech.lumi.ui.theme.DividerSubtle
 import com.nebulatech.lumi.ui.theme.OutlineVariant
+import com.nebulatech.lumi.ui.theme.RoseTintLight
 import com.nebulatech.lumi.ui.theme.RoseTintLightest
 import com.nebulatech.lumi.ui.theme.RoseTintMedium
 import com.nebulatech.lumi.ui.theme.TextPrimary
@@ -67,14 +68,16 @@ import com.nebulatech.lumi.ui.theme.TextStrong
 @Composable
 fun LogBBTBottomSheet(
     onDismissRequest: () -> Unit,
-    onSaveReading: (String, Boolean, Boolean) -> Unit = { _, _, _ -> },
+    onSaveReading: (String, String, Boolean, Boolean) -> Unit = { _, _, _, _ -> },
+    initialUnit: String = "F",
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     modifier: Modifier = Modifier
 ) {
     val tracker = LocalAnalyticsTracker.current
     TrackScreenView("log_bbt_sheet")
 
-    var tempValue by remember { mutableStateOf("97.8") }
+    var tempUnit by remember(initialUnit) { mutableStateOf(if (initialUnit == "C") "C" else "F") }
+    var tempValue by remember(initialUnit) { mutableStateOf(if (initialUnit == "C") "36.6" else "97.8") }
     var disturbedSleep by remember { mutableStateOf(false) }
     var feverIllness by remember { mutableStateOf(false) }
 
@@ -152,15 +155,42 @@ fun LogBBTBottomSheet(
                         fontWeight = FontWeight.Bold,
                         color = Primary
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = stringResource(R.string.unit_fahrenheit),
-                        fontFamily = LiterataFontFamily,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Primary,
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Box(
+                        modifier = Modifier
+                            .padding(bottom = 6.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(RoseTintLight)
+                            .clickable {
+                                val numeric = tempValue.toDoubleOrNull()
+                                if (tempUnit == "F") {
+                                    tempUnit = "C"
+                                    if (numeric != null) {
+                                        val celsius = (numeric - 32.0) * 5.0 / 9.0
+                                        tempValue = String.format(java.util.Locale.US, "%.1f", celsius)
+                                    } else {
+                                        tempValue = "36.6"
+                                    }
+                                } else {
+                                    tempUnit = "F"
+                                    if (numeric != null) {
+                                        val fahrenheit = numeric * 9.0 / 5.0 + 32.0
+                                        tempValue = String.format(java.util.Locale.US, "%.1f", fahrenheit)
+                                    } else {
+                                        tempValue = "97.8"
+                                    }
+                                }
+                            }
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(if (tempUnit == "C") R.string.unit_celsius else R.string.unit_fahrenheit),
+                            fontFamily = LiterataFontFamily,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Primary
+                        )
+                    }
                 }
 
                 // Underline line
@@ -309,7 +339,7 @@ fun LogBBTBottomSheet(
                             "fever_illness" to feverIllness
                         )
                     )
-                    onSaveReading(tempValue, disturbedSleep, feverIllness)
+                    onSaveReading(tempValue, tempUnit, disturbedSleep, feverIllness)
                     onDismissRequest()
                 },
                 modifier = Modifier

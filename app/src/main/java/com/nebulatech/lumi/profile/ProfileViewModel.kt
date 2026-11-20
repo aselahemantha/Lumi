@@ -3,6 +3,7 @@ package com.nebulatech.lumi.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nebulatech.lumi.core.domain.Result
+import com.nebulatech.lumi.data.model.CycleDefaults
 import com.nebulatech.lumi.data.model.UserProfile
 import com.nebulatech.lumi.data.repository.NotificationRepository
 import com.nebulatech.lumi.data.repository.RoomUserRepository
@@ -47,8 +48,8 @@ class ProfileViewModel(
             isPremium = user.isPremium,
             memberSince = user.memberSince,
             trackingDuration = computeTrackingDuration(user.memberSince),
-            cycleLength = profile?.cycleLength ?: 28,
-            periodDuration = profile?.periodDuration ?: 5,
+            cycleLength = profile?.cycleLength ?: CycleDefaults.DEFAULT_CYCLE_LENGTH,
+            periodDuration = profile?.periodDuration ?: CycleDefaults.DEFAULT_PERIOD_DURATION,
             primaryGoal = profile?.primaryGoal ?: com.nebulatech.lumi.data.model.PrimaryGoal.TRACK_CYCLE,
             age = profile?.age,
             weight = profile?.weight,
@@ -107,8 +108,8 @@ class ProfileViewModel(
                         currentProfile ?: UserProfile(
                             id = UUID.randomUUID().toString(),
                             userId = userId,
-                            cycleLength = 28,
-                            periodDuration = 5,
+                            cycleLength = CycleDefaults.DEFAULT_CYCLE_LENGTH,
+                            periodDuration = CycleDefaults.DEFAULT_PERIOD_DURATION,
                             primaryGoal = com.nebulatech.lumi.data.model.PrimaryGoal.TRACK_CYCLE,
                             notificationsEnabled = action.enabled,
                             trackingStartedDate = now,

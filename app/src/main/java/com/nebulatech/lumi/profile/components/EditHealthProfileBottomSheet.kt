@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.R
+import com.nebulatech.lumi.data.model.CycleDefaults
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -58,8 +59,8 @@ import com.nebulatech.lumi.ui.theme.TextSubtle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditHealthProfileBottomSheet(
-    initialCycleLength: Int = 28,
-    initialPeriodDuration: Int = 5,
+    initialCycleLength: Int = CycleDefaults.DEFAULT_CYCLE_LENGTH,
+    initialPeriodDuration: Int = CycleDefaults.DEFAULT_PERIOD_DURATION,
     initialPrimaryGoal: String = "Track Cycles",
     onDismissRequest: () -> Unit = {},
     onSave: (cycleLength: Int, periodDuration: Int, primaryGoal: String) -> Unit = { _, _, _ -> },
@@ -160,7 +161,7 @@ fun EditHealthProfileBottomSheet(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
-                        onClick = { if (cycleLength > 21) cycleLength-- },
+                        onClick = { if (cycleLength > CycleDefaults.MIN_EDITABLE_CYCLE_LENGTH) cycleLength-- },
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
@@ -178,7 +179,7 @@ fun EditHealthProfileBottomSheet(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     IconButton(
-                        onClick = { if (cycleLength < 45) cycleLength++ },
+                        onClick = { if (cycleLength < CycleDefaults.MAX_CYCLE_LENGTH) cycleLength++ },
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
@@ -234,7 +235,7 @@ fun EditHealthProfileBottomSheet(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
-                        onClick = { if (periodDuration > 2) periodDuration-- },
+                        onClick = { if (periodDuration > CycleDefaults.MIN_PERIOD_DURATION) periodDuration-- },
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
@@ -252,7 +253,7 @@ fun EditHealthProfileBottomSheet(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     IconButton(
-                        onClick = { if (periodDuration < 10) periodDuration++ },
+                        onClick = { if (periodDuration < CycleDefaults.MAX_PERIOD_DURATION) periodDuration++ },
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)

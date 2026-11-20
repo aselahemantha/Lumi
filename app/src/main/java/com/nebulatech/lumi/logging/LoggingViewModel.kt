@@ -131,7 +131,7 @@ class LoggingViewModel(
                     userId = userId,
                     date = today,
                     temperature = temp,
-                    temperatureUnit = "F",
+                    temperatureUnit = action.temperatureUnit,
                     readingTime = null,
                     cycleId = currentCycle?.id,
                     cycleDay = cycleDay,
