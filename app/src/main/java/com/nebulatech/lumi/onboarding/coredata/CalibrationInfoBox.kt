@@ -33,6 +33,8 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.TextSecondary
 
 @Composable
 fun CalibrationInfoBox(
@@ -44,7 +46,7 @@ fun CalibrationInfoBox(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
-            .background(Color(0xFFF9EEF2))
+            .background(RoseTintLight)
             .padding(18.dp)
     ) {
         Row(
@@ -86,7 +88,7 @@ fun CalibrationInfoBox(
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     lineHeight = 19.sp,
-                    color = Color(0xFF5E4E57)
+                    color = TextSecondary
                 )
             }
         }

@@ -53,6 +53,13 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +72,7 @@ fun HelpCenterBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        containerColor = Color(0xFFFBF9F7),
+        containerColor = Background,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
         Column(
@@ -83,7 +90,7 @@ fun HelpCenterBottomSheet(
                     modifier = Modifier
                         .size(42.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF7E6EE)),
+                        .background(RoseTintMedium),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -106,7 +113,7 @@ fun HelpCenterBottomSheet(
                         text = stringResource(R.string.help_center_subtitle),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        color = Color(0xFF7A6A73)
+                        color = TextMuted
                     )
                 }
             }
@@ -141,21 +148,21 @@ fun HelpCenterBottomSheet(
                         answer = "Lumi uses a biological cycle model combined with your personal historical data, basal body temperature shifts, and LH test logs. As you log consecutive cycles, predictions calibrate specifically to your body."
                     )
 
-                    HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     FaqAccordionItem(
                         question = "When is the best time to log BBT (Basal Body Temperature)?",
                         answer = "Take your temperature immediately upon waking, before getting out of bed or moving around. Consistent morning timing gives the cleanest thermal shift confirmation after ovulation."
                     )
 
-                    HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     FaqAccordionItem(
                         question = "Is my reproductive data shared or sold?",
                         answer = "Never. Lumi is built on a local-first privacy model with end-to-end encryption. Your cycle, mood, and intimate health logs are stored securely on your device."
                     )
 
-                    HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     FaqAccordionItem(
                         question = "How do I share my cycle data with my OB-GYN?",
@@ -170,7 +177,7 @@ fun HelpCenterBottomSheet(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF9EEF2)),
+                colors = CardDefaults.cardColors(containerColor = RoseTintLight),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Column(
@@ -202,7 +209,7 @@ fun HelpCenterBottomSheet(
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         lineHeight = 18.sp,
-                        color = Color(0xFF5E4E57)
+                        color = TextSecondary
                     )
 
                     Spacer(modifier = Modifier.height(14.dp))
@@ -261,7 +268,7 @@ private fun FaqAccordionItem(
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF26181F),
+                color = TextPrimary,
                 modifier = Modifier.weight(1f)
             )
 
@@ -280,7 +287,7 @@ private fun FaqAccordionItem(
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 lineHeight = 19.sp,
-                color = Color(0xFF6E5E67)
+                color = TextMuted
             )
         }
     }

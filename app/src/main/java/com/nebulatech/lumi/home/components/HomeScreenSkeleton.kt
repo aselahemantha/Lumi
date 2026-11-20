@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.nebulatech.lumi.ui.components.shimmerEffect
+import com.nebulatech.lumi.ui.theme.Background
 
 @Composable
 fun HomeScreenSkeleton(
@@ -57,7 +58,7 @@ fun HomeScreenSkeleton(
                 onTabSelected = onTabSelected
             )
         },
-        containerColor = Color(0xFFFBF9F7)
+        containerColor = Background
     ) { innerPadding ->
         Column(
             modifier = Modifier

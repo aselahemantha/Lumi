@@ -30,6 +30,8 @@ import com.nebulatech.lumi.ui.theme.Primary
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import com.nebulatech.lumi.ui.theme.TextStrong
+import com.nebulatech.lumi.ui.theme.TextSubtle
 
 /**
  * Clean, consistent Lumi Top Bar used on the Today / Home screen.
@@ -80,7 +82,7 @@ fun StandardLumiTopBar(
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF8A7982),
+                color = TextSubtle,
             )
         }
 
@@ -89,7 +91,7 @@ fun StandardLumiTopBar(
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = stringResource(R.string.notifications_desc),
-                    tint = Color(0xFF4A3A43),
+                    tint = TextStrong,
                     modifier = Modifier.size(24.dp),
                 )
             }

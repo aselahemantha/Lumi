@@ -56,6 +56,14 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.Error
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +80,7 @@ fun DataPrivacyBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        containerColor = Color(0xFFFBF9F7),
+        containerColor = Background,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
         Column(
@@ -90,7 +98,7 @@ fun DataPrivacyBottomSheet(
                     modifier = Modifier
                         .size(42.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF7E6EE)),
+                        .background(RoseTintMedium),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -113,7 +121,7 @@ fun DataPrivacyBottomSheet(
                         text = stringResource(R.string.data_privacy_subtitle),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        color = Color(0xFF7A6A73)
+                        color = TextMuted
                     )
                 }
             }
@@ -139,7 +147,7 @@ fun DataPrivacyBottomSheet(
                         description = "Your cycle and symptom records are stored directly on your device."
                     )
 
-                    HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     PrivacyBulletItem(
                         icon = Icons.Outlined.Shield,
@@ -147,7 +155,7 @@ fun DataPrivacyBottomSheet(
                         description = "Lumi never sells or shares your reproductive health data with third parties."
                     )
 
-                    HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     PrivacyBulletItem(
                         icon = Icons.Outlined.VpnKey,
@@ -186,7 +194,7 @@ fun DataPrivacyBottomSheet(
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -196,7 +204,7 @@ fun DataPrivacyBottomSheet(
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
                         lineHeight = 18.sp,
-                        color = Color(0xFF6E5E67)
+                        color = TextMuted
                     )
 
                     Spacer(modifier = Modifier.height(14.dp))
@@ -239,8 +247,8 @@ fun DataPrivacyBottomSheet(
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(14.dp),
-                border = BorderStroke(1.dp, Color(0xFFBA1A1A)),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBA1A1A))
+                border = BorderStroke(1.dp, Error),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Error)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -271,7 +279,7 @@ fun DataPrivacyBottomSheet(
                         fontFamily = LiterataFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFFBA1A1A)
+                        color = Error
                     )
                 },
                 text = {
@@ -280,7 +288,7 @@ fun DataPrivacyBottomSheet(
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         lineHeight = 19.sp,
-                        color = Color(0xFF5E4E57)
+                        color = TextSecondary
                     )
                 },
                 confirmButton = {
@@ -290,7 +298,7 @@ fun DataPrivacyBottomSheet(
                             onDeleteAllData()
                             onDismissRequest()
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFBA1A1A)),
+                        colors = ButtonDefaults.buttonColors(containerColor = Error),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
@@ -334,7 +342,7 @@ fun DataPrivacyBottomSheet(
                         text = stringResource(R.string.report_generated_body),
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
-                        color = Color(0xFF5E4E57)
+                        color = TextSecondary
                     )
                 },
                 confirmButton = {
@@ -367,7 +375,7 @@ private fun PrivacyBulletItem(
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFF9EEF2)),
+                .background(RoseTintLight),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -384,7 +392,7 @@ private fun PrivacyBulletItem(
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF26181F)
+                color = TextPrimary
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
@@ -392,7 +400,7 @@ private fun PrivacyBulletItem(
                 fontFamily = ManropeFontFamily,
                 fontSize = 12.sp,
                 lineHeight = 17.sp,
-                color = Color(0xFF7A6A73)
+                color = TextMuted
             )
         }
     }

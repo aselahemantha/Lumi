@@ -2,6 +2,8 @@ package com.nebulatech.lumi.notifications
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.nebulatech.lumi.ui.theme.PrimaryContainer
+import com.nebulatech.lumi.ui.theme.RoseTintLight
 
 enum class NotificationCategory {
     DAILY_REFLECTION,
@@ -19,6 +21,6 @@ data class LumiNotificationItem(
     val body: String,
     val timeText: String,
     val badgeIcon: ImageVector? = null,
-    val badgeBgColor: Color = Color(0xFFFDE8EF),
-    val badgeIconColor: Color = Color(0xFF8E5572)
+    val badgeBgColor: Color = RoseTintLight,
+    val badgeIconColor: Color = PrimaryContainer
 )

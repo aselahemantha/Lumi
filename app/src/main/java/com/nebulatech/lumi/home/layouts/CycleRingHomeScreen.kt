@@ -53,6 +53,9 @@ import com.nebulatech.lumi.logging.LoggingViewModel
 import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.OutlineVariant
+import com.nebulatech.lumi.ui.theme.PrimaryPressed
 
 /**
  * Layout 2: Standard Cycle Ring Screen
@@ -115,7 +118,7 @@ fun CycleRingHomeScreen(
                 onTabSelected = onTabSelected
             )
         },
-        containerColor = Color(0xFFFBF9F7)
+        containerColor = Background
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -160,7 +163,7 @@ fun CycleRingHomeScreen(
                     .height(52.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isPeriodPredicted || isPeriodMissed) Color(0xFF7B3F5E) else Primary
+                    containerColor = if (isPeriodPredicted || isPeriodMissed) PrimaryPressed else Primary
                 )
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -188,9 +191,9 @@ fun CycleRingHomeScreen(
                         .height(48.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color(0xFF7B3F5E)
+                        contentColor = PrimaryPressed
                     ),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFD6C2C9))
+                    border = androidx.compose.foundation.BorderStroke(1.dp, OutlineVariant)
                 ) {
                     Text(
                         text = stringResource(R.string.mark_as_missed_period),
@@ -256,7 +259,7 @@ fun CycleRingHomeScreen(
                             text = stringResource(R.string.confirm_button),
                             fontFamily = ManropeFontFamily,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF7B3F5E)
+                            color = PrimaryPressed
                         )
                     }
                 },

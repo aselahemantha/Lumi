@@ -46,6 +46,14 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.BorderSoft
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.SurfaceContainerLow
+import com.nebulatech.lumi.ui.theme.SurfaceSoft
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextSubtle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,12 +110,12 @@ fun EditHealthProfileBottomSheet(
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF5F3F1))
+                        .background(SurfaceContainerLow)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = stringResource(R.string.close_desc),
-                        tint = Color(0xFF5E4E57),
+                        tint = TextSecondary,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -122,14 +130,14 @@ fun EditHealthProfileBottomSheet(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
-                color = Color(0xFF7A6A73)
+                color = TextMuted
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFF7F5F3))
+                    .background(SurfaceSoft)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -140,13 +148,13 @@ fun EditHealthProfileBottomSheet(
                         fontFamily = ManropeFontFamily,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
                     Text(
                         text = stringResource(R.string.cycle_length_hint),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        color = Color(0xFF8A7B84)
+                        color = TextSubtle
                     )
                 }
 
@@ -157,7 +165,7 @@ fun EditHealthProfileBottomSheet(
                             .size(36.dp)
                             .clip(CircleShape)
                             .background(Color.White)
-                            .border(1.dp, Color(0xFFE5DDD9), CircleShape)
+                            .border(1.dp, BorderSoft, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Remove,
@@ -175,7 +183,7 @@ fun EditHealthProfileBottomSheet(
                             .size(36.dp)
                             .clip(CircleShape)
                             .background(Color.White)
-                            .border(1.dp, Color(0xFFE5DDD9), CircleShape)
+                            .border(1.dp, BorderSoft, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Add,
@@ -196,14 +204,14 @@ fun EditHealthProfileBottomSheet(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
-                color = Color(0xFF7A6A73)
+                color = TextMuted
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFF7F5F3))
+                    .background(SurfaceSoft)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -214,13 +222,13 @@ fun EditHealthProfileBottomSheet(
                         fontFamily = ManropeFontFamily,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
                     Text(
                         text = stringResource(R.string.period_duration_hint),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        color = Color(0xFF8A7B84)
+                        color = TextSubtle
                     )
                 }
 
@@ -231,7 +239,7 @@ fun EditHealthProfileBottomSheet(
                             .size(36.dp)
                             .clip(CircleShape)
                             .background(Color.White)
-                            .border(1.dp, Color(0xFFE5DDD9), CircleShape)
+                            .border(1.dp, BorderSoft, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Remove,
@@ -249,7 +257,7 @@ fun EditHealthProfileBottomSheet(
                             .size(36.dp)
                             .clip(CircleShape)
                             .background(Color.White)
-                            .border(1.dp, Color(0xFFE5DDD9), CircleShape)
+                            .border(1.dp, BorderSoft, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Add,
@@ -270,7 +278,7 @@ fun EditHealthProfileBottomSheet(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
-                color = Color(0xFF7A6A73)
+                color = TextMuted
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -281,7 +289,7 @@ fun EditHealthProfileBottomSheet(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(14.dp))
-                            .background(if (isSelected) Color(0xFFF9E4EB) else Color(0xFFF7F5F3))
+                            .background(if (isSelected) RoseTintLight else SurfaceSoft)
                             .border(
                                 width = if (isSelected) 1.5.dp else 0.dp,
                                 color = if (isSelected) Primary else Color.Transparent,
@@ -297,7 +305,7 @@ fun EditHealthProfileBottomSheet(
                             fontFamily = ManropeFontFamily,
                             fontSize = 14.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isSelected) Primary else Color(0xFF26181F)
+                            color = if (isSelected) Primary else TextPrimary
                         )
 
                         if (isSelected) {

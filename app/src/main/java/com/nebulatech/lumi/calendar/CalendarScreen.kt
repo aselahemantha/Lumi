@@ -48,6 +48,9 @@ import com.nebulatech.lumi.ui.theme.LumiTheme
 import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextStrong
 
 @Composable
 fun CalendarScreen(modifier: Modifier = Modifier, onTabSelected: (HomeTab) -> Unit = {}) {
@@ -69,7 +72,7 @@ fun CalendarScreen(modifier: Modifier = Modifier, onTabSelected: (HomeTab) -> Un
                 onTabSelected = onTabSelected,
             )
         },
-        containerColor = Color(0xFFFBF9F7),
+        containerColor = Background,
     ) { innerPadding ->
         if (state.isLoading) {
             com.nebulatech.lumi.calendar.components.CalendarScreenSkeleton(
@@ -98,7 +101,7 @@ fun CalendarScreen(modifier: Modifier = Modifier, onTabSelected: (HomeTab) -> Un
                         fontFamily = LiterataFontFamily,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F),
+                        color = TextPrimary,
                     )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -114,7 +117,7 @@ fun CalendarScreen(modifier: Modifier = Modifier, onTabSelected: (HomeTab) -> Un
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
                                 contentDescription = stringResource(R.string.previous_month_desc),
-                                tint = Color(0xFF3B2D34),
+                                tint = TextStrong,
                                 modifier = Modifier.size(24.dp),
                             )
                         }
@@ -131,7 +134,7 @@ fun CalendarScreen(modifier: Modifier = Modifier, onTabSelected: (HomeTab) -> Un
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                                 contentDescription = stringResource(R.string.next_month_desc),
-                                tint = Color(0xFF3B2D34),
+                                tint = TextStrong,
                                 modifier = Modifier.size(24.dp),
                             )
                         }

@@ -19,6 +19,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.Instant
 import java.util.UUID
+import com.nebulatech.lumi.ui.theme.PrimaryContainer
+import com.nebulatech.lumi.ui.theme.PrimaryDark
+import com.nebulatech.lumi.ui.theme.RoseAccent
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.SurfaceContainer
+import com.nebulatech.lumi.ui.theme.WarningAmber
+import com.nebulatech.lumi.ui.theme.WarningBgLight
 
 interface NotificationRepository {
     fun getNotificationsFlow(userId: String): Flow<List<LumiNotificationItem>>
@@ -42,16 +49,16 @@ class RoomNotificationRepository(
                     .getOrDefault(NotificationCategory.DAILY_REFLECTION)
                 val (badgeIcon, badgeBg, badgeTint) = when (category) {
                     NotificationCategory.PERIOD_PREDICTION ->
-                        Triple(Icons.Outlined.WaterDrop, Color(0xFFFDE8EF), Color(0xFF8E5572))
+                        Triple(Icons.Outlined.WaterDrop, RoseTintLight, PrimaryContainer)
 
                     NotificationCategory.FERTILITY_INSIGHT ->
-                        Triple(Icons.Outlined.Spa, Color(0xFFFDE8F4), Color(0xFFB54876))
+                        Triple(Icons.Outlined.Spa, RoseTintLight, RoseAccent)
 
                     NotificationCategory.PEAK_VITALITY ->
-                        Triple(Icons.Outlined.AutoAwesome, Color(0xFFFDF0E4), Color(0xFFD97706))
+                        Triple(Icons.Outlined.AutoAwesome, WarningBgLight, WarningAmber)
 
                     NotificationCategory.PHASE_INSIGHT ->
-                        Triple(Icons.Outlined.Grain, Color(0xFFEFE8EB), Color(0xFF5B3950))
+                        Triple(Icons.Outlined.Grain, SurfaceContainer, PrimaryDark)
 
                     else -> Triple(null, Color.Transparent, Color.Transparent)
                 }

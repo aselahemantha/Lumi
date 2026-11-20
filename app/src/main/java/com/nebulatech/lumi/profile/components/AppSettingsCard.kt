@@ -66,6 +66,13 @@ import com.nebulatech.lumi.security.BiometricAuthManager
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.SurfaceContainerHighest
+import com.nebulatech.lumi.ui.theme.SurfaceWarm
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextStrong
+import com.nebulatech.lumi.ui.theme.TextSubtle
 
 @Composable
 fun AppSettingsCard(
@@ -127,7 +134,7 @@ fun AppSettingsCard(
                     Icon(
                         imageVector = Icons.Outlined.Notifications,
                         contentDescription = null,
-                        tint = Color(0xFF4A3A43),
+                        tint = TextStrong,
                         modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(14.dp))
@@ -138,7 +145,7 @@ fun AppSettingsCard(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF26181F),
+                                color = TextPrimary,
                             )
                             if (notificationsEnabled) {
                                 Spacer(modifier = Modifier.width(6.dp))
@@ -158,7 +165,7 @@ fun AppSettingsCard(
                             },
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
-                            color = if (notificationsEnabled) Primary else Color(0xFF8A7A83),
+                            color = if (notificationsEnabled) Primary else TextSubtle,
                         )
                     }
                 }
@@ -175,7 +182,7 @@ fun AppSettingsCard(
                         checkedThumbColor = Color.White,
                         checkedTrackColor = Primary,
                         uncheckedThumbColor = Color.White,
-                        uncheckedTrackColor = Color(0xFFE4DCDD),
+                        uncheckedTrackColor = SurfaceContainerHighest,
                     ),
                 )
             }
@@ -191,7 +198,7 @@ fun AppSettingsCard(
                         .fillMaxWidth()
                         .padding(top = 14.dp)
                         .clip(RoundedCornerShape(18.dp))
-                        .background(Color(0xFFFBF8F9))
+                        .background(SurfaceWarm)
                         .padding(14.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
@@ -203,7 +210,7 @@ fun AppSettingsCard(
                         onCheckedChange = { onGranularToggle("DAILY_LOG", it) },
                     )
 
-                    HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     // Sub-item 2: Morning BBT Reminder
                     NotificationSubToggleRow(
@@ -213,7 +220,7 @@ fun AppSettingsCard(
                         onCheckedChange = { onGranularToggle("BBT_REMINDER", it) },
                     )
 
-                    HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     // Sub-item 3: Period Predictions & Cycle Alerts
                     NotificationSubToggleRow(
@@ -223,7 +230,7 @@ fun AppSettingsCard(
                         onCheckedChange = { onGranularToggle("PERIOD_START", it) },
                     )
 
-                    HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     // Sub-item 4: Fertile Window & Peak Ovulation
                     NotificationSubToggleRow(
@@ -233,7 +240,7 @@ fun AppSettingsCard(
                         onCheckedChange = { onGranularToggle("FERTILE_WINDOW", it) },
                     )
 
-                    HorizontalDivider(color = Color(0xFFF0E8EC), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     // Sub-item 5: Cycle Phase & Morning Readiness
                     NotificationSubToggleRow(
@@ -247,7 +254,7 @@ fun AppSettingsCard(
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 14.dp),
-                color = Color(0xFFF2ECEF),
+                color = DividerSubtle,
             )
 
             // 2. Biometric App Lock (Real Android BiometricPrompt implementation)
@@ -263,7 +270,7 @@ fun AppSettingsCard(
                     Icon(
                         imageVector = Icons.Outlined.Fingerprint,
                         contentDescription = null,
-                        tint = Color(0xFF4A3A43),
+                        tint = TextStrong,
                         modifier = Modifier.size(22.dp),
                     )
                     Spacer(modifier = Modifier.width(14.dp))
@@ -273,13 +280,13 @@ fun AppSettingsCard(
                             fontFamily = ManropeFontFamily,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF26181F),
+                            color = TextPrimary,
                         )
                         Text(
                             text = stringResource(R.string.biometric_app_lock_desc),
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
-                            color = Color(0xFF8A7A83),
+                            color = TextSubtle,
                         )
                     }
                 }
@@ -329,14 +336,14 @@ fun AppSettingsCard(
                         checkedThumbColor = Color.White,
                         checkedTrackColor = Primary,
                         uncheckedThumbColor = Color.White,
-                        uncheckedTrackColor = Color(0xFFE4DCDD),
+                        uncheckedTrackColor = SurfaceContainerHighest,
                     ),
                 )
             }
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 12.dp),
-                color = Color(0xFFF2ECEF),
+                color = DividerSubtle,
             )
 
             // 3. Data Privacy & Export Item
@@ -373,7 +380,7 @@ private fun NotificationSubToggleRow(
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.5.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF26181F),
+                color = TextPrimary,
             )
 
             if (timeBadge != null) {
@@ -381,7 +388,7 @@ private fun NotificationSubToggleRow(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .background(Color(0xFFF3EAF0))
+                        .background(DividerSubtle)
                         .padding(horizontal = 7.dp, vertical = 2.dp),
                 ) {
                     Text(
@@ -402,7 +409,7 @@ private fun NotificationSubToggleRow(
                 checkedThumbColor = Color.White,
                 checkedTrackColor = Primary,
                 uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = Color(0xFFE4DCDD),
+                uncheckedTrackColor = SurfaceContainerHighest,
             ),
         )
     }
@@ -436,7 +443,7 @@ fun SupportAndLogoutCard(
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 12.dp),
-                color = Color(0xFFF2ECEF),
+                color = DividerSubtle,
             )
 
             // Terms of Service Item
@@ -448,7 +455,7 @@ fun SupportAndLogoutCard(
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 12.dp),
-                color = Color(0xFFF2ECEF),
+                color = DividerSubtle,
             )
 
             // Contact Developer Item
@@ -512,7 +519,7 @@ private fun SettingsRowItem(
             Icon(
                 imageVector = icon,
                 contentDescription = title,
-                tint = Color(0xFF4A3A43),
+                tint = TextStrong,
                 modifier = Modifier.size(20.dp),
             )
             Spacer(modifier = Modifier.width(14.dp))
@@ -522,14 +529,14 @@ private fun SettingsRowItem(
                         text = title,
                         fontFamily = ManropeFontFamily,
                         fontSize = 15.sp,
-                        color = Color(0xFF26181F),
+                        color = TextPrimary,
                     )
                     if (badgeText != null) {
                         Spacer(modifier = Modifier.width(8.dp))
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color(0xFFF9E4EB))
+                                .background(RoseTintLight)
                                 .padding(horizontal = 8.dp, vertical = 2.dp),
                         ) {
                             Text(
@@ -547,7 +554,7 @@ private fun SettingsRowItem(
                         text = subtitle,
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        color = Color(0xFF8A7B84),
+                        color = TextSubtle,
                     )
                 }
             }
@@ -556,7 +563,7 @@ private fun SettingsRowItem(
         Icon(
             imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
             contentDescription = null,
-            tint = Color(0xFF8A7B84),
+            tint = TextSubtle,
             modifier = Modifier.size(20.dp),
         )
     }

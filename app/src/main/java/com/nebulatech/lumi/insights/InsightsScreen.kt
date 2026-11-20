@@ -43,6 +43,8 @@ import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.Primary
 import org.koin.androidx.compose.koinViewModel
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.TextStrong
 
 @Composable
 fun InsightsTopBar(
@@ -69,7 +71,7 @@ fun InsightsTopBar(
             Icon(
                 imageVector = Icons.Outlined.Notifications,
                 contentDescription = stringResource(R.string.notifications_desc),
-                tint = Color(0xFF4A3A43),
+                tint = TextStrong,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -97,7 +99,7 @@ fun InsightsScreen(
                 onTabSelected = onTabSelected
             )
         },
-        containerColor = Color(0xFFFBF9F7)
+        containerColor = Background
     ) { innerPadding ->
         if (state.isLoading) {
             com.nebulatech.lumi.insights.components.InsightsScreenSkeleton(

@@ -30,6 +30,14 @@ import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
 import java.time.YearMonth
+import com.nebulatech.lumi.ui.theme.BorderSoft
+import com.nebulatech.lumi.ui.theme.OutlineVariant
+import com.nebulatech.lumi.ui.theme.PrimaryDark
+import com.nebulatech.lumi.ui.theme.RoseAccent
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSubtle
 
 enum class CalendarDayType {
     NORMAL,
@@ -78,7 +86,7 @@ fun MonthlyCalendarCard(
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF8A7B84),
+                        color = TextSubtle,
                         modifier = Modifier.width(36.dp),
                         textAlign = TextAlign.Center
                     )
@@ -114,12 +122,12 @@ private fun CalendarCellItem(
     onClick: () -> Unit
 ) {
     val textColor = when {
-        !cell.isCurrentMonth -> Color(0xFFD4C8CD)
+        !cell.isCurrentMonth -> OutlineVariant
         cell.type == CalendarDayType.PERIOD_HEAVY -> Color.White
-        cell.type == CalendarDayType.PERIOD_PREDICTED || cell.type == CalendarDayType.PERIOD_MISSED -> Color(0xFF8B5E6E)
-        cell.type == CalendarDayType.FERTILE_FILLED -> Color(0xFF532E3E)
+        cell.type == CalendarDayType.PERIOD_PREDICTED || cell.type == CalendarDayType.PERIOD_MISSED -> RoseAccent
+        cell.type == CalendarDayType.FERTILE_FILLED -> PrimaryDark
         cell.type == CalendarDayType.OVULATION -> Primary
-        else -> Color(0xFF26181F)
+        else -> TextPrimary
     }
 
     Box(
@@ -151,7 +159,7 @@ private fun CalendarCellItem(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFE4D5DC)),
+                        .background(BorderSoft),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -159,7 +167,7 @@ private fun CalendarCellItem(
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF4A2B39)
+                        color = PrimaryDark
                     )
                 }
             }
@@ -191,7 +199,7 @@ private fun CalendarCellItem(
                         .size(36.dp)
                         .border(
                             width = 1.dp,
-                            color = Color(0xFFC7B1BA),
+                            color = OutlineVariant,
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -209,7 +217,7 @@ private fun CalendarCellItem(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
-                        .border(1.dp, Color(0xFFF7DDE6), CircleShape),
+                        .border(1.dp, RoseTintMedium, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -225,7 +233,7 @@ private fun CalendarCellItem(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFFDE8EF)),
+                        .background(RoseTintLight),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -246,7 +254,7 @@ private fun CalendarCellItem(
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFFDE8EF))
+                            .background(RoseTintLight)
                             .border(1.5.dp, Primary, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
@@ -286,7 +294,7 @@ private fun CalendarCellItem(
                                 .padding(top = 2.dp)
                                 .size(3.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFF095AC))
+                                .background(RoseAccent)
                         )
                     }
                 }

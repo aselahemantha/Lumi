@@ -28,6 +28,8 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
+import com.nebulatech.lumi.ui.theme.TextHint
+import com.nebulatech.lumi.ui.theme.TextMuted
 
 @Composable
 fun DeveloperSupportFooter(
@@ -88,7 +90,7 @@ fun DeveloperSupportFooter(
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.2.sp,
-            color = Color(0xFF6B5861)
+            color = TextMuted
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -98,7 +100,7 @@ fun DeveloperSupportFooter(
             fontFamily = ManropeFontFamily,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF9E8A95)
+            color = TextHint
         )
     }
 }

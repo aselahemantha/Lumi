@@ -39,6 +39,7 @@ import com.nebulatech.lumi.logging.LoggingAction
 import com.nebulatech.lumi.logging.LoggingEvent
 import com.nebulatech.lumi.logging.LoggingViewModel
 import com.nebulatech.lumi.ui.theme.LumiTheme
+import com.nebulatech.lumi.ui.theme.Background
 
 /**
  * Layout 3: High Fertility Dashboard Screen
@@ -96,7 +97,7 @@ fun FertilityDashboardHomeScreen(
                 onTabSelected = onTabSelected
             )
         },
-        containerColor = Color(0xFFFBF9F7)
+        containerColor = Background
     ) { innerPadding ->
         Column(
             modifier = Modifier

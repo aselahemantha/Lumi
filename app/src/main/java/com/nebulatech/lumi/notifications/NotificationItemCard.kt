@@ -34,6 +34,11 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextSubtle
+import com.nebulatech.lumi.ui.theme.WarningBgLight
 
 @Composable
 fun NotificationItemCard(
@@ -63,7 +68,7 @@ fun NotificationItemCard(
                     modifier = Modifier
                         .size(42.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFF7EFE9)),
+                        .background(WarningBgLight),
                     contentAlignment = Alignment.Center
                 ) {
                     // Stylized Lumi "L" organic glyph
@@ -130,14 +135,14 @@ fun NotificationItemCard(
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF6E5E67)
+                        color = TextMuted
                     )
 
                     Text(
                         text = item.timeText,
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        color = Color(0xFF8A7A83)
+                        color = TextSubtle
                     )
                 }
 
@@ -149,7 +154,7 @@ fun NotificationItemCard(
                     fontFamily = LiterataFontFamily,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF26181F)
+                    color = TextPrimary
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -160,7 +165,7 @@ fun NotificationItemCard(
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     lineHeight = 19.sp,
-                    color = Color(0xFF5E4E57)
+                    color = TextSecondary
                 )
             }
         }

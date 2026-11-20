@@ -62,6 +62,14 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.round
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.BorderSoft
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.SurfaceWarm
+import com.nebulatech.lumi.ui.theme.TextHint
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,7 +114,7 @@ fun ManualPastCyclesBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        containerColor = Color(0xFFFBF9F7),
+        containerColor = Background,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
         Column(
@@ -130,7 +138,7 @@ fun ManualPastCyclesBottomSheet(
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 lineHeight = 19.sp,
-                color = Color(0xFF6E5E67)
+                color = TextMuted
             )
 
             Spacer(modifier = Modifier.height(18.dp))
@@ -232,7 +240,7 @@ fun ManualPastCyclesBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFFF3E7ED))
+                    .background(RoseTintMedium)
                     .padding(horizontal = 14.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -245,7 +253,7 @@ fun ManualPastCyclesBottomSheet(
                     fontFamily = ManropeFontFamily,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF6E5E67)
+                    color = TextMuted
                 )
                 Text(
                     text = stringResource(
@@ -296,7 +304,7 @@ fun ManualPastCyclesBottomSheet(
                     fontFamily = ManropeFontFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF7A6A73)
+                    color = TextMuted
                 )
             }
 
@@ -315,16 +323,16 @@ fun ManualPastCyclesBottomSheet(
             }
 
             val lumiDatePickerColors = DatePickerDefaults.colors(
-                containerColor = Color(0xFFFAF7F5),
+                containerColor = SurfaceWarm,
                 titleContentColor = Primary,
                 headlineContentColor = Primary,
-                weekdayContentColor = Color(0xFF7A6A73),
-                subheadContentColor = Color(0xFF5E4E57),
-                yearContentColor = Color(0xFF26181F),
+                weekdayContentColor = TextMuted,
+                subheadContentColor = TextSecondary,
+                yearContentColor = TextPrimary,
                 currentYearContentColor = Primary,
                 selectedYearContentColor = Color.White,
                 selectedYearContainerColor = Primary,
-                dayContentColor = Color(0xFF26181F),
+                dayContentColor = TextPrimary,
                 selectedDayContentColor = Color.White,
                 selectedDayContainerColor = Primary,
                 todayContentColor = Primary,
@@ -371,7 +379,7 @@ fun ManualPastCyclesBottomSheet(
                 dismissButton = {
                     TextButton(
                         onClick = { activeDatePickerIndex = null },
-                        colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF7A6A73))
+                        colors = ButtonDefaults.textButtonColors(contentColor = TextMuted)
                     ) {
                         Text(stringResource(R.string.cancel_button), fontFamily = ManropeFontFamily)
                     }
@@ -429,7 +437,7 @@ private fun PastCycleInputCard(
                         Icon(
                             imageVector = Icons.Outlined.DeleteOutline,
                             contentDescription = stringResource(R.string.remove_cycle_desc),
-                            tint = Color(0xFF9E8791),
+                            tint = TextHint,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -442,10 +450,10 @@ private fun PastCycleInputCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(BorderStroke(1.dp, Color(0xFFE8DFE4)), RoundedCornerShape(12.dp))
+                    .border(BorderStroke(1.dp, BorderSoft), RoundedCornerShape(12.dp))
                     .clip(RoundedCornerShape(12.dp))
                     .clickable { onDateClick() }
-                    .background(Color(0xFFFAF7F8))
+                    .background(SurfaceWarm)
                     .padding(horizontal = 12.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -463,7 +471,7 @@ private fun PastCycleInputCard(
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
                 }
 
@@ -517,7 +525,7 @@ private fun MiniCounterBox(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFFAF7F8))
+            .background(SurfaceWarm)
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -525,7 +533,7 @@ private fun MiniCounterBox(
             text = label,
             fontFamily = ManropeFontFamily,
             fontSize = 11.sp,
-            color = Color(0xFF7A6A73)
+            color = TextMuted
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -552,7 +560,7 @@ private fun MiniCounterBox(
                 fontFamily = ManropeFontFamily,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF26181F)
+                color = TextPrimary
             )
 
             IconButton(

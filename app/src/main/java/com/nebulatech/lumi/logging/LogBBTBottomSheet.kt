@@ -54,6 +54,14 @@ import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.BorderSoft
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.OutlineVariant
+import com.nebulatech.lumi.ui.theme.RoseTintLightest
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextStrong
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,7 +90,7 @@ fun LogBBTBottomSheet(
                     .width(40.dp)
                     .height(4.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(Color(0xFFDCD2D6))
+                    .background(OutlineVariant)
             )
         },
         modifier = modifier
@@ -116,7 +124,7 @@ fun LogBBTBottomSheet(
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = stringResource(R.string.close_desc),
-                        tint = Color(0xFF3B2D34),
+                        tint = TextStrong,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -129,7 +137,7 @@ fun LogBBTBottomSheet(
                 text = stringResource(R.string.bbt_time_placeholder),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
-                color = Color(0xFF5E4E57)
+                color = TextSecondary
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -160,7 +168,7 @@ fun LogBBTBottomSheet(
                     modifier = Modifier
                         .width(140.dp)
                         .height(2.dp)
-                        .background(Color(0xFFF2DCE5))
+                        .background(RoseTintMedium)
                 )
             }
 
@@ -180,11 +188,11 @@ fun LogBBTBottomSheet(
                         .clickable { disturbedSleep = !disturbedSleep },
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (isSleepSelected) Color(0xFFFDF2F6) else Color.White
+                        containerColor = if (isSleepSelected) RoseTintLightest else Color.White
                     ),
                     border = androidx.compose.foundation.BorderStroke(
                         width = if (isSleepSelected) 1.5.dp else 1.dp,
-                        color = if (isSleepSelected) Primary else Color(0xFFEADBDF)
+                        color = if (isSleepSelected) Primary else BorderSoft
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
@@ -198,7 +206,7 @@ fun LogBBTBottomSheet(
                         Icon(
                             imageVector = Icons.Outlined.ModeNight,
                             contentDescription = null,
-                            tint = if (isSleepSelected) Primary else Color(0xFF4A3B43),
+                            tint = if (isSleepSelected) Primary else TextStrong,
                             modifier = Modifier.size(22.dp)
                         )
                         Spacer(modifier = Modifier.height(6.dp))
@@ -207,7 +215,7 @@ fun LogBBTBottomSheet(
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
                             fontWeight = if (isSleepSelected) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isSleepSelected) Primary else Color(0xFF4A3B43)
+                            color = if (isSleepSelected) Primary else TextStrong
                         )
                     }
                 }
@@ -221,11 +229,11 @@ fun LogBBTBottomSheet(
                         .clickable { feverIllness = !feverIllness },
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (isFeverSelected) Color(0xFFFDF2F6) else Color.White
+                        containerColor = if (isFeverSelected) RoseTintLightest else Color.White
                     ),
                     border = androidx.compose.foundation.BorderStroke(
                         width = if (isFeverSelected) 1.5.dp else 1.dp,
-                        color = if (isFeverSelected) Primary else Color(0xFFEADBDF)
+                        color = if (isFeverSelected) Primary else BorderSoft
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
@@ -239,7 +247,7 @@ fun LogBBTBottomSheet(
                         Icon(
                             imageVector = Icons.Outlined.Sick,
                             contentDescription = null,
-                            tint = if (isFeverSelected) Primary else Color(0xFF4A3B43),
+                            tint = if (isFeverSelected) Primary else TextStrong,
                             modifier = Modifier.size(22.dp)
                         )
                         Spacer(modifier = Modifier.height(6.dp))
@@ -248,7 +256,7 @@ fun LogBBTBottomSheet(
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
                             fontWeight = if (isFeverSelected) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isFeverSelected) Primary else Color(0xFF4A3B43)
+                            color = if (isFeverSelected) Primary else TextStrong
                         )
                     }
                 }
@@ -277,7 +285,7 @@ fun LogBBTBottomSheet(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            HorizontalDivider(color = Color(0xFFF2ECEF))
+            HorizontalDivider(color = DividerSubtle)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -365,7 +373,7 @@ private fun BBTNumpad(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.Backspace,
                                 contentDescription = stringResource(R.string.delete_desc),
-                                tint = Color(0xFF3B2D34),
+                                tint = TextStrong,
                                 modifier = Modifier.size(24.dp)
                             )
                         } else {
@@ -374,7 +382,7 @@ private fun BBTNumpad(
                                 fontFamily = LiterataFontFamily,
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF26181F),
+                                color = TextPrimary,
                                 textAlign = TextAlign.Center
                             )
                         }

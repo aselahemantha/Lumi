@@ -32,6 +32,9 @@ import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.Outline
+import com.nebulatech.lumi.ui.theme.OutlineVariant
+import com.nebulatech.lumi.ui.theme.SurfaceContainerHighest
 
 @Composable
 fun OnboardingBottomBar(
@@ -52,7 +55,7 @@ fun OnboardingBottomBar(
         OutlinedButton(
             onClick = onBackClick,
             shape = RoundedCornerShape(100),
-            border = BorderStroke(1.dp, Color(0xFFD4C2C8)),
+            border = BorderStroke(1.dp, OutlineVariant),
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Primary
             ),
@@ -79,8 +82,8 @@ fun OnboardingBottomBar(
             colors = ButtonDefaults.buttonColors(
                 containerColor = Primary,
                 contentColor = Color.White,
-                disabledContainerColor = Color(0xFFE4E2E0),
-                disabledContentColor = Color(0xFF827379).copy(alpha = 0.6f)
+                disabledContainerColor = SurfaceContainerHighest,
+                disabledContentColor = Outline.copy(alpha = 0.6f)
             ),
             contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)

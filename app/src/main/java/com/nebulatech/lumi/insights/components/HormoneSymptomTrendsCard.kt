@@ -37,6 +37,16 @@ import com.nebulatech.lumi.insights.SymptomTrendPoint
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.DestructiveRed
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.PrimaryContainer
+import com.nebulatech.lumi.ui.theme.PrimaryDark
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.RoseTintLightest
+import com.nebulatech.lumi.ui.theme.SurfaceWarm
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSubtle
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -129,13 +139,13 @@ fun HormonePhaseStatusCard(
                         modifier = Modifier
                             .size(42.dp)
                             .clip(CircleShape)
-                            .background(if (isOverdue) Color(0xFFFBECEE) else Color(0xFFFDF0F4)),
+                            .background(if (isOverdue) RoseTintLight else RoseTintLightest),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Spa,
                             contentDescription = null,
-                            tint = if (isOverdue) Color(0xFFB3261E) else Primary,
+                            tint = if (isOverdue) DestructiveRed else Primary,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -148,14 +158,14 @@ fun HormonePhaseStatusCard(
                             fontFamily = LiterataFontFamily,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF26181F)
+                            color = TextPrimary
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = subtitleText,
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
-                            color = if (isOverdue) Color(0xFFB3261E) else Color(0xFF7A6A73),
+                            color = if (isOverdue) DestructiveRed else TextMuted,
                             fontWeight = if (isOverdue) FontWeight.Medium else FontWeight.Normal
                         )
                     }
@@ -164,7 +174,7 @@ fun HormonePhaseStatusCard(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(if (isOverdue) Color(0xFFFCE8EC) else Color(0xFFF4E9EE))
+                        .background(if (isOverdue) RoseTintLight else DividerSubtle)
                         .padding(horizontal = 10.dp, vertical = 6.dp)
                 ) {
                     Text(
@@ -172,13 +182,13 @@ fun HormonePhaseStatusCard(
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (isOverdue) Color(0xFFB3261E) else Primary
+                        color = if (isOverdue) DestructiveRed else Primary
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(18.dp))
-            HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
+            HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
             Spacer(modifier = Modifier.height(16.dp))
 
             // Hormone Levels Row (3 status blocks)
@@ -189,14 +199,14 @@ fun HormonePhaseStatusCard(
                 HormoneStatBlock(
                     label = "Estrogen",
                     value = estrogenLevel,
-                    accentColor = Color(0xFF8E5572),
+                    accentColor = PrimaryContainer,
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 HormoneStatBlock(
                     label = "Progesterone",
                     value = progesteroneLevel,
-                    accentColor = Color(0xFF5B3047),
+                    accentColor = PrimaryDark,
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -217,7 +227,7 @@ fun HormonePhaseStatusCard(
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
-                    color = Color(0xFF8A7A83)
+                    color = TextSubtle
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 FlowRow(
@@ -229,7 +239,7 @@ fun HormonePhaseStatusCard(
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFFFBF4F7))
+                                .background(RoseTintLightest)
                                 .padding(horizontal = 10.dp, vertical = 5.dp)
                         ) {
                             Text(
@@ -257,14 +267,14 @@ private fun HormoneStatBlock(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(14.dp))
-            .background(Color(0xFFFAF7F8))
+            .background(SurfaceWarm)
             .padding(10.dp)
     ) {
         Text(
             text = label,
             fontFamily = ManropeFontFamily,
             fontSize = 11.sp,
-            color = Color(0xFF7A6A73)
+            color = TextMuted
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(

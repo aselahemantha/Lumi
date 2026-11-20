@@ -41,6 +41,15 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.WarningAmber
+import com.nebulatech.lumi.ui.theme.WarningBgLight
+import com.nebulatech.lumi.ui.theme.WarningTextBody
+import com.nebulatech.lumi.ui.theme.WarningTextDark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +61,7 @@ fun TermsOfServiceBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        containerColor = Color(0xFFFBF9F7),
+        containerColor = Background,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
         Column(
@@ -70,7 +79,7 @@ fun TermsOfServiceBottomSheet(
                     modifier = Modifier
                         .size(42.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF7E6EE)),
+                        .background(RoseTintMedium),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -93,7 +102,7 @@ fun TermsOfServiceBottomSheet(
                         text = stringResource(R.string.terms_last_updated),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        color = Color(0xFF7A6A73)
+                        color = TextMuted
                     )
                 }
             }
@@ -104,7 +113,7 @@ fun TermsOfServiceBottomSheet(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFDF0E4)),
+                colors = CardDefaults.cardColors(containerColor = WarningBgLight),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Row(
@@ -117,7 +126,7 @@ fun TermsOfServiceBottomSheet(
                     Icon(
                         imageVector = Icons.Outlined.MedicalServices,
                         contentDescription = null,
-                        tint = Color(0xFFD97706),
+                        tint = WarningAmber,
                         modifier = Modifier.size(22.dp)
                     )
                     Column {
@@ -126,7 +135,7 @@ fun TermsOfServiceBottomSheet(
                             fontFamily = LiterataFontFamily,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF8F4D00)
+                            color = WarningTextDark
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
@@ -134,7 +143,7 @@ fun TermsOfServiceBottomSheet(
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
                             lineHeight = 17.sp,
-                            color = Color(0xFF633A00)
+                            color = WarningTextBody
                         )
                     }
                 }
@@ -161,7 +170,7 @@ fun TermsOfServiceBottomSheet(
                         text = stringResource(R.string.tos_section_1_body)
                     )
 
-                    HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     TermsParagraphItem(
                         number = "2",
@@ -169,7 +178,7 @@ fun TermsOfServiceBottomSheet(
                         text = stringResource(R.string.tos_section_2_body)
                     )
 
-                    HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     TermsParagraphItem(
                         number = "3",
@@ -177,7 +186,7 @@ fun TermsOfServiceBottomSheet(
                         text = stringResource(R.string.tos_section_3_body)
                     )
 
-                    HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
+                    HorizontalDivider(color = DividerSubtle, thickness = 1.dp)
 
                     TermsParagraphItem(
                         number = "4",
@@ -223,7 +232,7 @@ private fun TermsParagraphItem(
             fontFamily = LiterataFontFamily,
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF26181F)
+            color = TextPrimary
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -231,7 +240,7 @@ private fun TermsParagraphItem(
             fontFamily = ManropeFontFamily,
             fontSize = 13.sp,
             lineHeight = 18.sp,
-            color = Color(0xFF6E5E67)
+            color = TextMuted
         )
     }
 }

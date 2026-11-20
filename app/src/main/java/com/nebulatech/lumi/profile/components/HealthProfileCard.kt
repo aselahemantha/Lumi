@@ -38,6 +38,12 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.SurfaceSoft
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextSubtle
 
 @Composable
 fun HealthProfileCard(
@@ -99,7 +105,7 @@ fun HealthProfileCard(
                         .weight(1f)
                         .clickable { onEditClick() },
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F5F3)),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceSoft),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(
@@ -111,7 +117,7 @@ fun HealthProfileCard(
                             Icon(
                                 imageVector = Icons.Outlined.Sync,
                                 contentDescription = null,
-                                tint = Color(0xFF5E4E57),
+                                tint = TextSecondary,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -120,7 +126,7 @@ fun HealthProfileCard(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 12.sp,
                                 lineHeight = 16.sp,
-                                color = Color(0xFF5E4E57)
+                                color = TextSecondary
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
@@ -130,14 +136,14 @@ fun HealthProfileCard(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF26181F)
+                                color = TextPrimary
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = stringResource(R.string.days_unit),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 13.sp,
-                                color = Color(0xFF5E4E57),
+                                color = TextSecondary,
                                 modifier = Modifier.padding(bottom = 2.dp)
                             )
                         }
@@ -150,7 +156,7 @@ fun HealthProfileCard(
                         .weight(1f)
                         .clickable { onEditClick() },
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F5F3)),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceSoft),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(
@@ -162,7 +168,7 @@ fun HealthProfileCard(
                             Icon(
                                 imageVector = Icons.Outlined.WaterDrop,
                                 contentDescription = null,
-                                tint = Color(0xFF5E4E57),
+                                tint = TextSecondary,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -171,7 +177,7 @@ fun HealthProfileCard(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 12.sp,
                                 lineHeight = 16.sp,
-                                color = Color(0xFF5E4E57)
+                                color = TextSecondary
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
@@ -181,14 +187,14 @@ fun HealthProfileCard(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF26181F)
+                                color = TextPrimary
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = stringResource(R.string.days_unit),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 13.sp,
-                                color = Color(0xFF5E4E57),
+                                color = TextSecondary,
                                 modifier = Modifier.padding(bottom = 2.dp)
                             )
                         }
@@ -204,7 +210,7 @@ fun HealthProfileCard(
                     .fillMaxWidth()
                     .clickable { onEditClick() },
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F5F3)),
+                colors = CardDefaults.cardColors(containerColor = SurfaceSoft),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Row(
@@ -217,7 +223,7 @@ fun HealthProfileCard(
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFF9E4EB)),
+                            .background(RoseTintLight),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -233,20 +239,20 @@ fun HealthProfileCard(
                             text = stringResource(R.string.primary_goal_label),
                             fontFamily = ManropeFontFamily,
                             fontSize = 11.sp,
-                            color = Color(0xFF7A6A73)
+                            color = TextMuted
                         )
                         Text(
                             text = primaryGoal,
                             fontFamily = ManropeFontFamily,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF26181F)
+                            color = TextPrimary
                         )
                     }
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                         contentDescription = null,
-                        tint = Color(0xFF8A7B84),
+                        tint = TextSubtle,
                         modifier = Modifier.size(20.dp)
                     )
                 }

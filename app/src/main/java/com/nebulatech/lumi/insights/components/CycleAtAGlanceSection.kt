@@ -31,6 +31,9 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextSecondary
 
 data class CycleHistoryItem(
     val month: String,
@@ -50,7 +53,7 @@ fun CycleAtAGlanceSection(
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
-            color = Color(0xFF6E5E67),
+            color = TextMuted,
             modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
         )
 
@@ -64,7 +67,7 @@ fun CycleAtAGlanceSection(
                 Card(
                     modifier = Modifier.width(140.dp),
                     shape = RoundedCornerShape(22.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFDE8EF)),
+                    colors = CardDefaults.cardColors(containerColor = RoseTintLight),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(
@@ -77,7 +80,7 @@ fun CycleAtAGlanceSection(
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF5E4B54)
+                            color = TextSecondary
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(verticalAlignment = Alignment.Bottom) {
@@ -93,7 +96,7 @@ fun CycleAtAGlanceSection(
                                 text = stringResource(R.string.days_unit),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 14.sp,
-                                color = Color(0xFF5E4B54),
+                                color = TextSecondary,
                                 modifier = Modifier.padding(bottom = 4.dp)
                             )
                         }

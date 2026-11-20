@@ -52,6 +52,11 @@ import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
 import org.koin.androidx.compose.koinViewModel
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.RoseTintLightest
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
 
 @Composable
 fun NotificationCenterScreen(
@@ -80,7 +85,7 @@ fun NotificationCenterScreen(
                     modifier = Modifier
                         .size(42.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFFDF0F4))
+                        .background(RoseTintLightest)
                         .clickable { onNavigateBack() },
                     contentAlignment = Alignment.Center
                 ) {
@@ -119,7 +124,7 @@ fun NotificationCenterScreen(
                 onTabSelected = onTabSelected
             )
         },
-        containerColor = Color(0xFFFBF9F7)
+        containerColor = Background
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -142,7 +147,7 @@ fun NotificationCenterScreen(
                     text = stringResource(R.string.notification_center_subtitle),
                     fontFamily = ManropeFontFamily,
                     fontSize = 15.sp,
-                    color = Color(0xFF5E4E57)
+                    color = TextSecondary
                 )
             }
 
@@ -166,7 +171,7 @@ fun NotificationCenterScreen(
                             modifier = Modifier
                                 .size(64.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFFDF0F4)),
+                                .background(RoseTintLightest),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -184,7 +189,7 @@ fun NotificationCenterScreen(
                             fontFamily = LiterataFontFamily,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF26181F)
+                            color = TextPrimary
                         )
 
                         Spacer(modifier = Modifier.height(6.dp))
@@ -194,7 +199,7 @@ fun NotificationCenterScreen(
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             lineHeight = 20.sp,
-                            color = Color(0xFF7A6A73),
+                            color = TextMuted,
                             textAlign = TextAlign.Center
                         )
 

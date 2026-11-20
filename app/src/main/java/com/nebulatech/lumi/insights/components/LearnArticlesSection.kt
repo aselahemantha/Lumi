@@ -36,6 +36,13 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.PrimaryContainer
+import com.nebulatech.lumi.ui.theme.PrimaryDark
+import com.nebulatech.lumi.ui.theme.RoseTintLightest
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.SurfaceContainerLow
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
 
 @Composable
 fun InsightsLumiBannerCard(
@@ -54,9 +61,9 @@ fun InsightsLumiBannerCard(
                 .background(
                     brush = Brush.linearGradient(
                         colors = listOf(
-                            Color(0xFF8E5572),
+                            PrimaryContainer,
                             Primary,
-                            Color(0xFF5B3047)
+                            PrimaryDark
                         )
                     )
                 )
@@ -77,7 +84,7 @@ fun InsightsLumiBannerCard(
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
-                        color = Color(0xFFF3DDE7)
+                        color = RoseTintMedium
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
@@ -104,7 +111,7 @@ fun LearnArticlesSection(
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
-            color = Color(0xFF6E5E67),
+            color = TextMuted,
             modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
         )
 
@@ -124,7 +131,7 @@ fun LearnArticlesSection(
                     modifier = Modifier
                         .size(54.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFFDF0F4)),
+                        .background(RoseTintLightest),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -142,7 +149,7 @@ fun LearnArticlesSection(
                     fontFamily = LiterataFontFamily,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF26181F)
+                    color = TextPrimary
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
@@ -152,7 +159,7 @@ fun LearnArticlesSection(
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     lineHeight = 20.sp,
-                    color = Color(0xFF6E5E67),
+                    color = TextMuted,
                     textAlign = TextAlign.Center
                 )
 
@@ -161,7 +168,7 @@ fun LearnArticlesSection(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFF4EDF0))
+                        .background(SurfaceContainerLow)
                         .padding(horizontal = 14.dp, vertical = 6.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {

@@ -58,6 +58,9 @@ import com.nebulatech.lumi.ui.theme.Primary
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
 import androidx.activity.SystemBarStyle
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.TextMuted
 
 class MainActivity : FragmentActivity() {
 
@@ -118,7 +121,7 @@ class MainActivity : FragmentActivity() {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color(0xFFFBF9F7))
+                                .background(Background)
                         )
                         return@CompositionLocalProvider
                     }
@@ -129,7 +132,7 @@ class MainActivity : FragmentActivity() {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color(0xFFFBF9F7))
+                                .background(Background)
                                 .padding(24.dp),
                             contentAlignment = Alignment.Center
                         ) {
@@ -141,7 +144,7 @@ class MainActivity : FragmentActivity() {
                                     modifier = Modifier
                                         .size(72.dp)
                                         .clip(CircleShape)
-                                        .background(Color(0xFFF7E6EE)),
+                                        .background(RoseTintMedium),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
@@ -168,7 +171,7 @@ class MainActivity : FragmentActivity() {
                                     text = "Biometric authentication is required to access your cycle records.",
                                     fontFamily = ManropeFontFamily,
                                     fontSize = 14.sp,
-                                    color = Color(0xFF6E5E67)
+                                    color = TextMuted
                                 )
 
                                 Spacer(modifier = Modifier.height(28.dp))

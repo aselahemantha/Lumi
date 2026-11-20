@@ -68,6 +68,17 @@ import org.json.JSONObject
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.ChartFsh
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.SuccessContainer
+import com.nebulatech.lumi.ui.theme.SuccessGreen
+import com.nebulatech.lumi.ui.theme.SurfaceContainerHighest
+import com.nebulatech.lumi.ui.theme.TextHint
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextStrong
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +97,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        containerColor = Color(0xFFFBF9F7),
+        containerColor = Background,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         modifier = modifier,
     ) {
@@ -111,7 +122,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         modifier = Modifier
                             .size(46.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFF7DDE6)),
+                            .background(RoseTintMedium),
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
@@ -133,7 +144,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                             text = if (isSentSuccess) "Thank you for your feedback" else "Send a note to Asela Hemantha",
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
-                            color = Color(0xFF7A6872),
+                            color = TextMuted,
                         )
                     }
                 }
@@ -142,7 +153,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = stringResource(R.string.close_desc),
-                        tint = Color(0xFF5E4E57),
+                        tint = TextSecondary,
                     )
                 }
             }
@@ -161,13 +172,13 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         modifier = Modifier
                             .size(72.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFE8F5E9)),
+                            .background(SuccessContainer),
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.CheckCircle,
                             contentDescription = null,
-                            tint = Color(0xFF2E7D32),
+                            tint = SuccessGreen,
                             modifier = Modifier.size(42.dp),
                         )
                     }
@@ -179,7 +190,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         fontFamily = LiterataFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F),
+                        color = TextPrimary,
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -193,7 +204,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
                         textAlign = TextAlign.Center,
-                        color = Color(0xFF6E5E67),
+                        color = TextMuted,
                         modifier = Modifier.padding(horizontal = 12.dp),
                     )
 
@@ -232,7 +243,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF5E4E57),
+                            color = TextSecondary,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -253,7 +264,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF3B2B34),
+                    color = TextStrong,
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 OutlinedTextField(
@@ -264,7 +275,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                             text = stringResource(R.string.email_placeholder),
                             fontFamily = ManropeFontFamily,
                             fontSize = 14.sp,
-                            color = Color(0xFFA5949D),
+                            color = TextHint,
                         )
                     },
                     singleLine = true,
@@ -274,9 +285,9 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
                         focusedBorderColor = Primary,
-                        unfocusedBorderColor = Color(0xFFE4DCDD),
-                        focusedTextColor = Color(0xFF26181F),
-                        unfocusedTextColor = Color(0xFF26181F),
+                        unfocusedBorderColor = SurfaceContainerHighest,
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary,
                     ),
                 )
 
@@ -288,7 +299,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF3B2B34),
+                    color = TextStrong,
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 OutlinedTextField(
@@ -301,9 +312,9 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
                         focusedBorderColor = Primary,
-                        unfocusedBorderColor = Color(0xFFE4DCDD),
-                        focusedTextColor = Color(0xFF26181F),
-                        unfocusedTextColor = Color(0xFF26181F),
+                        unfocusedBorderColor = SurfaceContainerHighest,
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary,
                     ),
                 )
 
@@ -315,7 +326,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF3B2B34),
+                    color = TextStrong,
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 OutlinedTextField(
@@ -326,7 +337,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                             text = stringResource(R.string.message_placeholder),
                             fontFamily = ManropeFontFamily,
                             fontSize = 14.sp,
-                            color = Color(0xFFA5949D),
+                            color = TextHint,
                         )
                     },
                     minLines = 4,
@@ -337,9 +348,9 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
                         focusedBorderColor = Primary,
-                        unfocusedBorderColor = Color(0xFFE4DCDD),
-                        focusedTextColor = Color(0xFF26181F),
-                        unfocusedTextColor = Color(0xFF26181F),
+                        unfocusedBorderColor = SurfaceContainerHighest,
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary,
                     ),
                 )
 
@@ -353,7 +364,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                             text = it,
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
-                            color = Color(0xFFD32F2F),
+                            color = ChartFsh,
                             modifier = Modifier.padding(top = 8.dp),
                         )
                     }
@@ -451,7 +462,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         .fillMaxWidth()
                         .height(46.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF5E4E57)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,

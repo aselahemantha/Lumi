@@ -58,6 +58,16 @@ import com.nebulatech.lumi.analytics.TrackScreenView
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.BorderSoft
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.OutlineVariant
+import com.nebulatech.lumi.ui.theme.RoseTintLightest
+import com.nebulatech.lumi.ui.theme.SurfaceContainerLow
+import com.nebulatech.lumi.ui.theme.SurfaceSoft
+import com.nebulatech.lumi.ui.theme.TextHint
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextStrong
 
 enum class LHIntensity(
     val title: String,
@@ -94,7 +104,7 @@ fun LogLHTestBottomSheet(
                     .width(40.dp)
                     .height(4.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(Color(0xFFDCD2D6))
+                    .background(OutlineVariant)
             )
         },
         modifier = modifier
@@ -126,13 +136,13 @@ fun LogLHTestBottomSheet(
                     },
                     modifier = Modifier
                         .clip(CircleShape)
-                        .background(Color(0xFFF5F2F4))
+                        .background(SurfaceContainerLow)
                         .size(36.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = stringResource(R.string.close_desc),
-                        tint = Color(0xFF3B2D34),
+                        tint = TextStrong,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -146,7 +156,7 @@ fun LogLHTestBottomSheet(
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF3B2D34)
+                color = TextStrong
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -161,11 +171,11 @@ fun LogLHTestBottomSheet(
                             .clickable { selectedIntensity = intensity },
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (isSelected) Color(0xFFFDF2F6) else Color.White
+                            containerColor = if (isSelected) RoseTintLightest else Color.White
                         ),
                         border = androidx.compose.foundation.BorderStroke(
                             width = if (isSelected) 1.5.dp else 1.dp,
-                            color = if (isSelected) Primary else Color(0xFFEADBDF)
+                            color = if (isSelected) Primary else BorderSoft
                         ),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
@@ -182,14 +192,14 @@ fun LogLHTestBottomSheet(
                                     fontFamily = LiterataFontFamily,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF26181F)
+                                    color = TextPrimary
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = intensity.description,
                                     fontFamily = ManropeFontFamily,
                                     fontSize = 13.sp,
-                                    color = Color(0xFF5E4E57)
+                                    color = TextSecondary
                                 )
                             }
 
@@ -198,7 +208,7 @@ fun LogLHTestBottomSheet(
                                 onClick = { selectedIntensity = intensity },
                                 colors = RadioButtonDefaults.colors(
                                     selectedColor = Primary,
-                                    unselectedColor = Color(0xFFD4C2C8)
+                                    unselectedColor = OutlineVariant
                                 )
                             )
                         }
@@ -214,7 +224,7 @@ fun LogLHTestBottomSheet(
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF3B2D34)
+                color = TextStrong
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -227,14 +237,14 @@ fun LogLHTestBottomSheet(
                         text = stringResource(R.string.test_brand_placeholder),
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
-                        color = Color(0xFF9E8E96)
+                        color = TextHint
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Primary,
-                    unfocusedBorderColor = Color(0xFFEADBDF),
+                    unfocusedBorderColor = BorderSoft,
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White
                 ),
@@ -249,7 +259,7 @@ fun LogLHTestBottomSheet(
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF3B2D34)
+                color = TextStrong
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -259,10 +269,10 @@ fun LogLHTestBottomSheet(
                     .fillMaxWidth()
                     .height(90.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFF7F5F3))
+                    .background(SurfaceSoft)
                     .border(
                         width = 1.dp,
-                        color = Color(0xFFD8CCD2),
+                        color = OutlineVariant,
                         shape = RoundedCornerShape(16.dp)
                     )
                     .clickable { /* Photo picker hook */ },
@@ -272,7 +282,7 @@ fun LogLHTestBottomSheet(
                     modifier = Modifier
                         .size(44.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFEADBDF)),
+                        .background(BorderSoft),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -286,7 +296,7 @@ fun LogLHTestBottomSheet(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            HorizontalDivider(color = Color(0xFFF2ECEF))
+            HorizontalDivider(color = DividerSubtle)
 
             Spacer(modifier = Modifier.height(16.dp))
 

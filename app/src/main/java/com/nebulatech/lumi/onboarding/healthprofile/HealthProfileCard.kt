@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.R
+import com.nebulatech.lumi.ui.theme.TextPrimary
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -102,8 +103,8 @@ fun HealthProfileCard(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                         cursorColor = MaterialTheme.colorScheme.primary,
-                        focusedTextColor = Color(0xFF26181F),
-                        unfocusedTextColor = Color(0xFF26181F),
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary,
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White
                     ),
@@ -149,7 +150,7 @@ fun HealthProfileCard(
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             textStyle = MaterialTheme.typography.bodyMedium.copy(
-                                color = Color(0xFF26181F)
+                                color = TextPrimary
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )

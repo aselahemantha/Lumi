@@ -16,11 +16,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.RoseTintLightest
 
 fun Modifier.shimmerEffect(
     shape: Shape = RoundedCornerShape(16.dp),
-    baseColor: Color = Color(0xFFF2ECEF),
-    highlightColor: Color = Color(0xFFFDF7FA)
+    baseColor: Color = DividerSubtle,
+    highlightColor: Color = RoseTintLightest
 ): Modifier = composed {
     val transition = rememberInfiniteTransition(label = "ShimmerTransition")
     val translateAnim = transition.animateFloat(

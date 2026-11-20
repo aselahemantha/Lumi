@@ -20,6 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
+import com.nebulatech.lumi.ui.theme.PrimaryDark
+import com.nebulatech.lumi.ui.theme.PrimaryPressed
+import com.nebulatech.lumi.ui.theme.TextPrimary
 
 @Composable
 fun HeroUserCard(
@@ -39,9 +42,9 @@ fun HeroUserCard(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            Color(0xFF7A606E),
-                            Color(0xFF4A3440),
-                            Color(0xFF261820)
+                            PrimaryPressed,
+                            PrimaryDark,
+                            TextPrimary
                         )
                     )
                 )

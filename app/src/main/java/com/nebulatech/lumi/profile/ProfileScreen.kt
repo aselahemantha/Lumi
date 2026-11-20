@@ -47,13 +47,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.nebulatech.lumi.R
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.analytics.AnalyticsConstants
 import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.analytics.TrackScreenView
@@ -75,6 +71,12 @@ import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
 import org.koin.androidx.compose.koinViewModel
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.OutlineVariant
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextStrong
 
 @Composable
 fun ProfileTopBar(modifier: Modifier = Modifier, onNotificationClick: () -> Unit = {}) {
@@ -98,7 +100,7 @@ fun ProfileTopBar(modifier: Modifier = Modifier, onNotificationClick: () -> Unit
             Icon(
                 imageVector = Icons.Outlined.Notifications,
                 contentDescription = stringResource(R.string.notifications_desc),
-                tint = Color(0xFF4A3A43),
+                tint = TextStrong,
                 modifier = Modifier.size(24.dp),
             )
         }
@@ -144,7 +146,7 @@ fun ProfileScreen(
                 onTabSelected = onTabSelected,
             )
         },
-        containerColor = Color(0xFFFBF9F7),
+        containerColor = Background,
     ) { innerPadding ->
         if (state.isLoading) {
             com.nebulatech.lumi.profile.components.ProfileScreenSkeleton(
@@ -307,7 +309,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .size(56.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFFDE8EF)),
+                                .background(RoseTintLight),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
@@ -338,7 +340,7 @@ fun ProfileScreen(
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             lineHeight = 20.sp,
-                            color = Color(0xFF6E5E67),
+                            color = TextMuted,
                             textAlign = TextAlign.Center,
                         )
 
@@ -356,8 +358,8 @@ fun ProfileScreen(
                                     .weight(1f)
                                     .height(46.dp),
                                 shape = RoundedCornerShape(14.dp),
-                                border = BorderStroke(1.dp, Color(0xFFD4C2C8)),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF5E4E57)),
+                                border = BorderStroke(1.dp, OutlineVariant),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
                             ) {
                                 Text(
                                     text = stringResource(R.string.cancel_button),

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.nebulatech.lumi.R
 import com.nebulatech.lumi.onboarding.components.HeroImageCard
 import com.nebulatech.lumi.onboarding.components.OnboardingHeader
+import com.nebulatech.lumi.ui.theme.TextPrimary
 
 @Composable
 fun WelcomeScreen(name: String, onNameChange: (String) -> Unit, modifier: Modifier = Modifier) {
@@ -69,8 +70,8 @@ fun WelcomeScreen(name: String, onNameChange: (String) -> Unit, modifier: Modifi
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     cursorColor = MaterialTheme.colorScheme.primary,
-                    focusedTextColor = Color(0xFF26181F),
-                    unfocusedTextColor = Color(0xFF26181F),
+                    focusedTextColor = TextPrimary,
+                    unfocusedTextColor = TextPrimary,
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
                 ),

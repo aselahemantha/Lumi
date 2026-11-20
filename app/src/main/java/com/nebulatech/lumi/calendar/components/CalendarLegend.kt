@@ -35,6 +35,14 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.DestructiveRed
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.RoseTintLightest
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.SurfaceContainerLow
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextStrong
 
 // ==========================================
 // 1. CALENDAR LEGEND
@@ -61,7 +69,7 @@ fun CalendarLegend(
                 text = stringResource(R.string.legend_period),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
-                color = Color(0xFF4A3B43)
+                color = TextStrong
             )
         }
 
@@ -70,14 +78,14 @@ fun CalendarLegend(
             Box(
                 modifier = Modifier
                     .size(10.dp)
-                    .border(1.5.dp, Color(0xFFF7CADA), CircleShape)
+                    .border(1.5.dp, RoseTintMedium, CircleShape)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = stringResource(R.string.legend_fertile),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
-                color = Color(0xFF4A3B43)
+                color = TextStrong
             )
         }
 
@@ -87,7 +95,7 @@ fun CalendarLegend(
                 modifier = Modifier
                     .size(12.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFDE8EF))
+                    .background(RoseTintLight)
                     .border(1.5.dp, Primary, CircleShape)
             )
             Spacer(modifier = Modifier.width(6.dp))
@@ -95,7 +103,7 @@ fun CalendarLegend(
                 text = stringResource(R.string.legend_ovulation),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
-                color = Color(0xFF4A3B43)
+                color = TextStrong
             )
         }
     }
@@ -122,10 +130,10 @@ fun PhaseDetailCard(
         else -> "Period overdue by ${-daysUntilNextPeriod} days"
     }
 
-    val badgeBg = if (isOverdue) Color(0xFFFCECEE) else Color(0xFFF4EDF0)
-    val badgeTextColor = if (isOverdue) Color(0xFFB3261E) else Color(0xFF52424A)
-    val iconBg = if (isOverdue) Color(0xFFFDE8EB) else Color(0xFFFDF0F4)
-    val iconTint = if (isOverdue) Color(0xFFB3261E) else Primary
+    val badgeBg = if (isOverdue) RoseTintLight else SurfaceContainerLow
+    val badgeTextColor = if (isOverdue) DestructiveRed else TextSecondary
+    val iconBg = if (isOverdue) RoseTintLight else RoseTintLightest
+    val iconTint = if (isOverdue) DestructiveRed else Primary
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -162,7 +170,7 @@ fun PhaseDetailCard(
                     fontFamily = LiterataFontFamily,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF26181F)
+                    color = TextPrimary
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
@@ -170,7 +178,7 @@ fun PhaseDetailCard(
                     fontFamily = ManropeFontFamily,
                     fontSize = 14.sp,
                     lineHeight = 21.sp,
-                    color = Color(0xFF594852)
+                    color = TextSecondary
                 )
                 Spacer(modifier = Modifier.height(14.dp))
                 Box(
@@ -204,8 +212,8 @@ fun CycleStatusBannerCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFBF4F7)),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEEDEE5)),
+        colors = CardDefaults.cardColors(containerColor = RoseTintLightest),
+        border = androidx.compose.foundation.BorderStroke(1.dp, RoseTintLight),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
@@ -233,7 +241,7 @@ fun CycleStatusBannerCard(
                 text = text,
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
-                color = Color(0xFF3B2C34),
+                color = TextStrong,
                 modifier = Modifier.weight(1f),
                 lineHeight = 20.sp
             )

@@ -53,6 +53,7 @@ import com.nebulatech.lumi.logging.LoggingViewModel
 import com.nebulatech.lumi.ui.theme.LumiTheme
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.Background
 
 /**
  * Layout 1: Late Luteal / Symptom Grid Screen
@@ -100,7 +101,7 @@ fun LateLutealHomeScreen(
                 onTabSelected = onTabSelected
             )
         },
-        containerColor = Color(0xFFFBF9F7)
+        containerColor = Background
     ) { innerPadding ->
         Column(
             modifier = Modifier

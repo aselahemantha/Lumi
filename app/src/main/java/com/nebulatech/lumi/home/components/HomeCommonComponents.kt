@@ -79,6 +79,19 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.BorderSoft
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.OutlineVariant
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.RoseTintLightest
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.SurfaceContainer
+import com.nebulatech.lumi.ui.theme.TextHint
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextStrong
+import com.nebulatech.lumi.ui.theme.TextSubtle
 
 // ==========================================
 // 1. CYCLE RING WIDGET (Layout 2)
@@ -116,7 +129,7 @@ fun CycleRingWidget(
             val strokeWidth = 22.dp.toPx()
             // Track background arc
             drawArc(
-                color = Color(0xFFF3EAEF),
+                color = DividerSubtle,
                 startAngle = -220f,
                 sweepAngle = 260f,
                 useCenter = false,
@@ -145,7 +158,7 @@ fun CycleRingWidget(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 1.2.sp,
-                color = Color(0xFF6B5861)
+                color = TextMuted
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
@@ -162,7 +175,7 @@ fun CycleRingWidget(
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 lineHeight = 16.sp,
-                color = Color(0xFF4A3B43),
+                color = TextStrong,
                 textAlign = TextAlign.Center
             )
         }
@@ -194,7 +207,7 @@ fun LumiInsightCard(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFBF0F5)),
+                    .background(RoseTintLightest),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -219,7 +232,7 @@ fun LumiInsightCard(
                     fontFamily = ManropeFontFamily,
                     fontSize = 14.sp,
                     lineHeight = 21.sp,
-                    color = Color(0xFF4E4047)
+                    color = TextStrong
                 )
             }
         }
@@ -259,7 +272,7 @@ fun Next7DaysCalendarStrip(
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.2.sp,
-            color = Color(0xFF6E5D66),
+            color = TextMuted,
             modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
         )
 
@@ -285,7 +298,7 @@ fun Next7DaysCalendarStrip(
                             text = day.dayName,
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
-                            color = if (day.isToday) Primary else Color(0xFF7A6B73)
+                            color = if (day.isToday) Primary else TextMuted
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Box(
@@ -305,7 +318,7 @@ fun Next7DaysCalendarStrip(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 16.sp,
                                 fontWeight = if (day.isToday) FontWeight.Bold else FontWeight.Medium,
-                                color = if (day.isToday) Color.White else Color(0xFF3B2E35)
+                                color = if (day.isToday) Color.White else TextStrong
                             )
                         }
                         if (day.hasPeriodDot) {
@@ -365,7 +378,7 @@ fun LateLutealHeaderCard(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFF7DDE6))
+                    .background(RoseTintMedium)
                     .padding(horizontal = 14.dp, vertical = 6.dp)
             ) {
                 Text(
@@ -383,7 +396,7 @@ fun LateLutealHeaderCard(
                 fontFamily = LiterataFontFamily,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF26181F),
+                color = TextPrimary,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -391,7 +404,7 @@ fun LateLutealHeaderCard(
                 text = description,
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
-                color = Color(0xFF594852),
+                color = TextSecondary,
                 textAlign = TextAlign.Center,
                 lineHeight = 20.sp
             )
@@ -403,7 +416,7 @@ fun LateLutealHeaderCard(
                     .height(8.dp)
                     .clip(RoundedCornerShape(4.dp)),
                 color = Primary,
-                trackColor = Color(0xFFEBE3E7)
+                trackColor = BorderSoft
             )
         }
     }
@@ -449,7 +462,7 @@ fun LogSymptomsSection(
                 fontFamily = LiterataFontFamily,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF26181F)
+                color = TextPrimary
             )
             Text(
                 text = stringResource(R.string.view_all),
@@ -471,10 +484,10 @@ fun LogSymptomsSection(
             symptoms.forEach { symptom ->
                 val cardColor = when {
                     symptom.isSelected -> Primary
-                    symptom.isCustom -> Color(0xFFEFECE9)
+                    symptom.isCustom -> SurfaceContainer
                     else -> Color.White
                 }
-                val contentColor = if (symptom.isSelected) Color.White else Color(0xFF2E2027)
+                val contentColor = if (symptom.isSelected) Color.White else TextPrimary
 
                 Card(
                     modifier = Modifier
@@ -484,7 +497,7 @@ fun LogSymptomsSection(
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = cardColor),
                     elevation = CardDefaults.cardElevation(defaultElevation = if (symptom.isCustom) 0.dp else 1.dp),
-                    border = if (symptom.isCustom) BorderStroke(1.dp, Color(0xFFD6CECA)) else null
+                    border = if (symptom.isCustom) BorderStroke(1.dp, OutlineVariant) else null
                 ) {
                     Column(
                         modifier = Modifier
@@ -552,7 +565,7 @@ fun LumiInsightPinkCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFCDCE8)),
+        colors = CardDefaults.cardColors(containerColor = RoseTintLight),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -582,7 +595,7 @@ fun LumiInsightPinkCard(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
-                    color = Color(0xFF6B5560)
+                    color = TextMuted
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -591,7 +604,7 @@ fun LumiInsightPinkCard(
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
-                color = Color(0xFF382A31)
+                color = TextStrong
             )
             Spacer(modifier = Modifier.height(14.dp))
             Card(
@@ -617,7 +630,7 @@ fun LumiInsightPinkCard(
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF261920)
+                        color = TextPrimary
                     )
                 }
             }
@@ -654,12 +667,12 @@ fun ThirtyDayTrendsCard(
                     fontFamily = LiterataFontFamily,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF26181F)
+                    color = TextPrimary
                 )
                 Icon(
                     imageVector = Icons.Outlined.BarChart,
                     contentDescription = null,
-                    tint = Color(0xFF36282E),
+                    tint = TextStrong,
                     modifier = Modifier.size(22.dp)
                 )
             }
@@ -670,7 +683,7 @@ fun ThirtyDayTrendsCard(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
-                color = Color(0xFF73636B)
+                color = TextMuted
             )
             Spacer(modifier = Modifier.height(4.dp))
             if (!mostFrequentSymptom.isNullOrBlank()) {
@@ -679,14 +692,14 @@ fun ThirtyDayTrendsCard(
                     fontFamily = ManropeFontFamily,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF26181F)
+                    color = TextPrimary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(R.string.trends_subtitle),
                     fontFamily = ManropeFontFamily,
                     fontSize = 12.sp,
-                    color = Color(0xFF8A7A83)
+                    color = TextSubtle
                 )
             } else {
                 Text(
@@ -694,14 +707,14 @@ fun ThirtyDayTrendsCard(
                     fontFamily = ManropeFontFamily,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF594852)
+                    color = TextSecondary
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = stringResource(R.string.trends_empty_subtitle),
                     fontFamily = ManropeFontFamily,
                     fontSize = 12.sp,
-                    color = Color(0xFF8A7A83)
+                    color = TextSubtle
                 )
             }
         }
@@ -723,7 +736,7 @@ fun FertilityHeaderCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFDF0F4)),
+        colors = CardDefaults.cardColors(containerColor = RoseTintLightest),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -735,7 +748,7 @@ fun FertilityHeaderCard(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFF7D5E1))
+                    .background(RoseTintMedium)
                     .padding(horizontal = 14.dp, vertical = 6.dp)
             ) {
                 Text(
@@ -762,7 +775,7 @@ fun FertilityHeaderCard(
                 text = description,
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
-                color = Color(0xFF4A3B43),
+                color = TextStrong,
                 textAlign = TextAlign.Center,
                 lineHeight = 20.sp
             )
@@ -867,7 +880,7 @@ fun BasalBodyTempChartCard(
                         fontFamily = LiterataFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
                     Text(
                         text = if (points.isNotEmpty()) {
@@ -876,14 +889,14 @@ fun BasalBodyTempChartCard(
                         } else "No readings recorded yet",
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
-                        color = Color(0xFF82727B)
+                        color = TextSubtle
                     )
                 }
 
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color(0xFFF7DDE6))
+                        .background(RoseTintMedium)
                         .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
@@ -925,7 +938,7 @@ fun BasalBodyTempChartCard(
                         yRatios.forEachIndexed { i, ratio ->
                             val y = paddingTop + ratio * chartH
                             drawLine(
-                                color = Color(0xFFF0E6EA),
+                                color = DividerSubtle,
                                 start = Offset(paddingLeft, y),
                                 end = Offset(w - paddingRight, y),
                                 strokeWidth = 1.dp.toPx(),
@@ -933,7 +946,7 @@ fun BasalBodyTempChartCard(
                             )
                             val textLayout = textMeasurer.measure(
                                 text = gridTemps[i],
-                                style = TextStyle(fontSize = 10.sp, color = Color(0xFFA898A1))
+                                style = TextStyle(fontSize = 10.sp, color = TextHint)
                             )
                             drawText(
                                 textLayoutResult = textLayout,
@@ -982,7 +995,7 @@ fun BasalBodyTempChartCard(
                             val y = paddingTop + ratio * chartH
                             val tempVal = yMax - ratio * (yMax - yMin)
                             drawLine(
-                                color = Color(0xFFF3EBEE),
+                                color = DividerSubtle,
                                 start = Offset(paddingLeft, y),
                                 end = Offset(w - paddingRight, y),
                                 strokeWidth = 1.dp.toPx(),
@@ -991,7 +1004,7 @@ fun BasalBodyTempChartCard(
                             val label = "%.1f°".format(tempVal)
                             val textLayout = textMeasurer.measure(
                                 text = label,
-                                style = TextStyle(fontSize = 10.sp, color = Color(0xFFA898A1))
+                                style = TextStyle(fontSize = 10.sp, color = TextHint)
                             )
                             drawText(
                                 textLayoutResult = textLayout,
@@ -1079,7 +1092,7 @@ fun BasalBodyTempChartCard(
                                     style = TextStyle(
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF26181F)
+                                        color = TextPrimary
                                     )
                                 )
                                 val bubbleW = textLayout.size.width + 16.dp.toPx()
@@ -1097,7 +1110,7 @@ fun BasalBodyTempChartCard(
                                     cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
                                 )
                                 drawRoundRect(
-                                    color = Color(0xFFE2D6DC),
+                                    color = BorderSoft,
                                     topLeft = Offset(bubbleX, bubbleY),
                                     size = Size(bubbleW, bubbleH),
                                     cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx()),
@@ -1137,14 +1150,14 @@ fun BasalBodyTempChartCard(
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF382A31)
+                            color = TextStrong
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = stringResource(R.string.no_bbt_readings_desc),
                             fontFamily = ManropeFontFamily,
                             fontSize = 11.sp,
-                            color = Color(0xFF82727B),
+                            color = TextSubtle,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -1175,7 +1188,7 @@ fun BasalBodyTempChartCard(
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal,
-                        color = if (isCurrent) Primary else Color(0xFF8C7C85)
+                        color = if (isCurrent) Primary else TextSubtle
                     )
                 }
             }
@@ -1187,7 +1200,7 @@ fun BasalBodyTempChartCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFFBF6F8))
+                    .background(RoseTintLightest)
                     .clickable { onLogBBTClick() }
                     .padding(horizontal = 14.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -1206,7 +1219,7 @@ fun BasalBodyTempChartCard(
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF382A31)
+                        color = TextStrong
                     )
                 }
 
@@ -1254,7 +1267,7 @@ fun TodaysLogsCard(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
-                color = Color(0xFF6E5E67)
+                color = TextMuted
             )
             Spacer(modifier = Modifier.height(14.dp))
 
@@ -1263,7 +1276,7 @@ fun TodaysLogsCard(
                     text = stringResource(R.string.no_logs_today),
                     fontFamily = ManropeFontFamily,
                     fontSize = 14.sp,
-                    color = Color(0xFF82727B),
+                    color = TextSubtle,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
             } else {
@@ -1285,13 +1298,13 @@ fun TodaysLogsCard(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF26181F)
+                                color = TextPrimary
                             )
                             Text(
                                 text = item.category,
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 12.sp,
-                                color = Color(0xFF82727B)
+                                color = TextSubtle
                             )
                         }
                     }
@@ -1346,7 +1359,7 @@ fun LibraryFeaturedCard(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
-                    color = Color(0xFFE8D4DD)
+                    color = BorderSoft
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(

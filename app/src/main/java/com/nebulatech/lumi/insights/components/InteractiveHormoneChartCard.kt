@@ -49,6 +49,20 @@ import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.BorderSoft
+import com.nebulatech.lumi.ui.theme.ChartEstrogen
+import com.nebulatech.lumi.ui.theme.ChartEstrogenBg
+import com.nebulatech.lumi.ui.theme.ChartFsh
+import com.nebulatech.lumi.ui.theme.ChartLh
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.SuccessGreen
+import com.nebulatech.lumi.ui.theme.SurfaceContainerHighest
+import com.nebulatech.lumi.ui.theme.SurfaceContainerLow
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextStrong
+import com.nebulatech.lumi.ui.theme.TextSubtle
 
 data class HormoneLevels(
     val estrogen: Float,     // pg/mL
@@ -107,10 +121,10 @@ fun InteractiveHormoneChartCard(
     var selectedDay by remember(initialDay) { mutableFloatStateOf(initialDay.toFloat().coerceIn(1f, 28f)) }
     val currentHormones = remember(selectedDay) { calculateHormonesForDay(selectedDay) }
 
-    val estrogenColor = Color(0xFF1E65D8)     // Blue
-    val progesteroneColor = Color(0xFF1B7D32) // Green
-    val lhColor = Color(0xFFE67E22)           // Yellow / Orange
-    val fshColor = Color(0xFFD32F2F)          // Red
+    val estrogenColor = ChartEstrogen     // Blue
+    val progesteroneColor = SuccessGreen // Green
+    val lhColor = ChartLh           // Yellow / Orange
+    val fshColor = ChartFsh          // Red
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -129,7 +143,7 @@ fun InteractiveHormoneChartCard(
                 fontFamily = LiterataFontFamily,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF26181F)
+                color = TextPrimary
             )
 
             Spacer(modifier = Modifier.height(14.dp))
@@ -144,14 +158,14 @@ fun InteractiveHormoneChartCard(
                     text = stringResource(R.string.hormone_y_axis),
                     fontFamily = ManropeFontFamily,
                     fontSize = 11.sp,
-                    color = Color(0xFF7A6A73)
+                    color = TextMuted
                 )
 
                 Text(
                     text = stringResource(R.string.hormone_x_axis),
                     fontFamily = ManropeFontFamily,
                     fontSize = 11.sp,
-                    color = Color(0xFF7A6A73)
+                    color = TextMuted
                 )
             }
 
@@ -207,7 +221,7 @@ fun InteractiveHormoneChartCard(
                     val ovulationX1 = dayToX(13f)
                     val ovulationX2 = dayToX(15f)
                     drawRect(
-                        color = Color(0xFFEBF3FC),
+                        color = ChartEstrogenBg,
                         topLeft = Offset(ovulationX1, paddingTop),
                         size = Size(ovulationX2 - ovulationX1, chartH)
                     )
@@ -217,7 +231,7 @@ fun InteractiveHormoneChartCard(
                     yLevels.forEach { lvl ->
                         val y = valToY(lvl.toFloat())
                         drawLine(
-                            color = Color(0xFFECE6E8),
+                            color = SurfaceContainerHighest,
                             start = Offset(paddingLeft, y),
                             end = Offset(w - paddingRight, y),
                             strokeWidth = 1.dp.toPx()
@@ -229,7 +243,7 @@ fun InteractiveHormoneChartCard(
                     phaseDays.forEach { pd ->
                         val x = dayToX(pd)
                         drawLine(
-                            color = Color(0xFFE4DCDD),
+                            color = SurfaceContainerHighest,
                             start = Offset(x, paddingTop),
                             end = Offset(x, paddingTop + chartH),
                             strokeWidth = 1.dp.toPx()
@@ -280,7 +294,7 @@ fun InteractiveHormoneChartCard(
                     val cursorX = dayToX(selectedDay)
                     val dashEffect = PathEffect.dashPathEffect(floatArrayOf(6f, 6f), 0f)
                     drawLine(
-                        color = Color(0xFF26181F),
+                        color = TextPrimary,
                         start = Offset(cursorX, paddingTop - 8.dp.toPx()),
                         end = Offset(cursorX, paddingTop + chartH + 4.dp.toPx()),
                         strokeWidth = 1.5.dp.toPx(),
@@ -313,7 +327,7 @@ fun InteractiveHormoneChartCard(
                             text = tick,
                             fontFamily = ManropeFontFamily,
                             fontSize = 10.sp,
-                            color = Color(0xFF8A7A83)
+                            color = TextSubtle
                         )
                     }
                 }
@@ -332,7 +346,7 @@ fun InteractiveHormoneChartCard(
                             fontFamily = ManropeFontFamily,
                             fontSize = 11.sp,
                             fontWeight = if (dayLabel == "${selectedDay.toInt()}") FontWeight.Bold else FontWeight.Normal,
-                            color = if (dayLabel == "${selectedDay.toInt()}") Primary else Color(0xFF7A6A73)
+                            color = if (dayLabel == "${selectedDay.toInt()}") Primary else TextMuted
                         )
                     }
                 }
@@ -344,10 +358,10 @@ fun InteractiveHormoneChartCard(
                         .align(Alignment.BottomCenter),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(stringResource(R.string.phase_menstrual), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF6E5E67))
-                    Text(stringResource(R.string.phase_follicular), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF6E5E67))
-                    Text(stringResource(R.string.phase_ovulation), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E65D8))
-                    Text(stringResource(R.string.phase_luteal), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF6E5E67))
+                    Text(stringResource(R.string.phase_menstrual), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = TextMuted)
+                    Text(stringResource(R.string.phase_follicular), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = TextMuted)
+                    Text(stringResource(R.string.phase_ovulation), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = ChartEstrogen)
+                    Text(stringResource(R.string.phase_luteal), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = TextMuted)
                 }
             }
 
@@ -373,7 +387,7 @@ fun InteractiveHormoneChartCard(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider(color = Color(0xFFF2ECEF))
+            HorizontalDivider(color = DividerSubtle)
             Spacer(modifier = Modifier.height(16.dp))
 
             // Dynamic Value Dashboard Box
@@ -390,7 +404,7 @@ fun InteractiveHormoneChartCard(
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
-                        color = Color(0xFF7A6A73)
+                        color = TextMuted
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -398,7 +412,7 @@ fun InteractiveHormoneChartCard(
                         fontFamily = LiterataFontFamily,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
                 }
 
@@ -407,7 +421,7 @@ fun InteractiveHormoneChartCard(
                     modifier = Modifier
                         .width(1.dp)
                         .height(32.dp)
-                        .background(Color(0xFFEADBDF))
+                        .background(BorderSoft)
                 )
 
                 // Column 2: ESTROGEN
@@ -418,7 +432,7 @@ fun InteractiveHormoneChartCard(
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
-                        color = Color(0xFF7A6A73)
+                        color = TextMuted
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -426,7 +440,7 @@ fun InteractiveHormoneChartCard(
                         fontFamily = LiterataFontFamily,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
                 }
 
@@ -435,7 +449,7 @@ fun InteractiveHormoneChartCard(
                     modifier = Modifier
                         .width(1.dp)
                         .height(32.dp)
-                        .background(Color(0xFFEADBDF))
+                        .background(BorderSoft)
                 )
 
                 // Column 3: PROGESTERONE
@@ -446,7 +460,7 @@ fun InteractiveHormoneChartCard(
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
-                        color = Color(0xFF7A6A73)
+                        color = TextMuted
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -454,7 +468,7 @@ fun InteractiveHormoneChartCard(
                         fontFamily = LiterataFontFamily,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
                 }
             }
@@ -471,7 +485,7 @@ fun InteractiveHormoneChartCard(
                     fontFamily = ManropeFontFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF3B2D34)
+                    color = TextStrong
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -483,9 +497,9 @@ fun InteractiveHormoneChartCard(
                     steps = 26,
                     modifier = Modifier.weight(1f),
                     colors = SliderDefaults.colors(
-                        thumbColor = Color(0xFF26181F),
+                        thumbColor = TextPrimary,
                         activeTrackColor = Primary,
-                        inactiveTrackColor = Color(0xFFEADBDF)
+                        inactiveTrackColor = BorderSoft
                     )
                 )
 
@@ -495,7 +509,7 @@ fun InteractiveHormoneChartCard(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(14.dp))
-                        .background(Color(0xFFF5F3F1))
+                        .background(SurfaceContainerLow)
                         .padding(horizontal = 16.dp, vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -504,7 +518,7 @@ fun InteractiveHormoneChartCard(
                         fontFamily = LiterataFontFamily,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
                 }
             }
@@ -526,7 +540,7 @@ private fun HormoneLegendItem(color: Color, label: String) {
             text = label,
             fontFamily = ManropeFontFamily,
             fontSize = 11.sp,
-            color = Color(0xFF5E4E57)
+            color = TextSecondary
         )
     }
 }

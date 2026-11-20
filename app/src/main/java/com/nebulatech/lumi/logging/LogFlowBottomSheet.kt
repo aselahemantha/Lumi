@@ -77,6 +77,19 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import com.nebulatech.lumi.ui.theme.BorderSoft
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.OutlineVariant
+import com.nebulatech.lumi.ui.theme.RoseTintLightest
+import com.nebulatech.lumi.ui.theme.RoseTintMedium
+import com.nebulatech.lumi.ui.theme.SurfaceContainerLow
+import com.nebulatech.lumi.ui.theme.SurfaceSoft
+import com.nebulatech.lumi.ui.theme.SurfaceWarm
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextStrong
+import com.nebulatech.lumi.ui.theme.TextSubtle
 
 enum class FlowIntensity(val label: String) {
     LIGHT("Light"),
@@ -123,7 +136,7 @@ fun LogFlowBottomSheet(
                     .width(40.dp)
                     .height(4.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(Color(0xFFDCD2D6))
+                    .background(OutlineVariant)
             )
         },
         modifier = modifier
@@ -144,7 +157,7 @@ fun LogFlowBottomSheet(
                     fontFamily = LiterataFontFamily,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF26181F)
+                    color = TextPrimary
                 )
 
                 IconButton(
@@ -159,7 +172,7 @@ fun LogFlowBottomSheet(
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = stringResource(R.string.close_desc),
-                        tint = Color(0xFF3B2D34),
+                        tint = TextStrong,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -178,7 +191,7 @@ fun LogFlowBottomSheet(
                     fontFamily = ManropeFontFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF3B2D34)
+                    color = TextStrong
                 )
 
                 val displayDateText = remember(selectedDate) {
@@ -196,9 +209,9 @@ fun LogFlowBottomSheet(
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFF7F2F4))
+                        .background(SurfaceSoft)
                         .border(
-                            BorderStroke(1.dp, Color(0xFFEADBDF)),
+                            BorderStroke(1.dp, BorderSoft),
                             RoundedCornerShape(12.dp)
                         )
                         .clickable { showDatePicker.value = true }
@@ -217,12 +230,12 @@ fun LogFlowBottomSheet(
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowDown,
                         contentDescription = null,
-                        tint = Color(0xFF8A7A83),
+                        tint = TextSubtle,
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -230,7 +243,7 @@ fun LogFlowBottomSheet(
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 12.dp),
-                color = Color(0xFFF2ECEF)
+                color = DividerSubtle
             )
 
             // Section 1: Flow Intensity
@@ -239,7 +252,7 @@ fun LogFlowBottomSheet(
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF3B2D34)
+                color = TextStrong
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -257,7 +270,7 @@ fun LogFlowBottomSheet(
                             .clickable { selectedFlow = if (isSelected) null else flow },
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = if (isSelected) Color(0xFFFDF2F6) else Color(0xFFF5F3F1)
+                            containerColor = if (isSelected) RoseTintLightest else SurfaceContainerLow
                         ),
                         border = if (isSelected) androidx.compose.foundation.BorderStroke(1.5.dp, Primary) else null,
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -276,7 +289,7 @@ fun LogFlowBottomSheet(
                                         modifier = Modifier
                                             .size(24.dp)
                                             .clip(CircleShape)
-                                            .background(Color(0xFFF7D5E1)),
+                                            .background(RoseTintMedium),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Box(
@@ -292,7 +305,7 @@ fun LogFlowBottomSheet(
                                         modifier = Modifier
                                             .size(24.dp)
                                             .clip(CircleShape)
-                                            .background(Color(0xFFF7D5E1)),
+                                            .background(RoseTintMedium),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Box(
@@ -320,7 +333,7 @@ fun LogFlowBottomSheet(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 13.sp,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isSelected) Primary else Color(0xFF3B2D34)
+                                color = if (isSelected) Primary else TextStrong
                             )
                         }
                     }
@@ -338,14 +351,14 @@ fun LogFlowBottomSheet(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = if (isMoreDetailsExpanded || selectedSymptoms.isNotEmpty() || selectedMood != null) {
-                        Color(0xFFFDF8FA)
+                        RoseTintLightest
                     } else {
-                        Color(0xFFFAF7F8)
+                        SurfaceWarm
                     }
                 ),
                 border = BorderStroke(
                     1.dp,
-                    if (selectedSymptoms.isNotEmpty() || selectedMood != null) Primary.copy(alpha = 0.3f) else Color(0xFFEADBDF)
+                    if (selectedSymptoms.isNotEmpty() || selectedMood != null) Primary.copy(alpha = 0.3f) else BorderSoft
                 )
             ) {
                 Column(modifier = Modifier.padding(14.dp)) {
@@ -361,14 +374,14 @@ fun LogFlowBottomSheet(
                                     fontFamily = ManropeFontFamily,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF26181F)
+                                    color = TextPrimary
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = stringResource(R.string.optional_label),
                                     fontFamily = ManropeFontFamily,
                                     fontSize = 12.sp,
-                                    color = Color(0xFF8A7A83)
+                                    color = TextSubtle
                                 )
                             }
                             Spacer(modifier = Modifier.height(2.dp))
@@ -381,7 +394,7 @@ fun LogFlowBottomSheet(
                                 },
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 12.sp,
-                                color = if (selectedSymptoms.isNotEmpty() || selectedMood != null) Primary else Color(0xFF8A7A83)
+                                color = if (selectedSymptoms.isNotEmpty() || selectedMood != null) Primary else TextSubtle
                             )
                         }
 
@@ -399,7 +412,7 @@ fun LogFlowBottomSheet(
                         exit = shrinkVertically() + fadeOut()
                     ) {
                         Column(modifier = Modifier.padding(top = 16.dp)) {
-                            HorizontalDivider(color = Color(0xFFF2ECEF))
+                            HorizontalDivider(color = DividerSubtle)
 
                             Spacer(modifier = Modifier.height(14.dp))
 
@@ -409,7 +422,7 @@ fun LogFlowBottomSheet(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF3B2D34)
+                                color = TextStrong
                             )
 
                             Spacer(modifier = Modifier.height(8.dp))
@@ -423,8 +436,8 @@ fun LogFlowBottomSheet(
                                 availableSymptoms.forEach { symptom ->
                                     val isSelected = selectedSymptoms.contains(symptom)
                                     val chipBg = if (isSelected) Primary else Color.White
-                                    val textColor = if (isSelected) Color.White else Color(0xFF4A3B43)
-                                    val border = if (isSelected) null else BorderStroke(1.dp, Color(0xFFEADBDF))
+                                    val textColor = if (isSelected) Color.White else TextStrong
+                                    val border = if (isSelected) null else BorderStroke(1.dp, BorderSoft)
 
                                     Box(
                                         modifier = Modifier
@@ -459,7 +472,7 @@ fun LogFlowBottomSheet(
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF3B2D34)
+                                color = TextStrong
                             )
 
                             Spacer(modifier = Modifier.height(10.dp))
@@ -471,7 +484,7 @@ fun LogFlowBottomSheet(
                                 MoodItem.entries.forEach { mood ->
                                     val isSelected = selectedMood == mood
                                     val circleBg = if (isSelected) Primary else Color.White
-                                    val iconColor = if (isSelected) Color.White else Color(0xFF3B2D34)
+                                    val iconColor = if (isSelected) Color.White else TextStrong
 
                                     Column(
                                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -485,7 +498,7 @@ fun LogFlowBottomSheet(
                                                 .clip(CircleShape)
                                                 .background(circleBg)
                                                 .border(
-                                                    BorderStroke(1.dp, if (isSelected) Primary else Color(0xFFEADBDF)),
+                                                    BorderStroke(1.dp, if (isSelected) Primary else BorderSoft),
                                                     CircleShape
                                                 ),
                                             contentAlignment = Alignment.Center
@@ -505,7 +518,7 @@ fun LogFlowBottomSheet(
                                             fontFamily = ManropeFontFamily,
                                             fontSize = 11.5.sp,
                                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                            color = if (isSelected) Primary else Color(0xFF4A3B43)
+                                            color = if (isSelected) Primary else TextStrong
                                         )
                                     }
                                 }
@@ -570,16 +583,16 @@ fun LogFlowBottomSheet(
         )
 
         val lumiDatePickerColors = DatePickerDefaults.colors(
-            containerColor = Color(0xFFFAF7F5),
+            containerColor = SurfaceWarm,
             titleContentColor = Primary,
             headlineContentColor = Primary,
-            weekdayContentColor = Color(0xFF7A6A73),
-            subheadContentColor = Color(0xFF5E4E57),
-            yearContentColor = Color(0xFF26181F),
+            weekdayContentColor = TextMuted,
+            subheadContentColor = TextSecondary,
+            yearContentColor = TextPrimary,
             currentYearContentColor = Primary,
             selectedYearContentColor = Color.White,
             selectedYearContainerColor = Primary,
-            dayContentColor = Color(0xFF26181F),
+            dayContentColor = TextPrimary,
             selectedDayContentColor = Color.White,
             selectedDayContainerColor = Primary,
             todayContentColor = Primary,
@@ -612,7 +625,7 @@ fun LogFlowBottomSheet(
             dismissButton = {
                 TextButton(
                     onClick = { showDatePicker.value = false },
-                    colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF7A6A73))
+                    colors = ButtonDefaults.textButtonColors(contentColor = TextMuted)
                 ) {
                     Text(
                         text = stringResource(R.string.cancel_button),

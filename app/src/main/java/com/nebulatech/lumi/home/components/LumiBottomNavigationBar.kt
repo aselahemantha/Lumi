@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
+import com.nebulatech.lumi.ui.theme.SurfaceWarm
+import com.nebulatech.lumi.ui.theme.TextSecondary
 
 enum class HomeTab(
     val label: String,
@@ -56,7 +58,7 @@ fun LumiBottomNavigationBar(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = Color(0xFFFAF7F5),
+        color = SurfaceWarm,
         shadowElevation = 8.dp
     ) {
         Row(
@@ -69,7 +71,7 @@ fun LumiBottomNavigationBar(
         ) {
             HomeTab.entries.forEach { tab ->
                 val isSelected = tab == selectedTab
-                val contentColor = if (isSelected) Color.White else Color(0xFF53434B)
+                val contentColor = if (isSelected) Color.White else TextSecondary
                 val backgroundColor = if (isSelected) Primary else Color.Transparent
 
                 Box(

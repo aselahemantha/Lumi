@@ -49,6 +49,14 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import com.nebulatech.lumi.ui.theme.BorderSoft
+import com.nebulatech.lumi.ui.theme.DividerSubtle
+import com.nebulatech.lumi.ui.theme.RoseTintLight
+import com.nebulatech.lumi.ui.theme.SurfaceWarm
+import com.nebulatech.lumi.ui.theme.TextMuted
+import com.nebulatech.lumi.ui.theme.TextPrimary
+import com.nebulatech.lumi.ui.theme.TextSecondary
+import com.nebulatech.lumi.ui.theme.TextSubtle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +92,7 @@ fun DatePickerCard(
                 text = stringResource(R.string.last_period_subtitle),
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
-                color = Color(0xFF6E5E67)
+                color = TextMuted
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -93,12 +101,12 @@ fun DatePickerCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(
-                        BorderStroke(1.dp, Color(0xFFE8DFE4)),
+                        BorderStroke(1.dp, BorderSoft),
                         RoundedCornerShape(16.dp)
                     )
                     .clip(RoundedCornerShape(16.dp))
                     .clickable { showDatePicker.value = true }
-                    .background(Color(0xFFFAF7F8))
+                    .background(SurfaceWarm)
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -118,20 +126,20 @@ fun DatePickerCard(
                         fontFamily = ManropeFontFamily,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF26181F)
+                        color = TextPrimary
                     )
                 }
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
-                    tint = Color(0xFF8A7A83),
+                    tint = TextSubtle,
                     modifier = Modifier.size(20.dp)
                 )
             }
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
-                color = Color(0xFFF2ECEF)
+                color = DividerSubtle
             )
 
             // Horizontal calendar strip highlighting the entire period duration
@@ -163,7 +171,7 @@ fun DatePickerCard(
                             color = when {
                                 isPeriodStart -> Primary
                                 isPeriodDay -> Primary.copy(alpha = 0.85f)
-                                else -> Color(0xFF8A7A83)
+                                else -> TextSubtle
                             },
                             fontWeight = if (isPeriodDay) FontWeight.Bold else FontWeight.Normal
                         )
@@ -176,8 +184,8 @@ fun DatePickerCard(
                                 .background(
                                     color = when {
                                         isPeriodStart -> Primary
-                                        isPeriodDay -> Color(0xFFFCE8EF)
-                                        else -> Color(0xFFFAF7F8)
+                                        isPeriodDay -> RoseTintLight
+                                        else -> SurfaceWarm
                                     }
                                 )
                                 .then(
@@ -188,7 +196,7 @@ fun DatePickerCard(
                                             CircleShape
                                         )
                                         else -> Modifier.border(
-                                            BorderStroke(1.dp, Color(0xFFE8DFE4)),
+                                            BorderStroke(1.dp, BorderSoft),
                                             CircleShape
                                         )
                                     }
@@ -202,7 +210,7 @@ fun DatePickerCard(
                                 color = when {
                                     isPeriodStart -> Color.White
                                     isPeriodDay -> Primary
-                                    else -> Color(0xFF26181F)
+                                    else -> TextPrimary
                                 },
                                 fontWeight = if (isPeriodDay) FontWeight.Bold else FontWeight.Normal
                             )
@@ -223,16 +231,16 @@ fun DatePickerCard(
         )
 
         val lumiDatePickerColors = DatePickerDefaults.colors(
-            containerColor = Color(0xFFFAF7F5),
+            containerColor = SurfaceWarm,
             titleContentColor = Primary,
             headlineContentColor = Primary,
-            weekdayContentColor = Color(0xFF7A6A73),
-            subheadContentColor = Color(0xFF5E4E57),
-            yearContentColor = Color(0xFF26181F),
+            weekdayContentColor = TextMuted,
+            subheadContentColor = TextSecondary,
+            yearContentColor = TextPrimary,
             currentYearContentColor = Primary,
             selectedYearContentColor = Color.White,
             selectedYearContainerColor = Primary,
-            dayContentColor = Color(0xFF26181F),
+            dayContentColor = TextPrimary,
             selectedDayContentColor = Color.White,
             selectedDayContainerColor = Primary,
             todayContentColor = Primary,
@@ -265,7 +273,7 @@ fun DatePickerCard(
             dismissButton = {
                 TextButton(
                     onClick = { showDatePicker.value = false },
-                    colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF7A6A73))
+                    colors = ButtonDefaults.textButtonColors(contentColor = TextMuted)
                 ) {
                     Text(
                         text = stringResource(R.string.cancel_button),
