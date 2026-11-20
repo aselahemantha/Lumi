@@ -49,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.BuildConfig
 import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
@@ -295,7 +296,7 @@ private fun FaqAccordionItem(
 
 private fun sendSupportEmail(context: Context) {
     val intent = Intent(Intent.ACTION_SENDTO).apply {
-        data = Uri.parse("mailto:support@lumiapp.com")
+        data = Uri.parse("mailto:${BuildConfig.SUPPORT_EMAIL}")
         putExtra(Intent.EXTRA_SUBJECT, "Lumi App Support & Inquiry")
         putExtra(Intent.EXTRA_TEXT, "Hello Lumi Team,\n\nI have a question regarding:")
     }

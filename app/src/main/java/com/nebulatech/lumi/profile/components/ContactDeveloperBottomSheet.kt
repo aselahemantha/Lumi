@@ -56,20 +56,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.BuildConfig
 import com.nebulatech.lumi.R
+import com.nebulatech.lumi.ui.theme.Background
+import com.nebulatech.lumi.ui.theme.ChartFsh
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.io.OutputStreamWriter
-import java.net.HttpURLConnection
-import java.net.URL
-import com.nebulatech.lumi.ui.theme.Background
-import com.nebulatech.lumi.ui.theme.ChartFsh
 import com.nebulatech.lumi.ui.theme.RoseTintMedium
 import com.nebulatech.lumi.ui.theme.SuccessContainer
 import com.nebulatech.lumi.ui.theme.SuccessGreen
@@ -79,6 +72,13 @@ import com.nebulatech.lumi.ui.theme.TextMuted
 import com.nebulatech.lumi.ui.theme.TextPrimary
 import com.nebulatech.lumi.ui.theme.TextSecondary
 import com.nebulatech.lumi.ui.theme.TextStrong
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -198,7 +198,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                     Text(
                         text = stringResource(
                             R.string.delivered_to_developer_body,
-                            stringResource(R.string.developer_email)
+                            BuildConfig.SUPPORT_EMAIL,
                         ),
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
@@ -247,7 +247,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = stringResource(R.string.developer_email),
+                            text = BuildConfig.SUPPORT_EMAIL,
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -384,9 +384,9 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
 
                         scope.launch {
                             val success = sendInAppMessage(
-                                recipient = "asela.hemantha.p@gmail.com",
-                                replyTo = userEmail.ifBlank { "anonymous@lumiapp.com" },
-                                subject = subject.ifBlank { "Lumi App Feedback" },
+                                recipient = BuildConfig.SUPPORT_EMAIL,
+                                replyTo = userEmail.ifBlank { ANONYMOUS_REPLY_TO },
+                                subject = subject.ifBlank { DEFAULT_FEEDBACK_SUBJECT },
                                 body = message,
                             )
                             isSending = false
@@ -446,9 +446,9 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                 OutlinedButton(
                     onClick = {
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:asela.hemantha.p@gmail.com")
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("asela.hemantha.p@gmail.com"))
-                            putExtra(Intent.EXTRA_SUBJECT, subject.ifBlank { "Lumi App Feedback" })
+                            data = Uri.parse("mailto:${BuildConfig.SUPPORT_EMAIL}")
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf(BuildConfig.SUPPORT_EMAIL))
+                            putExtra(Intent.EXTRA_SUBJECT, subject.ifBlank { DEFAULT_FEEDBACK_SUBJECT })
                             putExtra(Intent.EXTRA_TEXT, message)
                         }
                         try {
@@ -487,14 +487,16 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
     }
 }
 
+private const val ANONYMOUS_REPLY_TO = "anonymous@lumiapp.com"
+private const val DEFAULT_FEEDBACK_SUBJECT = "Lumi App Feedback"
+
 /**
  * Dispatches an in-app feedback payload directly via HTTP POST to the developer destination webhook.
  */
 private suspend fun sendInAppMessage(recipient: String, replyTo: String, subject: String, body: String): Boolean =
     withContext(Dispatchers.IO) {
         try {
-            // Formspree / Webhook submission endpoint for asela.hemantha.p@gmail.com
-            val url = URL("https://formspree.io/f/xbjnqvgk")
+            val url = URL(BuildConfig.FEEDBACK_WEBHOOK_URL)
             val connection = (url.openConnection() as HttpURLConnection).apply {
                 requestMethod = "POST"
                 connectTimeout = 8000
@@ -520,11 +522,8 @@ private suspend fun sendInAppMessage(recipient: String, replyTo: String, subject
 
             val responseCode = connection.responseCode
             connection.disconnect()
-            // If 200..299 or simulated connection
             responseCode in 200..299
         } catch (_: Exception) {
-            // Graceful network delay fallback simulation for offline/preview environments
-            delay(1200)
-            true
+            false
         }
     }

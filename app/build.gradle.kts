@@ -19,6 +19,13 @@ android {
         versionName = "1.10"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val feedbackWebhookUrl = project.findProperty("lumi.feedbackWebhookUrl")?.toString()
+            ?: "https://formspree.io/f/xbjnqvgk"
+        val supportEmail = project.findProperty("lumi.supportEmail")?.toString()
+            ?: "asela.hemantha.p@gmail.com"
+        buildConfigField("String", "FEEDBACK_WEBHOOK_URL", "\"$feedbackWebhookUrl\"")
+        buildConfigField("String", "SUPPORT_EMAIL", "\"$supportEmail\"")
     }
 
     buildTypes {
@@ -41,6 +48,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
