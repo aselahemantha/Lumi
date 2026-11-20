@@ -47,9 +47,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.onboarding.ManualPastCycle
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
@@ -114,7 +116,7 @@ fun ManualPastCyclesBottomSheet(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = "Manual Past Cycles",
+                text = stringResource(R.string.manual_past_cycles_title),
                 fontFamily = LiterataFontFamily,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
@@ -124,7 +126,7 @@ fun ManualPastCyclesBottomSheet(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Enter the start dates of your previous cycles to calibrate your baseline. Tap '+' to add more past cycles for higher prediction accuracy.",
+                text = stringResource(R.string.manual_past_cycles_desc),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 lineHeight = 19.sp,
@@ -213,7 +215,7 @@ fun ManualPastCyclesBottomSheet(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Add Another Past Cycle",
+                            text = stringResource(R.string.add_another_past_cycle),
                             fontFamily = ManropeFontFamily,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
@@ -235,15 +237,22 @@ fun ManualPastCyclesBottomSheet(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val cycleWord = stringResource(
+                    if (cyclesList.size == 1) R.string.cycle_singular else R.string.cycle_plural
+                )
                 Text(
-                    text = "Average (${cyclesList.size} ${if (cyclesList.size == 1) "cycle" else "cycles"})",
+                    text = stringResource(R.string.average_cycles_count, cyclesList.size, cycleWord),
                     fontFamily = ManropeFontFamily,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF6E5E67)
                 )
                 Text(
-                    text = "$currentAvgCycleLength days cycle • $currentAvgPeriodDuration days flow",
+                    text = stringResource(
+                        R.string.average_cycle_flow_summary,
+                        currentAvgCycleLength,
+                        currentAvgPeriodDuration
+                    ),
                     fontFamily = ManropeFontFamily,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -266,7 +275,7 @@ fun ManualPastCyclesBottomSheet(
                 colors = ButtonDefaults.buttonColors(containerColor = Primary)
             ) {
                 Text(
-                    text = "Save Past Cycles ($currentAvgCycleLength days avg)",
+                    text = stringResource(R.string.save_past_cycles_avg, currentAvgCycleLength),
                     fontFamily = ManropeFontFamily,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
@@ -283,7 +292,7 @@ fun ManualPastCyclesBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Auto-calculate instead",
+                    text = stringResource(R.string.auto_calculate_instead),
                     fontFamily = ManropeFontFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -356,7 +365,7 @@ fun ManualPastCyclesBottomSheet(
                         },
                         colors = ButtonDefaults.textButtonColors(contentColor = Primary)
                     ) {
-                        Text("OK", fontFamily = ManropeFontFamily, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.ok_button), fontFamily = ManropeFontFamily, fontWeight = FontWeight.Bold)
                     }
                 },
                 dismissButton = {
@@ -364,7 +373,7 @@ fun ManualPastCyclesBottomSheet(
                         onClick = { activeDatePickerIndex = null },
                         colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF7A6A73))
                     ) {
-                        Text("Cancel", fontFamily = ManropeFontFamily)
+                        Text(stringResource(R.string.cancel_button), fontFamily = ManropeFontFamily)
                     }
                 },
                 shape = RoundedCornerShape(28.dp),
@@ -419,7 +428,7 @@ private fun PastCycleInputCard(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.DeleteOutline,
-                            contentDescription = "Remove cycle",
+                            contentDescription = stringResource(R.string.remove_cycle_desc),
                             tint = Color(0xFF9E8791),
                             modifier = Modifier.size(18.dp)
                         )
@@ -450,7 +459,7 @@ private fun PastCycleInputCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Start: ${startDate.format(dateFormatter)}",
+                        text = stringResource(R.string.start_date_prefix, startDate.format(dateFormatter)),
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
@@ -459,7 +468,7 @@ private fun PastCycleInputCard(
                 }
 
                 Text(
-                    text = "Change",
+                    text = stringResource(R.string.change_button),
                     fontFamily = ManropeFontFamily,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -476,7 +485,7 @@ private fun PastCycleInputCard(
             ) {
                 // Cycle Length Counter
                 MiniCounterBox(
-                    label = "Cycle Length",
+                    label = stringResource(R.string.cycle_length_title),
                     value = cycleLength,
                     onDecrease = { if (cycleLength > 20) onLengthChange(cycleLength - 1) },
                     onIncrease = { if (cycleLength < 45) onLengthChange(cycleLength + 1) },
@@ -485,7 +494,7 @@ private fun PastCycleInputCard(
 
                 // Period Duration Counter
                 MiniCounterBox(
-                    label = "Period Flow",
+                    label = stringResource(R.string.period_flow_label),
                     value = periodDuration,
                     onDecrease = { if (periodDuration > 2) onDurationChange(periodDuration - 1) },
                     onIncrease = { if (periodDuration < 10) onDurationChange(periodDuration + 1) },
@@ -503,7 +512,7 @@ private fun MiniCounterBox(
     onDecrease: () -> Unit,
     onIncrease: () -> Unit,
     modifier: Modifier = Modifier,
-    unit: String = "days"
+    unit: String = stringResource(R.string.days_unit)
 ) {
     Column(
         modifier = modifier
@@ -532,14 +541,14 @@ private fun MiniCounterBox(
             ) {
                 Icon(
                     imageVector = Icons.Default.Remove,
-                    contentDescription = "Decrease",
+                    contentDescription = stringResource(R.string.decrease_desc),
                     tint = Primary,
                     modifier = Modifier.size(14.dp)
                 )
             }
 
             Text(
-                text = "$value $unit",
+                text = stringResource(R.string.value_with_unit, value, unit),
                 fontFamily = ManropeFontFamily,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -552,7 +561,7 @@ private fun MiniCounterBox(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Increase",
+                    contentDescription = stringResource(R.string.increase_desc),
                     tint = Primary,
                     modifier = Modifier.size(14.dp)
                 )

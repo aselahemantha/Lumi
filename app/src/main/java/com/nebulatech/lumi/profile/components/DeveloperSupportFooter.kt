@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -82,7 +83,7 @@ fun DeveloperSupportFooter(
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "MADE WITH PRECISION IN SRI LANKA 🤍",
+            text = stringResource(R.string.made_in_sri_lanka),
             fontFamily = ManropeFontFamily,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
@@ -93,7 +94,7 @@ fun DeveloperSupportFooter(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "Lumi v$versionName ($versionCode)",
+            text = stringResource(R.string.app_version_format, versionName, versionCode),
             fontFamily = ManropeFontFamily,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,

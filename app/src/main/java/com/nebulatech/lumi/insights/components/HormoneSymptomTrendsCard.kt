@@ -27,9 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.data.model.CyclePhase
 import com.nebulatech.lumi.insights.SymptomTrendPoint
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
@@ -210,7 +212,7 @@ fun HormonePhaseStatusCard(
             if (loggedSymptoms.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "RECENT SYMPTOMS LOGGED",
+                    text = stringResource(R.string.recent_symptoms_logged),
                     fontFamily = ManropeFontFamily,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
@@ -231,7 +233,7 @@ fun HormonePhaseStatusCard(
                                 .padding(horizontal = 10.dp, vertical = 5.dp)
                         ) {
                             Text(
-                                text = "${symptom.symptomName} (Day ${symptom.cycleDay})",
+                                text = stringResource(R.string.symptom_with_day, symptom.symptomName, symptom.cycleDay),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.SemiBold,

@@ -45,9 +45,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -94,14 +96,14 @@ fun HelpCenterBottomSheet(
 
                 Column {
                     Text(
-                        text = "Help Center",
+                        text = stringResource(R.string.help_center_title),
                         fontFamily = LiterataFontFamily,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = Primary
                     )
                     Text(
-                        text = "Frequently asked questions and expert cycle support",
+                        text = stringResource(R.string.help_center_subtitle),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
                         color = Color(0xFF7A6A73)
@@ -113,7 +115,7 @@ fun HelpCenterBottomSheet(
 
             // FAQ Accordion Section
             Text(
-                text = "Frequently Asked Questions",
+                text = stringResource(R.string.faq_header),
                 fontFamily = LiterataFontFamily,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
@@ -185,7 +187,7 @@ fun HelpCenterBottomSheet(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Need personal assistance?",
+                            text = stringResource(R.string.need_personal_assistance),
                             fontFamily = LiterataFontFamily,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
@@ -196,7 +198,7 @@ fun HelpCenterBottomSheet(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Our wellness and technical support team is available to answer any questions or receive your feedback.",
+                        text = stringResource(R.string.need_personal_assistance_desc),
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         lineHeight = 18.sp,
@@ -221,7 +223,7 @@ fun HelpCenterBottomSheet(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Contact Support Team",
+                                text = stringResource(R.string.contact_support_team),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold

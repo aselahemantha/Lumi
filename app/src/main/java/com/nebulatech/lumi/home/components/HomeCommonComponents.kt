@@ -67,6 +67,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
@@ -74,6 +75,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -138,7 +140,7 @@ fun CycleRingWidget(
                 .offset(y = (-4).dp)
         ) {
             Text(
-                text = "CYCLE DAY",
+                text = stringResource(R.string.cycle_day_label),
                 fontFamily = ManropeFontFamily,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -252,7 +254,7 @@ fun Next7DaysCalendarStrip(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "NEXT 7 DAYS",
+            text = stringResource(R.string.next_7_days_label),
             fontFamily = ManropeFontFamily,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
@@ -367,7 +369,7 @@ fun LateLutealHeaderCard(
                     .padding(horizontal = 14.dp, vertical = 6.dp)
             ) {
                 Text(
-                    text = "DAY $dayNumber",
+                    text = stringResource(R.string.day_number_upper, dayNumber),
                     fontFamily = ManropeFontFamily,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -443,14 +445,14 @@ fun LogSymptomsSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Log Today's Symptoms",
+                text = stringResource(R.string.log_todays_symptoms),
                 fontFamily = LiterataFontFamily,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF26181F)
             )
             Text(
-                text = "View All",
+                text = stringResource(R.string.view_all),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
@@ -528,7 +530,7 @@ fun LogSymptomsSection(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Save Daily Log",
+                    text = stringResource(R.string.save_daily_log),
                     fontFamily = ManropeFontFamily,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
@@ -575,7 +577,7 @@ fun LumiInsightPinkCard(
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "LUMI INSIGHT",
+                    text = stringResource(R.string.lumi_insight_badge),
                     fontFamily = ManropeFontFamily,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -648,7 +650,7 @@ fun ThirtyDayTrendsCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "30-Day Trends",
+                    text = stringResource(R.string.thirty_day_trends),
                     fontFamily = LiterataFontFamily,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -663,7 +665,7 @@ fun ThirtyDayTrendsCard(
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "MOST FREQUENT",
+                text = stringResource(R.string.most_frequent_badge),
                 fontFamily = ManropeFontFamily,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
@@ -681,14 +683,14 @@ fun ThirtyDayTrendsCard(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Based on your logged symptoms over the past 30 days.",
+                    text = stringResource(R.string.trends_subtitle),
                     fontFamily = ManropeFontFamily,
                     fontSize = 12.sp,
                     color = Color(0xFF8A7A83)
                 )
             } else {
                 Text(
-                    text = "No symptoms logged yet",
+                    text = stringResource(R.string.no_symptoms_logged_yet),
                     fontFamily = ManropeFontFamily,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -696,7 +698,7 @@ fun ThirtyDayTrendsCard(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Log your daily symptoms above to uncover your 30-day patterns.",
+                    text = stringResource(R.string.trends_empty_subtitle),
                     fontFamily = ManropeFontFamily,
                     fontSize = 12.sp,
                     color = Color(0xFF8A7A83)
@@ -783,7 +785,7 @@ fun FertilityHeaderCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Log BBT",
+                        text = stringResource(R.string.log_bbt_title),
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
@@ -810,7 +812,7 @@ fun FertilityHeaderCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Log LH Result",
+                        text = stringResource(R.string.log_lh_result),
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
@@ -861,7 +863,7 @@ fun BasalBodyTempChartCard(
             ) {
                 Column {
                     Text(
-                        text = "Basal Body Temp",
+                        text = stringResource(R.string.basal_body_temp_title),
                         fontFamily = LiterataFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
@@ -885,7 +887,7 @@ fun BasalBodyTempChartCard(
                         .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "Day $currentCycleDay",
+                        text = stringResource(R.string.day_number_title, currentCycleDay),
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
@@ -1131,7 +1133,7 @@ fun BasalBodyTempChartCard(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "No readings logged this cycle",
+                            text = stringResource(R.string.no_bbt_readings),
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
@@ -1139,7 +1141,7 @@ fun BasalBodyTempChartCard(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Log morning BBT to detect your ovulation thermal shift.",
+                            text = stringResource(R.string.no_bbt_readings_desc),
                             fontFamily = ManropeFontFamily,
                             fontSize = 11.sp,
                             color = Color(0xFF82727B),
@@ -1169,7 +1171,7 @@ fun BasalBodyTempChartCard(
                 xLabels.forEach { cd ->
                     val isCurrent = cd == currentCycleDay
                     Text(
-                        text = "CD$cd",
+                        text = stringResource(R.string.cycle_day_short, cd),
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal,
@@ -1247,7 +1249,7 @@ fun TodaysLogsCard(
                 .padding(20.dp)
         ) {
             Text(
-                text = "TODAY'S LOGS",
+                text = stringResource(R.string.todays_logs_header),
                 fontFamily = ManropeFontFamily,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
@@ -1258,7 +1260,7 @@ fun TodaysLogsCard(
 
             if (logs.isEmpty()) {
                 Text(
-                    text = "No symptoms or logs recorded yet today.",
+                    text = stringResource(R.string.no_logs_today),
                     fontFamily = ManropeFontFamily,
                     fontSize = 14.sp,
                     color = Color(0xFF82727B),
@@ -1339,7 +1341,7 @@ fun LibraryFeaturedCard(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "LIBRARY",
+                    text = stringResource(R.string.library_badge),
                     fontFamily = ManropeFontFamily,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -1360,7 +1362,7 @@ fun LibraryFeaturedCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Read article",
+                        text = stringResource(R.string.read_article),
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,

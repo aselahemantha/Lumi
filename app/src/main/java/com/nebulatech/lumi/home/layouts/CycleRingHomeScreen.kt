@@ -32,10 +32,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.analytics.AnalyticsConstants
 import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.home.components.CycleRingWidget
@@ -191,7 +193,7 @@ fun CycleRingHomeScreen(
                     border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFD6C2C9))
                 ) {
                     Text(
-                        text = "Mark as Missed Period",
+                        text = stringResource(R.string.mark_as_missed_period),
                         fontFamily = ManropeFontFamily,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold
@@ -230,7 +232,7 @@ fun CycleRingHomeScreen(
                 onDismissRequest = { showMissedConfirmDialog = false },
                 title = {
                     Text(
-                        text = "Mark Period as Missed?",
+                        text = stringResource(R.string.mark_missed_dialog_title),
                         fontFamily = ManropeFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
@@ -238,7 +240,7 @@ fun CycleRingHomeScreen(
                 },
                 text = {
                     Text(
-                        text = "This will mark this cycle as missed and prevent it from distorting your average cycle length calculations. When your bleeding begins next, log your flow to start fresh.",
+                        text = stringResource(R.string.mark_missed_dialog_body),
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp
                     )
@@ -251,7 +253,7 @@ fun CycleRingHomeScreen(
                         }
                     ) {
                         Text(
-                            text = "Confirm",
+                            text = stringResource(R.string.confirm_button),
                             fontFamily = ManropeFontFamily,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF7B3F5E)
@@ -263,7 +265,7 @@ fun CycleRingHomeScreen(
                         onClick = { showMissedConfirmDialog = false }
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel_button),
                             fontFamily = ManropeFontFamily
                         )
                     }

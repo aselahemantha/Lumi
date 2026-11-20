@@ -23,11 +23,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.analytics.AnalyticsConstants
 import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.analytics.TrackScreenView
@@ -56,7 +58,7 @@ fun InsightsTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Insights",
+            text = stringResource(R.string.insights_title),
             fontFamily = LiterataFontFamily,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
@@ -66,7 +68,7 @@ fun InsightsTopBar(
         IconButton(onClick = onNotificationClick) {
             Icon(
                 imageVector = Icons.Outlined.Notifications,
-                contentDescription = "Notifications",
+                contentDescription = stringResource(R.string.notifications_desc),
                 tint = Color(0xFF4A3A43),
                 modifier = Modifier.size(24.dp)
             )

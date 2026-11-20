@@ -255,7 +255,7 @@ fun DatePickerCard(
                     colors = ButtonDefaults.textButtonColors(contentColor = Primary)
                 ) {
                     Text(
-                        text = "OK",
+                        text = stringResource(R.string.ok_button),
                         fontFamily = ManropeFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
@@ -268,7 +268,7 @@ fun DatePickerCard(
                     colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF7A6A73))
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel_button),
                         fontFamily = ManropeFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp

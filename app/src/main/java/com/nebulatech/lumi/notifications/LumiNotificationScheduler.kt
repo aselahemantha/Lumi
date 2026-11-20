@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.nebulatech.lumi.R
 import java.util.Calendar
 
 object LumiNotificationScheduler {
@@ -21,8 +22,8 @@ object LumiNotificationScheduler {
             minute = 0,
             requestCode = ID_MORNING_CHECK,
             action = LumiNotificationReceiver.ACTION_MORNING_CHECK,
-            title = "Period & Morning Cycle Check",
-            body = "Your daily cycle predictions are ready.",
+            title = context.getString(R.string.notif_morning_check_title),
+            body = context.getString(R.string.notif_morning_check_body),
             channelId = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
         )
 
@@ -33,8 +34,8 @@ object LumiNotificationScheduler {
             minute = 0,
             requestCode = ID_FERTILITY_ALERT,
             action = LumiNotificationReceiver.ACTION_FERTILITY_ALERT,
-            title = "Peak Vitality",
-            body = "Peak fertility window today!",
+            title = context.getString(R.string.notif_fertility_alert_title),
+            body = context.getString(R.string.notif_fertility_alert_body),
             channelId = LumiNotificationChannels.CHANNEL_FERTILITY_ALERTS,
         )
 
@@ -45,8 +46,8 @@ object LumiNotificationScheduler {
             minute = 30,
             requestCode = ID_DAILY_REFLECTION,
             action = LumiNotificationReceiver.ACTION_DAILY_REFLECTION,
-            title = "Daily Reflection",
-            body = "How are you feeling today? Log today's symptoms and mood.",
+            title = context.getString(R.string.notif_daily_reflection_title),
+            body = context.getString(R.string.notif_daily_reflection_body),
             channelId = LumiNotificationChannels.CHANNEL_DAILY_REMINDERS,
         )
     }
@@ -125,8 +126,8 @@ object LumiNotificationScheduler {
      */
     fun triggerNotificationNow(
         context: Context,
-        title: String = "Lumi Cycle Alert",
-        body: String = "Your daily insights and cycle prediction are ready in Lumi.",
+        title: String = context.getString(R.string.notif_instant_title),
+        body: String = context.getString(R.string.notif_instant_body),
         channelId: String = LumiNotificationChannels.CHANNEL_CYCLE_PREDICTIONS,
         notificationId: Int = 3001,
     ) {

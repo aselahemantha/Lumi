@@ -39,4 +39,216 @@
     <string name="security_info_text">Your health data is stored locally and securely. It is never shared with third parties without explicit consent.</string>
     <string name="name_label">What should we call you?</string>
     <string name="name_placeholder">e.g., Sarah</string>
+
+    <!-- Common -->
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="close_desc">Close</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="done_button">Done</string>
+    <string name="save_changes_button">Save Changes</string>
+    <string name="decrease_desc">Decrease</string>
+    <string name="increase_desc">Increase</string>
+    <string name="delete_desc">Delete</string>
+    <string name="selected_desc">Selected</string>
+    <string name="notifications_desc">Notifications</string>
+    <string name="view_all">View All</string>
+    <string name="days_unit">days</string>
+    <string name="lumi_insight_badge">LUMI INSIGHT</string>
+
+    <!-- Notifications -->
+    <string name="notification_center_title">Notification Center</string>
+    <string name="notification_center_subtitle">System alerts, reminders, and phase insights delivered to you.</string>
+    <string name="clear_all">Clear All</string>
+    <string name="notifications_empty_title">You\'re all caught up!</string>
+    <string name="notifications_empty_desc">Daily reminders, period alerts, and phase insights will appear here when delivered.</string>
+    <string name="send_test_notification">Send Test Notification</string>
+    <string name="notif_morning_check_title">Period &amp; Morning Cycle Check</string>
+    <string name="notif_morning_check_body">Your daily cycle predictions are ready.</string>
+    <string name="notif_fertility_alert_title">Peak Vitality</string>
+    <string name="notif_fertility_alert_body">Peak fertility window today!</string>
+    <string name="notif_daily_reflection_title">Daily Reflection</string>
+    <string name="notif_daily_reflection_body">How are you feeling today? Log today\'s symptoms and mood.</string>
+    <string name="notif_instant_title">Lumi Cycle Alert</string>
+    <string name="notif_instant_body">Your daily insights and cycle prediction are ready in Lumi.</string>
+
+    <!-- Onboarding (Remaining) -->
+    <string name="step_of_steps">Step %1$d of %2$d</string>
+    <string name="weight_unit_kg">kg</string>
+    <string name="weight_unit_lbs">lbs</string>
+    <string name="ai_cycle_calibration_title">AI Cycle Calibration</string>
+    <string name="ai_calibration_manual_desc">Using your custom past cycle records for baseline calibration and precision predictions.</string>
+    <string name="ai_calibration_auto_desc">We automatically calculate past cycle data using the information given by you to provide precision insights from day one.</string>
+    <string name="edit_past_cycles">Edit Past Cycles</string>
+    <string name="enter_past_cycles_manually">Enter Past Cycles Manually</string>
+    <string name="manual_past_cycles_title">Manual Past Cycles</string>
+    <string name="manual_past_cycles_desc">Enter the start dates of your previous cycles to calibrate your baseline. Tap \'+\' to add more past cycles for higher prediction accuracy.</string>
+    <string name="add_another_past_cycle">Add Another Past Cycle</string>
+    <string name="average_cycles_count">Average (%1$d %2$s)</string>
+    <string name="cycle_singular">cycle</string>
+    <string name="cycle_plural">cycles</string>
+    <string name="average_cycle_flow_summary">%1$d days cycle • %2$d days flow</string>
+    <string name="save_past_cycles_avg">Save Past Cycles (%1$d days avg)</string>
+    <string name="auto_calculate_instead">Auto-calculate instead</string>
+    <string name="remove_cycle_desc">Remove cycle</string>
+    <string name="start_date_prefix">Start: %1$s</string>
+    <string name="change_button">Change</string>
+    <string name="period_flow_label">Period Flow</string>
+    <string name="value_with_unit">%1$d %2$s</string>
+
+    <!-- Calendar -->
+    <string name="previous_month_desc">Previous Month</string>
+    <string name="next_month_desc">Next Month</string>
+    <string name="calendar_cycle_steady">Your average cycle length is steady at %1$d days.</string>
+    <string name="calendar_cycle_steady_default">Your cycle length is steady at 28 days.</string>
+    <string name="legend_period">Period</string>
+    <string name="legend_fertile">Fertile</string>
+    <string name="legend_ovulation">Ovulation</string>
+    <string name="phase_day_format">%1$s  •  Day %2$d</string>
+
+    <!-- Logging -->
+    <string name="daily_log_title">Daily Log</string>
+    <string name="log_date_label">Log Date</string>
+    <string name="select_date_desc">Select Date</string>
+    <string name="flow_intensity_label">Flow Intensity</string>
+    <string name="symptoms_and_mood_label">Symptoms &amp; Mood</string>
+    <string name="optional_label">(Optional)</string>
+    <string name="symptoms_label">Symptoms</string>
+    <string name="mood_label">Mood</string>
+    <string name="save_log_button">Save Log</string>
+    <string name="log_bbt_title">Log BBT</string>
+    <string name="bbt_time_placeholder">Today, 7:30 AM</string>
+    <string name="unit_fahrenheit">°F</string>
+    <string name="disturbed_sleep_label">Disturbed Sleep</string>
+    <string name="fever_illness_label">Fever / Illness</string>
+    <string name="save_reading_button">Save Reading</string>
+    <string name="log_lh_test_title">Log LH Test</string>
+    <string name="test_result_intensity_label">Test Result Intensity</string>
+    <string name="test_brand_optional_label">Test Brand (Optional)</string>
+    <string name="test_brand_placeholder">e.g., Easy@Home, Clearblue</string>
+    <string name="test_strip_photo_label">Test Strip Photo</string>
+    <string name="take_photo_desc">Take Photo</string>
+    <string name="save_result_button">Save Result</string>
+
+    <!-- Home -->
+    <string name="cycle_day_label">CYCLE DAY</string>
+    <string name="next_7_days_label">NEXT 7 DAYS</string>
+    <string name="day_number_upper">DAY %1$d</string>
+    <string name="day_number_title">Day %1$d</string>
+    <string name="cycle_day_short">CD%1$d</string>
+    <string name="log_todays_symptoms">Log Today\'s Symptoms</string>
+    <string name="save_daily_log">Save Daily Log</string>
+    <string name="thirty_day_trends">30-Day Trends</string>
+    <string name="most_frequent_badge">MOST FREQUENT</string>
+    <string name="trends_subtitle">Based on your logged symptoms over the past 30 days.</string>
+    <string name="no_symptoms_logged_yet">No symptoms logged yet</string>
+    <string name="trends_empty_subtitle">Log your daily symptoms above to uncover your 30-day patterns.</string>
+    <string name="log_lh_result">Log LH Result</string>
+    <string name="basal_body_temp_title">Basal Body Temp</string>
+    <string name="no_bbt_readings">No readings logged this cycle</string>
+    <string name="no_bbt_readings_desc">Log morning BBT to detect your ovulation thermal shift.</string>
+    <string name="todays_logs_header">TODAY\'S LOGS</string>
+    <string name="no_logs_today">No symptoms or logs recorded yet today.</string>
+    <string name="library_badge">LIBRARY</string>
+    <string name="read_article">Read article</string>
+    <string name="mark_as_missed_period">Mark as Missed Period</string>
+    <string name="mark_missed_dialog_title">Mark Period as Missed?</string>
+    <string name="mark_missed_dialog_body">This will mark this cycle as missed and prevent it from distorting your average cycle length calculations. When your bleeding begins next, log your flow to start fresh.</string>
+    <string name="period_started_early">Period Started Early? Log Flow</string>
+
+    <!-- Insights -->
+    <string name="insights_title">Insights</string>
+    <string name="cycle_at_a_glance">CYCLE AT A GLANCE</string>
+    <string name="hormone_cycle_tracker">Hormone Cycle Tracker</string>
+    <string name="hormone_y_axis">Level (Relative Intensity) ↑</string>
+    <string name="hormone_x_axis">Cycle Day →</string>
+    <string name="phase_menstrual">Menstrual</string>
+    <string name="phase_follicular">Follicular</string>
+    <string name="phase_ovulation">Ovulation</string>
+    <string name="phase_luteal">Luteal</string>
+    <string name="phase_label_upper">PHASE</string>
+    <string name="estrogen_label_upper">ESTROGEN</string>
+    <string name="progesterone_label_upper">PROGESTERONE</string>
+    <string name="estrogen_value_pg_ml">%1$d pg/mL</string>
+    <string name="day_of_cycle_label">Day of Cycle</string>
+    <string name="recent_symptoms_logged">RECENT SYMPTOMS LOGGED</string>
+    <string name="symptom_with_day">%1$s (Day %2$d)</string>
+    <string name="learn_header">LEARN</string>
+    <string name="personalized_health_articles">Personalized Health Articles</string>
+    <string name="personalized_health_articles_desc">Evidence-based research, sleep studies, and nutrition guides will be available when connected online or syncing with Lumi Cloud.</string>
+    <string name="online_library_coming_soon">Online Library Coming Soon</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="logout_dialog_title">Log Out of Lumi?</string>
+    <string name="logout_dialog_message">Logging out will clear all local cycle records, logs, and preferences from this device and close the application.</string>
+    <string name="logout_button">Log Out</string>
+    <string name="made_in_sri_lanka">MADE WITH PRECISION IN SRI LANKA 🤍</string>
+    <string name="app_version_format">Lumi v%1$s (%2$d)</string>
+    <string name="edit_profile_desc">Edit Profile</string>
+    <string name="cycle_length_multiline">Cycle\nLength</string>
+    <string name="period_duration_multiline">Period\nDuration</string>
+    <string name="primary_goal_label">Primary Goal</string>
+    <string name="edit_health_profile_title">Edit Health Profile</string>
+    <string name="cycle_length_upper">CYCLE LENGTH</string>
+    <string name="cycle_length_days_format">%1$d days</string>
+    <string name="cycle_length_hint">Average: 28 days (21–45 allowed)</string>
+    <string name="period_duration_upper">PERIOD DURATION</string>
+    <string name="period_duration_hint">Average: 5 days (2–10 allowed)</string>
+    <string name="primary_goal_upper">PRIMARY GOAL</string>
+    <string name="app_settings_title">App Settings</string>
+    <string name="notifications_title">Notifications</string>
+    <string name="biometric_app_lock_title">Biometric App Lock</string>
+    <string name="biometric_app_lock_desc">Require fingerprint or Face ID to open Lumi</string>
+    <string name="biometric_not_supported">Biometric authentication not supported or enrolled on this device</string>
+    <string name="data_privacy_title">Data Privacy &amp; Export</string>
+    <string name="data_privacy_subtitle">Your data belongs to you. Fully encrypted &amp; private.</string>
+    <string name="export_health_records">Export Health Records</string>
+    <string name="clinical_cycle_summary_title">Clinical Cycle &amp; Symptom Summary</string>
+    <string name="clinical_cycle_summary_desc">Generate a comprehensive export of your cycle history, period duration, BBT temperatures, and symptoms formatted for doctor visits or personal backups.</string>
+    <string name="export_health_summary_csv">Export Health Summary (CSV)</string>
+    <string name="erase_all_health_data_button">Erase All Health &amp; Cycle Data</string>
+    <string name="erase_all_data_dialog_title">Erase All Data?</string>
+    <string name="erase_all_data_dialog_body">This will permanently delete all your logged periods, daily symptoms, BBT readings, and cycle history from this device. This action cannot be undone.</string>
+    <string name="yes_delete_everything">Yes, Delete Everything</string>
+    <string name="report_generated_title">Report Generated</string>
+    <string name="report_generated_body">Your Lumi cycle summary has been prepared. You can share or save the file via the system dialog.</string>
+
+    <!-- Contact Developer -->
+    <string name="delivered_to_developer">Delivered to Developer</string>
+    <string name="delivered_to_developer_body">Your message has been dispatched to %1$s. We appreciate you helping make Lumi better!</string>
+    <string name="developer_email">asela.hemantha.p@gmail.com</string>
+    <string name="email_to_label">To:</string>
+    <string name="your_email_optional_label">Your Email (Optional for reply)</string>
+    <string name="email_placeholder">name@example.com</string>
+    <string name="subject_label">Subject</string>
+    <string name="message_label">Message</string>
+    <string name="message_placeholder">Describe your questions, suggestions, or bugs…</string>
+    <string name="sending_button">Sending…</string>
+    <string name="send_in_app_message">Send In-App Message</string>
+    <string name="or_open_in_email_app">Or Open in Email App</string>
+
+    <!-- Help Center -->
+    <string name="help_center_title">Help Center</string>
+    <string name="help_center_subtitle">Frequently asked questions and expert cycle support</string>
+    <string name="faq_header">Frequently Asked Questions</string>
+    <string name="need_personal_assistance">Need personal assistance?</string>
+    <string name="need_personal_assistance_desc">Our wellness and technical support team is available to answer any questions or receive your feedback.</string>
+    <string name="contact_support_team">Contact Support Team</string>
+
+    <!-- Terms of Service -->
+    <string name="terms_of_service_title">Terms of Service</string>
+    <string name="terms_last_updated">Last updated: August 2026</string>
+    <string name="not_medical_advice_title">Not Medical Advice</string>
+    <string name="not_medical_advice_body">Lumi is a wellness tracking tool designed for self-monitoring and personal body literacy. Lumi predictions and phase recommendations do not constitute clinical medical advice or guaranteed contraception.</string>
+    <string name="tos_section_1_title">Acceptance of Terms</string>
+    <string name="tos_section_1_body">By creating an account or using Lumi, you agree to these Terms of Service. If you disagree with any portion of these terms, please discontinue using the application.</string>
+    <string name="tos_section_2_title">User Data Ownership</string>
+    <string name="tos_section_2_body">You maintain full intellectual property rights and ownership of your personal health data. Lumi implements industry-standard encryption protocols to protect your records.</string>
+    <string name="tos_section_3_title">Prediction Accuracy</string>
+    <string name="tos_section_3_body">The precision of cycle predictions, fertile windows, and phase insights depends upon the accuracy and regularity of your symptom, temperature, and LH test logs.</string>
+    <string name="tos_section_4_title">Service Modifications</string>
+    <string name="tos_section_4_body">We continually enhance Lumi with new algorithms and features. Material changes to terms will be communicated with appropriate in-app notice.</string>
+    <string name="tos_agree_button">I Understand &amp; Agree</string>
+    <string name="tos_numbered_title">%1$s. %2$s</string>
 </resources>

@@ -42,10 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.analytics.AnalyticsConstants
 import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.analytics.TrackScreenView
@@ -98,7 +100,7 @@ fun LogBBTBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Log BBT",
+                    text = stringResource(R.string.log_bbt_title),
                     fontFamily = LiterataFontFamily,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
@@ -113,7 +115,7 @@ fun LogBBTBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.close_desc),
                         tint = Color(0xFF3B2D34),
                         modifier = Modifier.size(20.dp)
                     )
@@ -124,7 +126,7 @@ fun LogBBTBottomSheet(
 
             // Time Sublabel
             Text(
-                text = "Today, 7:30 AM",
+                text = stringResource(R.string.bbt_time_placeholder),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 color = Color(0xFF5E4E57)
@@ -144,7 +146,7 @@ fun LogBBTBottomSheet(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "°F",
+                        text = stringResource(R.string.unit_fahrenheit),
                         fontFamily = LiterataFontFamily,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
@@ -201,7 +203,7 @@ fun LogBBTBottomSheet(
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "Disturbed Sleep",
+                            text = stringResource(R.string.disturbed_sleep_label),
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
                             fontWeight = if (isSleepSelected) FontWeight.Bold else FontWeight.Medium,
@@ -242,7 +244,7 @@ fun LogBBTBottomSheet(
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "Fever / Illness",
+                            text = stringResource(R.string.fever_illness_label),
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
                             fontWeight = if (isFeverSelected) FontWeight.Bold else FontWeight.Medium,
@@ -309,7 +311,7 @@ fun LogBBTBottomSheet(
                 colors = ButtonDefaults.buttonColors(containerColor = Primary)
             ) {
                 Text(
-                    text = "Save Reading",
+                    text = stringResource(R.string.save_reading_button),
                     fontFamily = ManropeFontFamily,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -362,7 +364,7 @@ private fun BBTNumpad(
                         if (item == "DEL") {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.Backspace,
-                                contentDescription = "Delete",
+                                contentDescription = stringResource(R.string.delete_desc),
                                 tint = Color(0xFF3B2D34),
                                 modifier = Modifier.size(24.dp)
                             )

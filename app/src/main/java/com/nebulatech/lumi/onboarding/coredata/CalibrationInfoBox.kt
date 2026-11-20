@@ -25,9 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -66,7 +68,7 @@ fun CalibrationInfoBox(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "AI Cycle Calibration",
+                    text = stringResource(R.string.ai_cycle_calibration_title),
                     fontFamily = LiterataFontFamily,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -77,9 +79,9 @@ fun CalibrationInfoBox(
 
                 Text(
                     text = if (hasManualData) {
-                        "Using your custom past cycle records for baseline calibration and precision predictions."
+                        stringResource(R.string.ai_calibration_manual_desc)
                     } else {
-                        "We automatically calculate past cycle data using the information given by you to provide precision insights from day one."
+                        stringResource(R.string.ai_calibration_auto_desc)
                     },
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
@@ -117,7 +119,11 @@ fun CalibrationInfoBox(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (hasManualData) "Edit Past Cycles" else "Enter Past Cycles Manually",
+                        text = if (hasManualData) {
+                            stringResource(R.string.edit_past_cycles)
+                        } else {
+                            stringResource(R.string.enter_past_cycles_manually)
+                        },
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,

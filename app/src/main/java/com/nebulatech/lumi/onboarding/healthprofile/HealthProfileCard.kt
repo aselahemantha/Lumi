@@ -200,7 +200,7 @@ fun HealthProfileCard(
                             DropdownMenuItem(
                                 text = {
                                     Text(
-                                        text = "kg",
+                                        text = stringResource(R.string.weight_unit_kg),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
@@ -213,7 +213,7 @@ fun HealthProfileCard(
                             DropdownMenuItem(
                                 text = {
                                     Text(
-                                        text = "lbs",
+                                        text = stringResource(R.string.weight_unit_lbs),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )

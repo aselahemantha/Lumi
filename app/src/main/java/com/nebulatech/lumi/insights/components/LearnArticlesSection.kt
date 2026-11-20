@@ -27,10 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -70,7 +72,7 @@ fun InsightsLumiBannerCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "LUMI INSIGHT",
+                        text = stringResource(R.string.lumi_insight_badge),
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
@@ -97,7 +99,7 @@ fun LearnArticlesSection(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "LEARN",
+            text = stringResource(R.string.learn_header),
             fontFamily = ManropeFontFamily,
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
@@ -136,7 +138,7 @@ fun LearnArticlesSection(
                 Spacer(modifier = Modifier.height(14.dp))
 
                 Text(
-                    text = "Personalized Health Articles",
+                    text = stringResource(R.string.personalized_health_articles),
                     fontFamily = LiterataFontFamily,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -146,7 +148,7 @@ fun LearnArticlesSection(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = "Evidence-based research, sleep studies, and nutrition guides will be available when connected online or syncing with Lumi Cloud.",
+                    text = stringResource(R.string.personalized_health_articles_desc),
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     lineHeight = 20.sp,
@@ -171,7 +173,7 @@ fun LearnArticlesSection(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Online Library Coming Soon",
+                            text = stringResource(R.string.online_library_coming_soon),
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,

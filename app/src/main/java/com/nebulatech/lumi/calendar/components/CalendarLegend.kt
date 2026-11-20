@@ -27,9 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -56,7 +58,7 @@ fun CalendarLegend(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "Period",
+                text = stringResource(R.string.legend_period),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 color = Color(0xFF4A3B43)
@@ -72,7 +74,7 @@ fun CalendarLegend(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "Fertile",
+                text = stringResource(R.string.legend_fertile),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 color = Color(0xFF4A3B43)
@@ -90,7 +92,7 @@ fun CalendarLegend(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "Ovulation",
+                text = stringResource(R.string.legend_ovulation),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 color = Color(0xFF4A3B43)
@@ -156,7 +158,7 @@ fun PhaseDetailCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "$phaseName  •  Day $dayNumber",
+                    text = stringResource(R.string.phase_day_format, phaseName, dayNumber),
                     fontFamily = LiterataFontFamily,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -195,7 +197,7 @@ fun PhaseDetailCard(
 // ==========================================
 @Composable
 fun CycleStatusBannerCard(
-    text: String = "Your cycle length is steady at 28 days.",
+    text: String = stringResource(R.string.calendar_cycle_steady_default),
     onViewAllClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -237,7 +239,7 @@ fun CycleStatusBannerCard(
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = "View All",
+                text = stringResource(R.string.view_all),
                 fontFamily = ManropeFontFamily,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,

@@ -40,10 +40,12 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -123,7 +125,7 @@ fun InteractiveHormoneChartCard(
         ) {
             // Chart Title
             Text(
-                text = "Hormone Cycle Tracker",
+                text = stringResource(R.string.hormone_cycle_tracker),
                 fontFamily = LiterataFontFamily,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
@@ -139,14 +141,14 @@ fun InteractiveHormoneChartCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Level (Relative Intensity) ↑",
+                    text = stringResource(R.string.hormone_y_axis),
                     fontFamily = ManropeFontFamily,
                     fontSize = 11.sp,
                     color = Color(0xFF7A6A73)
                 )
 
                 Text(
-                    text = "Cycle Day →",
+                    text = stringResource(R.string.hormone_x_axis),
                     fontFamily = ManropeFontFamily,
                     fontSize = 11.sp,
                     color = Color(0xFF7A6A73)
@@ -342,10 +344,10 @@ fun InteractiveHormoneChartCard(
                         .align(Alignment.BottomCenter),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Menstrual", fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF6E5E67))
-                    Text("Follicular", fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF6E5E67))
-                    Text("Ovulation", fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E65D8))
-                    Text("Luteal", fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF6E5E67))
+                    Text(stringResource(R.string.phase_menstrual), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF6E5E67))
+                    Text(stringResource(R.string.phase_follicular), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF6E5E67))
+                    Text(stringResource(R.string.phase_ovulation), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E65D8))
+                    Text(stringResource(R.string.phase_luteal), fontFamily = ManropeFontFamily, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF6E5E67))
                 }
             }
 
@@ -383,7 +385,7 @@ fun InteractiveHormoneChartCard(
                 // Column 1: PHASE
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "PHASE",
+                        text = stringResource(R.string.phase_label_upper),
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
@@ -411,7 +413,7 @@ fun InteractiveHormoneChartCard(
                 // Column 2: ESTROGEN
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "ESTROGEN",
+                        text = stringResource(R.string.estrogen_label_upper),
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
@@ -420,7 +422,7 @@ fun InteractiveHormoneChartCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "${currentHormones.estrogen.toInt()} pg/mL",
+                        text = stringResource(R.string.estrogen_value_pg_ml, currentHormones.estrogen.toInt()),
                         fontFamily = LiterataFontFamily,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
@@ -439,7 +441,7 @@ fun InteractiveHormoneChartCard(
                 // Column 3: PROGESTERONE
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "PROGESTERONE",
+                        text = stringResource(R.string.progesterone_label_upper),
                         fontFamily = ManropeFontFamily,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
@@ -465,7 +467,7 @@ fun InteractiveHormoneChartCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Day of Cycle",
+                    text = stringResource(R.string.day_of_cycle_label),
                     fontFamily = ManropeFontFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,

@@ -34,12 +34,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.analytics.AnalyticsConstants
 import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.analytics.TrackScreenView
@@ -84,7 +86,7 @@ fun NotificationCenterScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.back_button),
                         tint = Primary,
                         modifier = Modifier.size(20.dp)
                     )
@@ -92,7 +94,7 @@ fun NotificationCenterScreen(
 
                 if (state.notifications.isNotEmpty()) {
                     Text(
-                        text = "Clear All",
+                        text = stringResource(R.string.clear_all),
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
@@ -129,7 +131,7 @@ fun NotificationCenterScreen(
             // Header Title & Subtitle matching Insights & Calendar design
             Column(modifier = Modifier.padding(top = 4.dp)) {
                 Text(
-                    text = "Notification Center",
+                    text = stringResource(R.string.notification_center_title),
                     fontFamily = LiterataFontFamily,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
@@ -137,7 +139,7 @@ fun NotificationCenterScreen(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "System alerts, reminders, and phase insights delivered to you.",
+                    text = stringResource(R.string.notification_center_subtitle),
                     fontFamily = ManropeFontFamily,
                     fontSize = 15.sp,
                     color = Color(0xFF5E4E57)
@@ -178,7 +180,7 @@ fun NotificationCenterScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = "You're all caught up!",
+                            text = stringResource(R.string.notifications_empty_title),
                             fontFamily = LiterataFontFamily,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
@@ -188,7 +190,7 @@ fun NotificationCenterScreen(
                         Spacer(modifier = Modifier.height(6.dp))
 
                         Text(
-                            text = "Daily reminders, period alerts, and phase insights will appear here when delivered.",
+                            text = stringResource(R.string.notifications_empty_desc),
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             lineHeight = 20.sp,
@@ -211,7 +213,7 @@ fun NotificationCenterScreen(
                             )
                             Spacer(modifier = Modifier.size(8.dp))
                             Text(
-                                text = "Send Test Notification",
+                                text = stringResource(R.string.send_test_notification),
                                 fontFamily = ManropeFontFamily,
                                 fontWeight = FontWeight.Bold,
                                 color = Primary

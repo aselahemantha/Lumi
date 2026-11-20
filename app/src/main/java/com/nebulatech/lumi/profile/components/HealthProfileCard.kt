@@ -30,9 +30,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -63,7 +65,7 @@ fun HealthProfileCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Health Profile",
+                    text = stringResource(R.string.health_profile_title),
                     fontFamily = LiterataFontFamily,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
@@ -77,7 +79,7 @@ fun HealthProfileCard(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Edit Profile",
+                        contentDescription = stringResource(R.string.edit_profile_desc),
                         tint = Primary,
                         modifier = Modifier.size(20.dp)
                     )
@@ -114,7 +116,7 @@ fun HealthProfileCard(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Cycle\nLength",
+                                text = stringResource(R.string.cycle_length_multiline),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 12.sp,
                                 lineHeight = 16.sp,
@@ -132,7 +134,7 @@ fun HealthProfileCard(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "days",
+                                text = stringResource(R.string.days_unit),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 13.sp,
                                 color = Color(0xFF5E4E57),
@@ -165,7 +167,7 @@ fun HealthProfileCard(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Period\nDuration",
+                                text = stringResource(R.string.period_duration_multiline),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 12.sp,
                                 lineHeight = 16.sp,
@@ -183,7 +185,7 @@ fun HealthProfileCard(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "days",
+                                text = stringResource(R.string.days_unit),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 13.sp,
                                 color = Color(0xFF5E4E57),
@@ -228,7 +230,7 @@ fun HealthProfileCard(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Primary Goal",
+                            text = stringResource(R.string.primary_goal_label),
                             fontFamily = ManropeFontFamily,
                             fontSize = 11.sp,
                             color = Color(0xFF7A6A73)

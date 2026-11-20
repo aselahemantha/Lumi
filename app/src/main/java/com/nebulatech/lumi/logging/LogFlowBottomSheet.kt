@@ -61,10 +61,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.analytics.AnalyticsConstants
 import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.analytics.TrackScreenView
@@ -138,7 +140,7 @@ fun LogFlowBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Daily Log",
+                    text = stringResource(R.string.daily_log_title),
                     fontFamily = LiterataFontFamily,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
@@ -156,7 +158,7 @@ fun LogFlowBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.close_desc),
                         tint = Color(0xFF3B2D34),
                         modifier = Modifier.size(20.dp)
                     )
@@ -172,7 +174,7 @@ fun LogFlowBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Log Date",
+                    text = stringResource(R.string.log_date_label),
                     fontFamily = ManropeFontFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
@@ -206,7 +208,7 @@ fun LogFlowBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Default.DateRange,
-                        contentDescription = "Select Date",
+                        contentDescription = stringResource(R.string.select_date_desc),
                         tint = Primary,
                         modifier = Modifier.size(16.dp)
                     )
@@ -233,7 +235,7 @@ fun LogFlowBottomSheet(
 
             // Section 1: Flow Intensity
             Text(
-                text = "Flow Intensity",
+                text = stringResource(R.string.flow_intensity_label),
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
@@ -355,7 +357,7 @@ fun LogFlowBottomSheet(
                         Column(modifier = Modifier.weight(1f)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "Symptoms & Mood",
+                                    text = stringResource(R.string.symptoms_and_mood_label),
                                     fontFamily = ManropeFontFamily,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
@@ -363,7 +365,7 @@ fun LogFlowBottomSheet(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = "(Optional)",
+                                    text = stringResource(R.string.optional_label),
                                     fontFamily = ManropeFontFamily,
                                     fontSize = 12.sp,
                                     color = Color(0xFF8A7A83)
@@ -403,7 +405,7 @@ fun LogFlowBottomSheet(
 
                             // Symptoms Selection
                             Text(
-                                text = "Symptoms",
+                                text = stringResource(R.string.symptoms_label),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
@@ -453,7 +455,7 @@ fun LogFlowBottomSheet(
 
                             // Mood Selection
                             Text(
-                                text = "Mood",
+                                text = stringResource(R.string.mood_label),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
@@ -547,7 +549,7 @@ fun LogFlowBottomSheet(
                 colors = ButtonDefaults.buttonColors(containerColor = Primary)
             ) {
                 Text(
-                    text = "Save Log",
+                    text = stringResource(R.string.save_log_button),
                     fontFamily = ManropeFontFamily,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -600,7 +602,7 @@ fun LogFlowBottomSheet(
                     colors = ButtonDefaults.textButtonColors(contentColor = Primary)
                 ) {
                     Text(
-                        text = "OK",
+                        text = stringResource(R.string.ok_button),
                         fontFamily = ManropeFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
@@ -613,7 +615,7 @@ fun LogFlowBottomSheet(
                     colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF7A6A73))
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel_button),
                         fontFamily = ManropeFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp

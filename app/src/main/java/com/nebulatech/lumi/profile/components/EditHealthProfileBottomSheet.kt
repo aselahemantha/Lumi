@@ -38,9 +38,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -88,7 +90,7 @@ fun EditHealthProfileBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Edit Health Profile",
+                    text = stringResource(R.string.edit_health_profile_title),
                     fontFamily = LiterataFontFamily,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
@@ -104,7 +106,7 @@ fun EditHealthProfileBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.close_desc),
                         tint = Color(0xFF5E4E57),
                         modifier = Modifier.size(18.dp)
                     )
@@ -115,7 +117,7 @@ fun EditHealthProfileBottomSheet(
 
             // 1. Cycle Length Stepper
             Text(
-                text = "CYCLE LENGTH",
+                text = stringResource(R.string.cycle_length_upper),
                 fontFamily = ManropeFontFamily,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
@@ -134,14 +136,14 @@ fun EditHealthProfileBottomSheet(
             ) {
                 Column {
                     Text(
-                        text = "$cycleLength days",
+                        text = stringResource(R.string.cycle_length_days_format, cycleLength),
                         fontFamily = ManropeFontFamily,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF26181F)
                     )
                     Text(
-                        text = "Average: 28 days (21–45 allowed)",
+                        text = stringResource(R.string.cycle_length_hint),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
                         color = Color(0xFF8A7B84)
@@ -159,7 +161,7 @@ fun EditHealthProfileBottomSheet(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Remove,
-                            contentDescription = "Decrease",
+                            contentDescription = stringResource(R.string.decrease_desc),
                             tint = Primary,
                             modifier = Modifier.size(18.dp)
                         )
@@ -177,7 +179,7 @@ fun EditHealthProfileBottomSheet(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Add,
-                            contentDescription = "Increase",
+                            contentDescription = stringResource(R.string.increase_desc),
                             tint = Primary,
                             modifier = Modifier.size(18.dp)
                         )
@@ -189,7 +191,7 @@ fun EditHealthProfileBottomSheet(
 
             // 2. Period Duration Stepper
             Text(
-                text = "PERIOD DURATION",
+                text = stringResource(R.string.period_duration_upper),
                 fontFamily = ManropeFontFamily,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
@@ -208,14 +210,14 @@ fun EditHealthProfileBottomSheet(
             ) {
                 Column {
                     Text(
-                        text = "$periodDuration days",
+                        text = stringResource(R.string.cycle_length_days_format, periodDuration),
                         fontFamily = ManropeFontFamily,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF26181F)
                     )
                     Text(
-                        text = "Average: 5 days (2–10 allowed)",
+                        text = stringResource(R.string.period_duration_hint),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
                         color = Color(0xFF8A7B84)
@@ -233,7 +235,7 @@ fun EditHealthProfileBottomSheet(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Remove,
-                            contentDescription = "Decrease",
+                            contentDescription = stringResource(R.string.decrease_desc),
                             tint = Primary,
                             modifier = Modifier.size(18.dp)
                         )
@@ -251,7 +253,7 @@ fun EditHealthProfileBottomSheet(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Add,
-                            contentDescription = "Increase",
+                            contentDescription = stringResource(R.string.increase_desc),
                             tint = Primary,
                             modifier = Modifier.size(18.dp)
                         )
@@ -263,7 +265,7 @@ fun EditHealthProfileBottomSheet(
 
             // 3. Primary Goal Picker
             Text(
-                text = "PRIMARY GOAL",
+                text = stringResource(R.string.primary_goal_upper),
                 fontFamily = ManropeFontFamily,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
@@ -308,7 +310,7 @@ fun EditHealthProfileBottomSheet(
                             ) {
                                 Icon(
                                     imageVector = Icons.Outlined.Check,
-                                    contentDescription = "Selected",
+                                    contentDescription = stringResource(R.string.selected_desc),
                                     tint = Color.White,
                                     modifier = Modifier.size(14.dp)
                                 )
@@ -333,7 +335,7 @@ fun EditHealthProfileBottomSheet(
                 colors = ButtonDefaults.buttonColors(containerColor = Primary)
             ) {
                 Text(
-                    text = "Save Changes",
+                    text = stringResource(R.string.save_changes_button),
                     fontFamily = ManropeFontFamily,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,

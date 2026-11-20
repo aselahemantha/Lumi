@@ -51,10 +51,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -139,7 +141,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                 IconButton(onClick = onDismissRequest) {
                     Icon(
                         imageVector = Icons.Outlined.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.close_desc),
                         tint = Color(0xFF5E4E57),
                     )
                 }
@@ -173,7 +175,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Delivered to Developer",
+                        text = stringResource(R.string.delivered_to_developer),
                         fontFamily = LiterataFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
@@ -183,7 +185,10 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Your message has been dispatched to asela.hemantha.p@gmail.com. We appreciate you helping make Lumi better!",
+                        text = stringResource(
+                            R.string.delivered_to_developer_body,
+                            stringResource(R.string.developer_email)
+                        ),
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
@@ -203,7 +208,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         colors = ButtonDefaults.buttonColors(containerColor = Primary),
                     ) {
                         Text(
-                            text = "Done",
+                            text = stringResource(R.string.done_button),
                             fontFamily = ManropeFontFamily,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
@@ -223,7 +228,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "To:",
+                            text = stringResource(R.string.email_to_label),
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
@@ -231,7 +236,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "asela.hemantha.p@gmail.com",
+                            text = stringResource(R.string.developer_email),
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -244,7 +249,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
 
                 // Reply-To Email Field (Optional)
                 Text(
-                    text = "Your Email (Optional for reply)",
+                    text = stringResource(R.string.your_email_optional_label),
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -256,7 +261,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                     onValueChange = { userEmail = it },
                     placeholder = {
                         Text(
-                            text = "name@example.com",
+                            text = stringResource(R.string.email_placeholder),
                             fontFamily = ManropeFontFamily,
                             fontSize = 14.sp,
                             color = Color(0xFFA5949D),
@@ -279,7 +284,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
 
                 // Subject Field
                 Text(
-                    text = "Subject",
+                    text = stringResource(R.string.subject_label),
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -306,7 +311,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
 
                 // Message Body Field
                 Text(
-                    text = "Message",
+                    text = stringResource(R.string.message_label),
                     fontFamily = ManropeFontFamily,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -318,7 +323,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                     onValueChange = { message = it },
                     placeholder = {
                         Text(
-                            text = "Describe your questions, suggestions, or bugs...",
+                            text = stringResource(R.string.message_placeholder),
                             fontFamily = ManropeFontFamily,
                             fontSize = 14.sp,
                             color = Color(0xFFA5949D),
@@ -398,7 +403,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "Sending...",
+                            text = stringResource(R.string.sending_button),
                             fontFamily = ManropeFontFamily,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
@@ -415,7 +420,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Send In-App Message",
+                                text = stringResource(R.string.send_in_app_message),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
@@ -459,7 +464,7 @@ fun ContactDeveloperBottomSheet(onDismissRequest: () -> Unit, modifier: Modifier
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Or Open in Email App",
+                            text = stringResource(R.string.or_open_in_email_app),
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,

@@ -23,9 +23,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -43,7 +45,7 @@ fun CycleAtAGlanceSection(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "CYCLE AT A GLANCE",
+            text = stringResource(R.string.cycle_at_a_glance),
             fontFamily = ManropeFontFamily,
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
@@ -88,7 +90,7 @@ fun CycleAtAGlanceSection(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "days",
+                                text = stringResource(R.string.days_unit),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 14.sp,
                                 color = Color(0xFF5E4B54),

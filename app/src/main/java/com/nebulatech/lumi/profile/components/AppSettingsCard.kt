@@ -56,10 +56,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.security.BiometricAuthManager
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
@@ -97,7 +99,7 @@ fun AppSettingsCard(
                 .padding(20.dp),
         ) {
             Text(
-                text = "App Settings",
+                text = stringResource(R.string.app_settings_title),
                 fontFamily = LiterataFontFamily,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
@@ -132,7 +134,7 @@ fun AppSettingsCard(
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "Notifications",
+                                text = stringResource(R.string.notifications_title),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -267,14 +269,14 @@ fun AppSettingsCard(
                     Spacer(modifier = Modifier.width(14.dp))
                     Column {
                         Text(
-                            text = "Biometric App Lock",
+                            text = stringResource(R.string.biometric_app_lock_title),
                             fontFamily = ManropeFontFamily,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF26181F),
                         )
                         Text(
-                            text = "Require fingerprint or Face ID to open Lumi",
+                            text = stringResource(R.string.biometric_app_lock_desc),
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
                             color = Color(0xFF8A7A83),
@@ -305,7 +307,7 @@ fun AppSettingsCard(
                                 } else {
                                     Toast.makeText(
                                         context,
-                                        "Biometric authentication not supported or enrolled on this device",
+                                        context.getString(R.string.biometric_not_supported),
                                         Toast.LENGTH_LONG,
                                     ).show()
                                 }
@@ -477,7 +479,7 @@ fun SupportAndLogoutCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Log Out",
+                        text = stringResource(R.string.logout_button),
                         fontFamily = ManropeFontFamily,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,

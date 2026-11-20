@@ -33,9 +33,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -81,14 +83,14 @@ fun TermsOfServiceBottomSheet(
 
                 Column {
                     Text(
-                        text = "Terms of Service",
+                        text = stringResource(R.string.terms_of_service_title),
                         fontFamily = LiterataFontFamily,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = Primary
                     )
                     Text(
-                        text = "Last updated: August 2026",
+                        text = stringResource(R.string.terms_last_updated),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
                         color = Color(0xFF7A6A73)
@@ -120,7 +122,7 @@ fun TermsOfServiceBottomSheet(
                     )
                     Column {
                         Text(
-                            text = "Not Medical Advice",
+                            text = stringResource(R.string.not_medical_advice_title),
                             fontFamily = LiterataFontFamily,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
@@ -128,7 +130,7 @@ fun TermsOfServiceBottomSheet(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Lumi is a wellness tracking tool designed for self-monitoring and personal body literacy. Lumi predictions and phase recommendations do not constitute clinical medical advice or guaranteed contraception.",
+                            text = stringResource(R.string.not_medical_advice_body),
                             fontFamily = ManropeFontFamily,
                             fontSize = 12.sp,
                             lineHeight = 17.sp,
@@ -155,32 +157,32 @@ fun TermsOfServiceBottomSheet(
                 ) {
                     TermsParagraphItem(
                         number = "1",
-                        title = "Acceptance of Terms",
-                        text = "By creating an account or using Lumi, you agree to these Terms of Service. If you disagree with any portion of these terms, please discontinue using the application."
+                        title = stringResource(R.string.tos_section_1_title),
+                        text = stringResource(R.string.tos_section_1_body)
                     )
 
                     HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
 
                     TermsParagraphItem(
                         number = "2",
-                        title = "Data Ownership & Security",
-                        text = "You maintain full intellectual property rights and ownership of your personal health data. Lumi implements industry-standard encryption protocols to protect your records."
+                        title = stringResource(R.string.tos_section_2_title),
+                        text = stringResource(R.string.tos_section_2_body)
                     )
 
                     HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
 
                     TermsParagraphItem(
                         number = "3",
-                        title = "User Accuracy & Responsibility",
-                        text = "The precision of cycle predictions, fertile windows, and phase insights depends upon the accuracy and regularity of your symptom, temperature, and LH test logs."
+                        title = stringResource(R.string.tos_section_3_title),
+                        text = stringResource(R.string.tos_section_3_body)
                     )
 
                     HorizontalDivider(color = Color(0xFFF2ECEF), thickness = 1.dp)
 
                     TermsParagraphItem(
                         number = "4",
-                        title = "Modifications to Service",
-                        text = "We continually enhance Lumi with new algorithms and features. Material changes to terms will be communicated with appropriate in-app notice."
+                        title = stringResource(R.string.tos_section_4_title),
+                        text = stringResource(R.string.tos_section_4_body)
                     )
                 }
             }
@@ -197,7 +199,7 @@ fun TermsOfServiceBottomSheet(
                 colors = ButtonDefaults.buttonColors(containerColor = Primary)
             ) {
                 Text(
-                    text = "I Understand & Agree",
+                    text = stringResource(R.string.tos_agree_button),
                     fontFamily = ManropeFontFamily,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
@@ -217,7 +219,7 @@ private fun TermsParagraphItem(
 ) {
     Column {
         Text(
-            text = "$number. $title",
+            text = stringResource(R.string.tos_numbered_title, number, title),
             fontFamily = LiterataFontFamily,
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,

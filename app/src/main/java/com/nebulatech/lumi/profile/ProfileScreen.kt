@@ -41,8 +41,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.R
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,7 +87,7 @@ fun ProfileTopBar(modifier: Modifier = Modifier, onNotificationClick: () -> Unit
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Profile",
+            text = stringResource(R.string.profile_title),
             fontFamily = LiterataFontFamily,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
@@ -91,7 +97,7 @@ fun ProfileTopBar(modifier: Modifier = Modifier, onNotificationClick: () -> Unit
         IconButton(onClick = onNotificationClick) {
             Icon(
                 imageVector = Icons.Outlined.Notifications,
-                contentDescription = "Notifications",
+                contentDescription = stringResource(R.string.notifications_desc),
                 tint = Color(0xFF4A3A43),
                 modifier = Modifier.size(24.dp),
             )
@@ -316,7 +322,7 @@ fun ProfileScreen(
 
                         // Title
                         Text(
-                            text = "Log Out of Lumi?",
+                            text = stringResource(R.string.logout_dialog_title),
                             fontFamily = LiterataFontFamily,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
@@ -328,7 +334,7 @@ fun ProfileScreen(
 
                         // Message
                         Text(
-                            text = "Logging out will clear all local cycle records, logs, and preferences from this device and close the application.",
+                            text = stringResource(R.string.logout_dialog_message),
                             fontFamily = ManropeFontFamily,
                             fontSize = 13.sp,
                             lineHeight = 20.sp,
@@ -354,7 +360,7 @@ fun ProfileScreen(
                                 colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF5E4E57)),
                             ) {
                                 Text(
-                                    text = "Cancel",
+                                    text = stringResource(R.string.cancel_button),
                                     fontFamily = ManropeFontFamily,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -374,7 +380,7 @@ fun ProfileScreen(
                                 colors = ButtonDefaults.buttonColors(containerColor = Primary),
                             ) {
                                 Text(
-                                    text = "Log Out",
+                                    text = stringResource(R.string.logout_button),
                                     fontFamily = ManropeFontFamily,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,

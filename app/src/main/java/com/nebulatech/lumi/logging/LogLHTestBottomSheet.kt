@@ -47,9 +47,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.analytics.AnalyticsConstants
 import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.analytics.TrackScreenView
@@ -110,7 +112,7 @@ fun LogLHTestBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Log LH Test",
+                    text = stringResource(R.string.log_lh_test_title),
                     fontFamily = LiterataFontFamily,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
@@ -129,7 +131,7 @@ fun LogLHTestBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.close_desc),
                         tint = Color(0xFF3B2D34),
                         modifier = Modifier.size(18.dp)
                     )
@@ -140,7 +142,7 @@ fun LogLHTestBottomSheet(
 
             // Section 1: Test Result Intensity
             Text(
-                text = "Test Result Intensity",
+                text = stringResource(R.string.test_result_intensity_label),
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
@@ -208,7 +210,7 @@ fun LogLHTestBottomSheet(
 
             // Section 2: Test Brand (Optional)
             Text(
-                text = "Test Brand (Optional)",
+                text = stringResource(R.string.test_brand_optional_label),
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
@@ -222,7 +224,7 @@ fun LogLHTestBottomSheet(
                 onValueChange = { testBrand = it },
                 placeholder = {
                     Text(
-                        text = "e.g., Easy@Home, Clearblue",
+                        text = stringResource(R.string.test_brand_placeholder),
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         color = Color(0xFF9E8E96)
@@ -243,7 +245,7 @@ fun LogLHTestBottomSheet(
 
             // Section 3: Test Strip Photo
             Text(
-                text = "Test Strip Photo",
+                text = stringResource(R.string.test_strip_photo_label),
                 fontFamily = ManropeFontFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
@@ -275,7 +277,7 @@ fun LogLHTestBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.CameraAlt,
-                        contentDescription = "Take Photo",
+                        contentDescription = stringResource(R.string.take_photo_desc),
                         tint = Primary,
                         modifier = Modifier.size(22.dp)
                     )
@@ -303,7 +305,7 @@ fun LogLHTestBottomSheet(
                     border = androidx.compose.foundation.BorderStroke(1.dp, Primary)
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel_button),
                         fontFamily = ManropeFontFamily,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
@@ -337,7 +339,7 @@ fun LogLHTestBottomSheet(
                     colors = ButtonDefaults.buttonColors(containerColor = Primary)
                 ) {
                     Text(
-                        text = "Save Result",
+                        text = stringResource(R.string.save_result_button),
                         fontFamily = ManropeFontFamily,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,

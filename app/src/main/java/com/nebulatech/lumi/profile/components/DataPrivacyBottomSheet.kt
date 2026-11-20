@@ -48,9 +48,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.ui.theme.LiterataFontFamily
 import com.nebulatech.lumi.ui.theme.ManropeFontFamily
 import com.nebulatech.lumi.ui.theme.Primary
@@ -101,14 +103,14 @@ fun DataPrivacyBottomSheet(
 
                 Column {
                     Text(
-                        text = "Data Privacy & Export",
+                        text = stringResource(R.string.data_privacy_title),
                         fontFamily = LiterataFontFamily,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = Primary
                     )
                     Text(
-                        text = "Your data belongs to you. Fully encrypted & private.",
+                        text = stringResource(R.string.data_privacy_subtitle),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
                         color = Color(0xFF7A6A73)
@@ -159,7 +161,7 @@ fun DataPrivacyBottomSheet(
 
             // 2. Export Health Report Section
             Text(
-                text = "Export Health Records",
+                text = stringResource(R.string.export_health_records),
                 fontFamily = LiterataFontFamily,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
@@ -180,7 +182,7 @@ fun DataPrivacyBottomSheet(
                         .padding(18.dp)
                 ) {
                     Text(
-                        text = "Clinical Cycle & Symptom Summary",
+                        text = stringResource(R.string.clinical_cycle_summary_title),
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
@@ -190,7 +192,7 @@ fun DataPrivacyBottomSheet(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Generate a comprehensive export of your cycle history, period duration, BBT temperatures, and symptoms formatted for doctor visits or personal backups.",
+                        text = stringResource(R.string.clinical_cycle_summary_desc),
                         fontFamily = ManropeFontFamily,
                         fontSize = 12.sp,
                         lineHeight = 18.sp,
@@ -218,7 +220,7 @@ fun DataPrivacyBottomSheet(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Export Health Summary (CSV)",
+                                text = stringResource(R.string.export_health_summary_csv),
                                 fontFamily = ManropeFontFamily,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold
@@ -248,7 +250,7 @@ fun DataPrivacyBottomSheet(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Erase All Health & Cycle Data",
+                        text = stringResource(R.string.erase_all_health_data_button),
                         fontFamily = ManropeFontFamily,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
@@ -265,7 +267,7 @@ fun DataPrivacyBottomSheet(
                 onDismissRequest = { showDeleteConfirmDialog = false },
                 title = {
                     Text(
-                        text = "Erase All Data?",
+                        text = stringResource(R.string.erase_all_data_dialog_title),
                         fontFamily = LiterataFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
@@ -274,7 +276,7 @@ fun DataPrivacyBottomSheet(
                 },
                 text = {
                     Text(
-                        text = "This will permanently delete all your logged periods, daily symptoms, BBT readings, and cycle history from this device. This action cannot be undone.",
+                        text = stringResource(R.string.erase_all_data_dialog_body),
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         lineHeight = 19.sp,
@@ -292,7 +294,7 @@ fun DataPrivacyBottomSheet(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            text = "Yes, Delete Everything",
+                            text = stringResource(R.string.yes_delete_everything),
                             fontFamily = ManropeFontFamily,
                             fontWeight = FontWeight.Bold
                         )
@@ -304,7 +306,7 @@ fun DataPrivacyBottomSheet(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel_button),
                             fontFamily = ManropeFontFamily
                         )
                     }
@@ -320,7 +322,7 @@ fun DataPrivacyBottomSheet(
                 onDismissRequest = { showExportSuccessDialog = false },
                 title = {
                     Text(
-                        text = "Report Generated",
+                        text = stringResource(R.string.report_generated_title),
                         fontFamily = LiterataFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
@@ -329,7 +331,7 @@ fun DataPrivacyBottomSheet(
                 },
                 text = {
                     Text(
-                        text = "Your Lumi cycle summary has been prepared. You can share or save the file via the system dialog.",
+                        text = stringResource(R.string.report_generated_body),
                         fontFamily = ManropeFontFamily,
                         fontSize = 13.sp,
                         color = Color(0xFF5E4E57)
@@ -341,7 +343,7 @@ fun DataPrivacyBottomSheet(
                         colors = ButtonDefaults.buttonColors(containerColor = Primary),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("Done", fontFamily = ManropeFontFamily, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.done_button), fontFamily = ManropeFontFamily, fontWeight = FontWeight.Bold)
                     }
                 },
                 containerColor = Color.White,

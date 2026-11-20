@@ -16,8 +16,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.onboarding.OnboardingStep
 
 @Composable
@@ -59,7 +61,7 @@ fun OnboardingProgressBar(
             trackColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
         )
         Text(
-            text = "Step $step of $totalSteps",
+            text = stringResource(R.string.step_of_steps, step, totalSteps),
             style = MaterialTheme.typography.labelMedium.copy(fontSize = 13.sp),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

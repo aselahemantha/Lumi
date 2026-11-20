@@ -26,11 +26,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nebulatech.lumi.R
 import com.nebulatech.lumi.analytics.AnalyticsConstants
 import com.nebulatech.lumi.analytics.LocalAnalyticsTracker
 import com.nebulatech.lumi.analytics.TrackScreenView
@@ -111,7 +113,7 @@ fun CalendarScreen(modifier: Modifier = Modifier, onTabSelected: (HomeTab) -> Un
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
-                                contentDescription = "Previous Month",
+                                contentDescription = stringResource(R.string.previous_month_desc),
                                 tint = Color(0xFF3B2D34),
                                 modifier = Modifier.size(24.dp),
                             )
@@ -128,7 +130,7 @@ fun CalendarScreen(modifier: Modifier = Modifier, onTabSelected: (HomeTab) -> Un
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                                contentDescription = "Next Month",
+                                contentDescription = stringResource(R.string.next_month_desc),
                                 tint = Color(0xFF3B2D34),
                                 modifier = Modifier.size(24.dp),
                             )
@@ -170,7 +172,7 @@ fun CalendarScreen(modifier: Modifier = Modifier, onTabSelected: (HomeTab) -> Un
 
                 // 4. Cycle Status Banner Card (View All navigates to Insights)
                 CycleStatusBannerCard(
-                    text = "Your average cycle length is steady at ${state.cycleLength} days.",
+                    text = stringResource(R.string.calendar_cycle_steady, state.cycleLength),
                     onViewAllClick = {
                         tracker.trackButtonClick(
                             buttonName = "btn_calendar_view_insights",

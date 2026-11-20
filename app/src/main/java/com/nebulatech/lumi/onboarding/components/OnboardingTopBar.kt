@@ -33,7 +33,7 @@ fun OnboardingTopBar(
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back_button),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
